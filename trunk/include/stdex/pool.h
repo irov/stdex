@@ -2,16 +2,16 @@
 
 namespace stdex
 {
-	template<size_t TSizeType, size_t TChunkCount>
+	template<size_t TBlockSize, size_t TBlockCount>
 	class pool_template_chunk
 	{
     public:
-        typedef pool_template_chunk<TSizeType, TChunkCount> chunk_type;
+        typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_type;
 
 	public:
 		struct pool_block
 		{
-			char buff[TSizeType];
+			char buff[TBlockSize];
             chunk_type * chunk;
 			pool_block * next;
 		};
@@ -21,12 +21,12 @@ namespace stdex
             : m_prev(nullptr)
             , m_next(nullptr)
             , m_freeBlock(nullptr)
-            , m_countBlock(TChunkCount)
+            , m_countBlock(TBlockCount)
 		{
             pool_block * block = nullptr;
 
 			for( pool_block * it = buffer_block, 
-				*it_end = buffer_block + TChunkCount; 
+				*it_end = buffer_block + TBlockCount; 
 				it != it_end; 
 			++it )
 			{
@@ -93,7 +93,7 @@ namespace stdex
         }
 
     protected:
-		pool_block buffer_block[TChunkCount];
+		pool_block buffer_block[TBlockCount];
 
     protected:
         chunk_type * m_prev;
@@ -104,10 +104,10 @@ namespace stdex
         size_t m_countBlock;
 	};
 
-	template<size_t TSizeType, size_t TChunkCount>
+	template<size_t TBlockSize, size_t TBlockCount>
 	class pool
 	{
-		typedef pool_template_chunk<TSizeType, TChunkCount> chunk_type;
+		typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_type;
 		typedef typename chunk_type::pool_block block_type;
 
     public:
@@ -218,7 +218,7 @@ namespace stdex
 
         void updateFreeChunks_( chunk_type * _chunk )
         {
-            const size_t chunkCount = TChunkCount;
+            const size_t chunkCount = TBlockCount;
 
             size_t chunkCountBlock = _chunk->getCountBlock();
 
@@ -253,7 +253,7 @@ namespace stdex
                 return;
             }
 
-            const size_t chunkCount2 = TChunkCount * 2;
+            const size_t chunkCount2 = TBlockCount * 2;
 
             if( m_countBlockMax - m_countBlock > chunkCount2 )
             {
@@ -265,7 +265,7 @@ namespace stdex
                 delete free;
 
                 --m_countChunk;
-                m_countBlockMax -= TChunkCount;
+                m_countBlockMax -= TBlockCount;
             }
         }
 
@@ -286,7 +286,7 @@ namespace stdex
 
                 ++m_countChunk;
 
-                const size_t chunkCount = TChunkCount;
+                const size_t chunkCount = TBlockCount;
 
                 m_countBlockMax += chunkCount;
             }
@@ -299,6 +299,27 @@ namespace stdex
             m_freeChunk = chunk;
 		}
 
+    public:
+        size_t getCountBlock() const
+        {
+            return m_countBlock;
+        }
+
+        size_t getCountBlockMax() const
+        {
+            return m_countBlockMax;
+        }
+
+        size_t getBlockSize() const
+        {
+            return TBlockSize;
+        }
+
+        size_t getBlockCount() const
+        {
+            return TBlockCount;
+        }
+
 	protected:
 		chunk_type * m_freeChunk;
         chunk_type * m_fullChunk;
@@ -309,7 +330,7 @@ namespace stdex
         size_t m_countChunk;
 	};
 
-    template<class T, size_t TChunkCount>
+    template<class T, size_t TBlockCount>
     class template_pool
     {
     public:
@@ -343,7 +364,7 @@ namespace stdex
         }
 
     protected:
-        typedef pool<sizeof(T), TChunkCount> pool_type;
+        typedef pool<sizeof(T), TBlockCount> pool_type;
         pool_type m_pool;
     };
 }
