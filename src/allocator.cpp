@@ -4,6 +4,8 @@
 #   include <malloc.h>
 #   include <memory.h>
 
+#   include <stdio.h>
+
 namespace stdex
 {
 #   define allocator_pool_def(i, f, c)\
@@ -37,26 +39,26 @@ namespace stdex
     const static size_t si_global = 20;
     //////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_loop( function )\
-        function(0) else \
-        function(1) else \
-        function(2) else \
-        function(3) else \
-        function(4) else \
-        function(5) else \
-        function(6) else \
-        function(7) else \
-        function(8) else \
-        function(9) else \
-        function(10) else \
-        function(11) else \
-        function(12) else \
-        function(13) else \
-        function(14) else \
-        function(15) else \
-        function(16) else \
-        function(17) else \
-        function(18) else \
-        function(19) else
+        function(0) \
+        function(1) \
+        function(2) \
+        function(3) \
+        function(4) \
+        function(5) \
+        function(6) \
+        function(7) \
+        function(8) \
+        function(9) \
+        function(10) \
+        function(11) \
+        function(12) \
+        function(13) \
+        function(14) \
+        function(15) \
+        function(16) \
+        function(17) \
+        function(18) \
+        function(19)
 
     //////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_alloc( i )\
@@ -64,7 +66,7 @@ namespace stdex
     {\
         mem = p##i.alloc();\
         pi = i;\
-    }
+    } else
     //////////////////////////////////////////////////////////////////////////
     static void * malloc( size_t _size )
     {
@@ -94,7 +96,7 @@ namespace stdex
     if( pi == i )\
     {\
     p##i.free(mem_pool);\
-    }
+    } else
     //////////////////////////////////////////////////////////////////////////
     static void free( void * _mem )
     {
@@ -167,6 +169,20 @@ namespace stdex
         
         return new_mem;
     }
+    //////////////////////////////////////////////////////////////////////////
+#   define allocator_pool_info(i) \
+    { \
+        pool_type_p##i & p = p##i; \
+        size_t bs = p.getBlockSize(); \
+        size_t cb = p.getCountBlock(); \
+        size_t cb_max = p.getCountBlockMax(); \
+        printf("block %d alloc %d:%d\n", bs, cb, cb_max ); \
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void memoryinfo()
+    {
+        allocator_pool_loop( allocator_pool_info )
+    }
 }
 
 #ifdef __cplusplus
@@ -190,6 +206,11 @@ extern "C" {
     void * stdex_realloc( void * _mem, size_t _size )
     {
         return stdex::realloc( _mem, _size );
+    }
+
+    void stdex_memoryinfo()
+    {
+        return stdex::memoryinfo();
     }
 #ifdef __cplusplus
 };

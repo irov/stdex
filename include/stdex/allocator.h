@@ -9,6 +9,8 @@ extern "C" {
     void stdex_free( void * _mem );
     void * stdex_calloc( size_t _num, size_t _size );
     void * stdex_realloc( void * _mem, size_t _size );
+
+    void stdex_memoryinfo();
 #ifdef __cplusplus
 };
 #endif
