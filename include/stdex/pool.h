@@ -81,10 +81,21 @@ namespace stdex
             _chunk->m_prev = this;
         }
 
+    public:
+        chunk_type * getNext() const
+        {
+            return m_next;
+        }
+
+        size_t getCountBlock() const
+        {
+            return m_countBlock;
+        }
+
     protected:
 		pool_block buffer_block[TChunkCount];
 
-    public:
+    protected:
         chunk_type * m_prev;
         chunk_type * m_next;
 
@@ -116,7 +127,7 @@ namespace stdex
 
             while( chunk != nullptr )
             {
-                chunk_type * next = chunk->m_next;
+                chunk_type * next = chunk->getNext();
 
                 delete chunk;
 
@@ -127,7 +138,7 @@ namespace stdex
 
             while( chunk != nullptr )
             {
-                chunk_type * next = chunk->m_next;
+                chunk_type * next = chunk->getNext();
 
                 delete chunk;
 
@@ -138,7 +149,7 @@ namespace stdex
 
             while( chunk != nullptr )
             {
-                chunk_type * next = chunk->m_next;
+                chunk_type * next = chunk->getNext();
 
                 delete chunk;
 
@@ -185,35 +196,41 @@ namespace stdex
 	protected:
         void updateAllockChunks_()
         {
-            if( m_freeChunk->m_countBlock == 0 )
+            size_t chunkCountBlock = m_freeChunk->getCountBlock();
+
+            if( chunkCountBlock != 0 )
             {
-                chunk_type * free = m_freeChunk;
-                m_freeChunk = m_freeChunk->m_next;
-
-                free->unlink();
-
-                if( m_fullChunk != nullptr )
-                {
-                    free->push_front( m_fullChunk );
-                }
-
-                m_fullChunk = free;
+                return;
             }
+             
+            chunk_type * free = m_freeChunk;
+            m_freeChunk = m_freeChunk->getNext();
+
+            free->unlink();
+
+            if( m_fullChunk != nullptr )
+            {
+                free->push_front( m_fullChunk );
+            }
+
+            m_fullChunk = free;
         }
 
         void updateFreeChunks_( chunk_type * _chunk )
         {
             const size_t chunkCount = TChunkCount;
 
-            if( _chunk->m_countBlock == chunkCount )
+            size_t chunkCountBlock = _chunk->getCountBlock();
+
+            if( chunkCountBlock == chunkCount )
             {
                 if( m_freeChunk == _chunk )
                 {
-                    m_freeChunk = m_freeChunk->m_next;
+                    m_freeChunk = m_freeChunk->getNext();
                 }
                 else if( m_fullChunk == _chunk )
                 {
-                    m_fullChunk = m_fullChunk->m_next;
+                    m_fullChunk = m_fullChunk->getNext();
                 }
 
                 _chunk->unlink();
@@ -241,7 +258,7 @@ namespace stdex
             if( m_countBlockMax - m_countBlock > chunkCount2 )
             {
                 chunk_type * free = m_emptyChunk;
-                m_emptyChunk = m_emptyChunk->m_next;
+                m_emptyChunk = m_emptyChunk->getNext();
 
                 free->unlink();
 
@@ -259,7 +276,7 @@ namespace stdex
             if( m_emptyChunk != nullptr )
             {
                 chunk = m_emptyChunk;
-                m_emptyChunk = m_emptyChunk->m_next;
+                m_emptyChunk = m_emptyChunk->getNext();
 
                 chunk->unlink();
             }
