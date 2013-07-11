@@ -11,14 +11,14 @@ namespace stdex
     typedef pool<f, c> pool_type_p##i;\
     pool_type_p##i p##i;
 
-    allocator_pool_def(0, 8, 32);
-    allocator_pool_def(1, 21, 32);
-    allocator_pool_def(2, 34, 32);
-    allocator_pool_def(3, 55, 32);
-    allocator_pool_def(4, 89, 32);
-    allocator_pool_def(5, 144, 32);
-    allocator_pool_def(6, 233, 32);
-    allocator_pool_def(7, 377, 32);
+    allocator_pool_def(0, 8, 128);
+    allocator_pool_def(1, 21, 128);
+    allocator_pool_def(2, 34, 128);
+    allocator_pool_def(3, 55, 128);
+    allocator_pool_def(4, 89, 64);
+    allocator_pool_def(5, 144, 64);
+    allocator_pool_def(6, 233, 64);
+    allocator_pool_def(7, 377, 64);
     allocator_pool_def(8, 610, 32);
     allocator_pool_def(9, 987, 32);
     allocator_pool_def(10, 1597, 32);
@@ -30,7 +30,7 @@ namespace stdex
     allocator_pool_def(16, 28657, 4);
     allocator_pool_def(17, 46368, 4);
     allocator_pool_def(18, 75025, 4);
-    allocator_pool_def(19, 121393, 2);
+    allocator_pool_def(19, 121393, 4);
     //////////////////////////////////////////////////////////////////////////
     const static size_t s[] = {s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19};
     //////////////////////////////////////////////////////////////////////////
