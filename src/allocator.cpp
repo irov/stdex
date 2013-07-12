@@ -174,9 +174,9 @@ namespace stdex
     { \
         pool_type_p##i & p = p##i; \
         size_t bs = p.getBlockSize(); \
+        size_t bc = p.getBlockCount(); \
         size_t cb = p.getCountBlock(); \
-        size_t cb_max = p.getCountBlockMax(); \
-        printf("block %d alloc %d:%d\n", bs, cb, cb_max ); \
+        printf("block %d alloc %d:%d\n", bs, cb, bs * bc ); \
     }
     //////////////////////////////////////////////////////////////////////////
     void memoryinfo()
