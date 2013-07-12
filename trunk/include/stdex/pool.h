@@ -21,29 +21,32 @@ namespace stdex
             : m_prev(nullptr)
             , m_next(nullptr)
             , m_freeBlock(nullptr)
-            , m_countBlock(TBlockCount)
-		{
-            pool_block * block = nullptr;
-
-			for( pool_block * it = buffer_block, 
-				*it_end = buffer_block + TBlockCount; 
-				it != it_end; 
-			++it )
-			{
-                it->chunk = this;
-				it->next = block;
-				block = it;
-			}
-
-            m_freeBlock = block;
+            , m_countBlock(0)
+            , m_allocBlock(1)
+		{       
+            m_freeBlock = buffer_block + 0;
+            m_freeBlock->chunk = this;
+            m_freeBlock->next = nullptr; 
 		}
 
         pool_block * alloc()
         {
             pool_block * block = m_freeBlock;
+
+            if( m_freeBlock->next == nullptr && m_allocBlock != TBlockCount )
+            {
+                pool_block * next = buffer_block + m_allocBlock;
+                next->chunk = this;
+                next->next = nullptr;
+
+                ++m_allocBlock;
+
+                m_freeBlock->next = next;
+            }
+                        
             m_freeBlock = m_freeBlock->next;
 
-            --m_countBlock;
+            ++m_countBlock;
 
             return block;
         }
@@ -53,7 +56,7 @@ namespace stdex
             _block->next = m_freeBlock;
             m_freeBlock = _block;
 
-            ++m_countBlock;
+            --m_countBlock;
         }
 
     public:
@@ -102,6 +105,7 @@ namespace stdex
         pool_block * m_freeBlock;
 
         size_t m_countBlock;
+        size_t m_allocBlock;
 	};
 
 	template<size_t TBlockSize, size_t TBlockCount>
@@ -116,7 +120,6 @@ namespace stdex
             , m_fullChunk(nullptr)
             , m_emptyChunk(nullptr)
             , m_countBlock(0)
-            , m_countBlockMax(0)
             , m_countChunk(0)
         {
         }
@@ -195,10 +198,12 @@ namespace stdex
 
 	protected:
         void updateAllockChunks_()
-        {
+        {            
             size_t chunkCountBlock = m_freeChunk->getCountBlock();
 
-            if( chunkCountBlock != 0 )
+            const size_t chunkCount = TBlockCount;
+
+            if( chunkCountBlock != chunkCount )
             {
                 return;
             }
@@ -218,11 +223,9 @@ namespace stdex
 
         void updateFreeChunks_( chunk_type * _chunk )
         {
-            const size_t chunkCount = TBlockCount;
-
             size_t chunkCountBlock = _chunk->getCountBlock();
 
-            if( chunkCountBlock == chunkCount )
+            if( chunkCountBlock == 0 )
             {
                 if( m_freeChunk == _chunk )
                 {
@@ -253,9 +256,10 @@ namespace stdex
                 return;
             }
 
-            const size_t chunkCount2 = TBlockCount * 2;
+            const size_t blockCount2 = TBlockCount * 2;
+            size_t countBlockMax = m_countChunk * TBlockCount;
 
-            if( m_countBlockMax - m_countBlock > chunkCount2 )
+            if( countBlockMax - m_countBlock > blockCount2 )
             {
                 chunk_type * free = m_emptyChunk;
                 m_emptyChunk = m_emptyChunk->getNext();
@@ -265,7 +269,6 @@ namespace stdex
                 delete free;
 
                 --m_countChunk;
-                m_countBlockMax -= TBlockCount;
             }
         }
 
@@ -285,10 +288,6 @@ namespace stdex
 			    chunk = new chunk_type();
 
                 ++m_countChunk;
-
-                const size_t chunkCount = TBlockCount;
-
-                m_countBlockMax += chunkCount;
             }
 
             if( m_freeChunk != nullptr )
@@ -303,11 +302,6 @@ namespace stdex
         size_t getCountBlock() const
         {
             return m_countBlock;
-        }
-
-        size_t getCountBlockMax() const
-        {
-            return m_countBlockMax;
         }
 
         size_t getBlockSize() const
@@ -326,7 +320,6 @@ namespace stdex
         chunk_type * m_emptyChunk;
 
         size_t m_countBlock;
-        size_t m_countBlockMax;
         size_t m_countChunk;
 	};
 
