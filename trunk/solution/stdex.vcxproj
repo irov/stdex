@@ -70,9 +70,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\src\allocator.cpp" />
     <ClCompile Include="..\src\const_string.cpp" />
     <ClCompile Include="..\src\const_string_holder.cpp" />
@@ -80,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\stdex\allocator.h" />
+    <ClInclude Include="..\include\stdex\auto_array.h" />
     <ClInclude Include="..\include\stdex\binary_vector.h" />
     <ClInclude Include="..\include\stdex\const_string.h" />
     <ClInclude Include="..\include\stdex\const_string_holder.h" />
@@ -90,6 +88,7 @@
     <ClInclude Include="..\include\stdex\intrusive_ptr.h" />
     <ClInclude Include="..\include\stdex\intrusive_slug.h" />
     <ClInclude Include="..\include\stdex\pool.h" />
+    <ClInclude Include="..\include\stdex\static_array.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
