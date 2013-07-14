@@ -9,7 +9,6 @@ namespace stdex
         static_array()
         {
             m_current = m_buff;
-            m_end = m_buff + I;
         }
 
     public:
@@ -84,7 +83,8 @@ namespace stdex
 
         bool full() const
         {
-            return m_current == m_end;
+            const T * end = m_buff + I;
+            return m_current == end;
         }
 
         size_t size() const
@@ -106,6 +106,5 @@ namespace stdex
     protected:
         T m_buff[I];
         T * m_current;
-        T * m_end;
     };
 }
