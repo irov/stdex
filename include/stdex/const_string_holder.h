@@ -98,7 +98,7 @@ namespace stdex
 
     protected:
         friend inline void intrusive_ptr_add_ref( const_string_holder * _ptr );
-        friend inline void intrusive_ptr_release( const_string_holder * _ptr );
+        friend inline void intrusive_ptr_dec_ref( const_string_holder * _ptr );
 
     protected:
         void setup( const char * _data, size_t _size );
@@ -120,7 +120,7 @@ namespace stdex
         ++_ptr->m_owner->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
-    inline void intrusive_ptr_release( const_string_holder * _ptr )
+    inline void intrusive_ptr_dec_ref( const_string_holder * _ptr )
     {
         if( --_ptr->m_owner->m_reference == 0 )
         {

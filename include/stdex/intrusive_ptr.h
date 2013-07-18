@@ -72,6 +72,11 @@ namespace stdex
 			return m_ptr;
 		}
 
+        operator T * () const
+        {
+            return m_ptr;
+        }
+
 		void swap( intrusive_ptr & _rhs )
 		{
             T * tmp = m_ptr;
@@ -92,7 +97,7 @@ namespace stdex
 		{
 			if( m_ptr != nullptr )
 			{
-				intrusive_ptr_release( m_ptr );
+				intrusive_ptr_dec_ref( m_ptr );
 			}
 		}
 
@@ -180,13 +185,4 @@ namespace stdex
 
         return ptr != nullptr;
     }
-	////////////////////////////////////////////////////////////////////////////
-	//template<class T> 
-	//inline bool operator < ( const IntrusivePtr<T> & _left, const IntrusivePtr<T> & _right )
-	//{
- //       T * left_ptr = _left.get();
- //       T * left_ptr = _right.get();
-
-	//	return std::less<T *>()( _left.get(), _right.get() );
-	//}
 }

@@ -1,19 +1,16 @@
 #	pragma once
 
-#	include "stdex/intrusive_list.h"
+#	include "stdex/intrusive_slug_list.h"
 
 namespace stdex
 {
 	template<class T>
 	class intrusive_slug
-		: public intrusive_linked<T>
+		: public intrusive_slug_linked<T>
 	{
-    public:
-        typedef intrusive_linked<T> linked_type;
-
 	public:
-		inline intrusive_slug( intrusive_list<T> & _list )
-			: linked_type(EILT_SLUG)
+		inline intrusive_slug( intrusive_slug_list<T> & _list )
+			: intrusive_slug_linked<T>(EILT_SLUG)
 			, m_end(*_list.end())
 		{
 			_list.push_front( this );
