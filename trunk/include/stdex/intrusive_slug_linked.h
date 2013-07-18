@@ -2,26 +2,41 @@
 
 namespace stdex
 {
+	enum EIntrusiveLinkedTag
+	{
+		EILT_ELEMENT,
+		EILT_END,
+		EILT_SLUG
+	};
+
     template<class Tag>
-	class intrusive_linked
+	class intrusive_slug_linked
 	{
     public:
-		typedef intrusive_linked<Tag> linked_type;
+        typedef intrusive_slug_linked<Tag> linked_type;
 
 	public:
-		inline intrusive_linked()
+		inline intrusive_slug_linked()
 			: m_right(nullptr)
 			, m_left(nullptr)
+			, m_tag(EILT_ELEMENT)
 		{
 		}
 
-		inline ~intrusive_linked()
+        inline intrusive_slug_linked( EIntrusiveLinkedTag _tag )
+			: m_right(nullptr)
+			, m_left(nullptr)
+			, m_tag(_tag)
+		{
+		}
+
+		inline ~intrusive_slug_linked()
 		{
 			this->unlink();
 		}
 
     private:
-        intrusive_linked & operator = ( const intrusive_linked & _linked )
+        intrusive_slug_linked & operator = ( const intrusive_slug_linked & _linked )
         {
             (void)_linked;
 
@@ -29,9 +44,14 @@ namespace stdex
         }
 
 	public:
+		inline int getIntrusiveTag() const
+		{ 
+			return m_tag;
+		}
+
 		inline bool unique() const
 		{
-			return (m_right == nullptr) && (m_left == nullptr);
+			return !m_right && !m_left;
 		}
 
 		inline linked_type * left() const
@@ -190,9 +210,7 @@ namespace stdex
 				return node_found;
 			}
 
-            const linked_type * other = find_other( _pred );
-
-			return other;
+			return find_other( _pred );
 		}
 
 		template<class F>
@@ -237,5 +255,6 @@ namespace stdex
 	public:
 		mutable linked_type * m_right;
 		mutable linked_type * m_left;
-    };
+		int m_tag;
+	};
 }

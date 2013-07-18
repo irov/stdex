@@ -1,30 +1,29 @@
 #	pragma once
 
-#	include "stdex/intrusive_linked.h"
+#	include "stdex/intrusive_slug_linked.h"
 #	include "stdex/intrusive_algorithm.h"
 
 namespace stdex
 {
 	template<class T>
-	class intrusive_list
+	class intrusive_slug_list
 	{
-    public:
-        typedef typename T::linked_type linked_type;
+		typedef intrusive_slug_linked<T> linked_type;
         typedef T * value_type;
 
 	public:
-		intrusive_list()
+		intrusive_slug_list()
 		{
 			m_head.m_right = &m_head;
 			m_head.m_left = &m_head;
 		}
 
-		~intrusive_list()
+		~intrusive_slug_list()
 		{
 			this->clear();
 
-			m_head.m_right = nullptr;
-			m_head.m_left = nullptr;
+			m_head.m_right = 0;
+			m_head.m_left = 0;
 		}
 
 	protected:
@@ -35,7 +34,14 @@ namespace stdex
 			inline explicit base_iterator( linked_type * _node )
 				: m_node(_node)
 			{
+                this->adapt_node();
 			}
+
+            inline base_iterator( linked_type * _node, bool _stable )
+                : m_node(_node)
+            {
+                (void)_stable;
+            }
 
             inline base_iterator( const base_iterator & _node )
                 : m_node(_node.get())
@@ -70,15 +76,31 @@ namespace stdex
 			}
 
 		protected:
-            inline void shuffle_next()
-            {
-                m_node = m_node->right();
-            }
+			inline void shuffle_next()
+			{
+				do
+				{
+					m_node = m_node->right();
+				}
+				while( m_node->getIntrusiveTag() == EILT_SLUG );
+			}
 
 			inline void shuffle_prev()
 			{
-                m_node = m_node->left();			
+				do
+				{
+					m_node = m_node->left();
+				}
+				while( m_node->getIntrusiveTag() == EILT_SLUG );			
 			}
+
+            inline void adapt_node()
+            {
+                while( m_node->getIntrusiveTag() == EILT_SLUG )
+                {
+                    m_node = m_node->right();
+                }
+            }
 
 		protected:
 			linked_type * m_node;
@@ -94,6 +116,11 @@ namespace stdex
 			{
 			}
 
+            inline const_iterator( linked_type * _node, bool _stable )
+                : base_iterator<const_iterator>(_node, _stable)
+            {
+            }
+
             inline const_iterator( const const_iterator & _node )
                 : base_iterator<const_iterator>(_node)
             {
@@ -103,6 +130,8 @@ namespace stdex
 			inline const_iterator & operator = ( const const_iterator & _it )
 			{
 				this->m_node = _it.m_node;
+
+                this->adapt_node();
 
 				return *this;
 			}
@@ -119,7 +148,6 @@ namespace stdex
 			{
 				const_iterator tmp = *this;
 				++*this;
-
 				return tmp;
 			}
 
@@ -134,7 +162,6 @@ namespace stdex
 			{
 				const_iterator tmp = *this;
 				--*this;
-
 				return tmp;
 			}
 		};
@@ -148,6 +175,11 @@ namespace stdex
 			{
 			}
 
+            inline iterator( linked_type * _node, bool _stable)
+                : base_iterator<iterator>(_node, _stable)
+            {
+            }
+
             inline iterator( const iterator & _node )
                 : base_iterator<iterator>(_node)
             {
@@ -157,6 +189,8 @@ namespace stdex
             inline iterator & operator = ( const iterator & _it )
             {
                 this->m_node = _it.m_node;
+
+                this->adapt_node();
 
                 return *this;
             }
@@ -172,7 +206,6 @@ namespace stdex
 			{
 				iterator tmp = *this;
 				++*this;
-
 				return tmp;
 			}
 
@@ -187,7 +220,6 @@ namespace stdex
 			{
 				iterator tmp = *this;
 				--*this;
-
 				return tmp;
 			}
 		};
@@ -200,6 +232,11 @@ namespace stdex
 				: base_iterator<reverse_iterator>(_node)
 			{
 			}
+
+            inline reverse_iterator( linked_type * _node, bool _stable )
+                : base_iterator<reverse_iterator>(_node, _stable)
+            {
+            }
 
             inline reverse_iterator( const reverse_iterator & _node )
                 : base_iterator<reverse_iterator>(_node)
@@ -224,7 +261,6 @@ namespace stdex
 			{
 				reverse_iterator tmp = *this;
 				--*this;
-
 				return tmp;
 			}
 
@@ -239,7 +275,6 @@ namespace stdex
 			{
 				reverse_iterator tmp = *this;
 				++*this;
-
 				return tmp;
 			}
 		};
@@ -252,7 +287,7 @@ namespace stdex
 
 		inline iterator end()
 		{
-			return iterator(&m_head);
+			return iterator(&m_head, true);
 		}
 
 		inline const_iterator begin() const
@@ -262,7 +297,7 @@ namespace stdex
 
 		inline const_iterator end() const
 		{
-			return const_iterator(&m_head);
+			return const_iterator(&m_head, true);
 		}
 
 		inline reverse_iterator rbegin()
@@ -272,7 +307,7 @@ namespace stdex
 
 		inline reverse_iterator rend()
 		{
-			return reverse_iterator(&m_head);
+			return reverse_iterator(&m_head, true);
 		}
 
 	public:
@@ -289,7 +324,7 @@ namespace stdex
 	public:
 		inline void push_front( linked_type * _node )
 		{	
-            iterator it = this->begin();
+            iterator it = this->pure_begin_();
 
 			this->insert_( it, _node );
 		}
@@ -341,6 +376,7 @@ namespace stdex
 		inline bool empty() const
 		{
 			return this->begin() == this->end();
+			//return m_head.m_right == &m_head;
 		}
 
 		inline iterator insert( iterator _where, linked_type * _node )
@@ -398,6 +434,11 @@ namespace stdex
             linked_type * linked = _where.get();
 			linked->link_before( _node );
 		}
+
+        inline iterator pure_begin_()
+        {
+            return iterator(m_head.m_right, true);
+        }
 
 	protected:
 		mutable linked_type m_head;
