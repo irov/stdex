@@ -51,7 +51,7 @@ namespace stdex
 
 		inline bool unique() const
 		{
-			return !m_right && !m_left;
+			return (m_right == nullptr) && (m_left == nullptr);
 		}
 
 		inline linked_type * left() const
