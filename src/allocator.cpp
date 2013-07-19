@@ -174,14 +174,24 @@ namespace stdex
     { \
         pool_type_p##i & p = p##i; \
         size_t bs = p.getBlockSize(); \
+        size_t cc = p.getChunkCount(); \
         size_t bc = p.getBlockCount(); \
-        size_t cb = p.getCountBlock(); \
-        printf("block %d alloc %d:%d\n", bs, cb, bs * bc ); \
+        size_t bt = p.getBlockTotal(); \
+        total_now += bs * bc; \
+        total_max += bs * bt * cc; \
+        printf("block %d:%d alloc %d:%d\n", bs, cc, bs * bc, bs * bt * cc ); \
     }
     //////////////////////////////////////////////////////////////////////////
     void memoryinfo()
     {
-        allocator_pool_loop( allocator_pool_info )
+        size_t total_now = 0;
+        size_t total_max = 0;
+        allocator_pool_loop( allocator_pool_info );
+        
+        float total_now_mb = float(total_now / (1024.f * 1024.f));
+        float total_max_mb = float(total_max / (1024.f * 1024.f));
+        printf("-------------------------------------\n");
+        printf("total %.3f:%.3f", total_now_mb, total_max_mb);
     }
 }
 

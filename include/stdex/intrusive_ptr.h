@@ -72,10 +72,10 @@ namespace stdex
 			return m_ptr;
 		}
 
-        operator T * () const
-        {
-            return m_ptr;
-        }
+        //operator T * () const
+        //{
+        //    return m_ptr;
+        //}
 
 		void swap( intrusive_ptr & _rhs )
 		{
