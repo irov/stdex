@@ -1,5 +1,7 @@
 #   pragma once
 
+#   include <stddef.h>
+
 namespace stdex
 {
     class intrusive_ptr_base

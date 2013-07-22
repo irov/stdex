@@ -8,6 +8,8 @@ namespace stdex
 	class intrusive_slug
 		: public intrusive_slug_linked<T>
 	{
+    public:
+        typedef typename intrusive_slug_linked<T>::linked_type slug_linked_type;
 	public:
 		inline intrusive_slug( intrusive_slug_list<T> & _list )
 			: intrusive_slug_linked<T>(EILT_SLUG)
@@ -19,7 +21,7 @@ namespace stdex
 	public:
 		void next_shuffle()
 		{
-			linked_type * pos = this->right();
+			slug_linked_type * pos = this->right();
 
 			pos = this->adapt_( pos );
 
@@ -33,36 +35,36 @@ namespace stdex
 
 		inline bool eof() const
 		{
-			linked_type * pos = this->current();
+			slug_linked_type * pos = this->current();
 
 			return pos == m_end;
 		}
 
 		inline T * operator -> () const
 		{
-            linked_type * linked = this->current();
+            slug_linked_type * linked = this->current();
 
 			return static_cast<T *>(linked);
 		}
 
 		inline T * operator * () const
 		{
-            linked_type * linked = this->current();
+            slug_linked_type * linked = this->current();
 
 			return static_cast<T *>(linked);
 		}
 
 	protected:
-		inline linked_type * current() const
+		inline slug_linked_type * current() const
 		{
-			linked_type * pos = this->right();
+			slug_linked_type * pos = this->right();
 
-			linked_type * current = this->adapt_( pos );
+			slug_linked_type * current = this->adapt_( pos );
 
 			return current;
 		}
 
-		inline linked_type * adapt_( linked_type * _pos ) const
+		inline slug_linked_type * adapt_( slug_linked_type * _pos ) const
 		{
 			while( _pos->getIntrusiveTag() == EILT_SLUG )
 			{
@@ -73,6 +75,6 @@ namespace stdex
 		}
 		
 	protected:
-		const linked_type * m_end;
+		const slug_linked_type * m_end;
 	};
 }
