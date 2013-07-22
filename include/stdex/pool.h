@@ -57,16 +57,7 @@ namespace stdex
 
         ~pool()
         {
-            chunk_t * chunk = m_chunk;
-
-            while( chunk != nullptr )
-            {
-                chunk_t * prev = chunk->getPrev();
-
-                delete chunk;
-
-                chunk = prev;
-            }
+            this->clear();
         }
 
     public:
@@ -115,6 +106,27 @@ namespace stdex
         size_t getBlockTotal() const
         {
             return TBlockCount;
+        }
+
+    public:
+        void clear()
+        {
+            chunk_t * chunk = m_chunk;
+
+            while( chunk != nullptr )
+            {
+                chunk_t * prev = chunk->getPrev();
+
+                delete chunk;
+
+                chunk = prev;
+            }
+
+            m_chunk = nullptr;
+            m_free = nullptr;
+
+            m_blockCount = 0;
+            m_chunkCount = 0;
         }
 
     protected:
