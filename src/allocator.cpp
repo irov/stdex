@@ -68,7 +68,7 @@ namespace stdex
         pi = i;\
     } else
     //////////////////////////////////////////////////////////////////////////
-    static void * malloc( size_t _size )
+    static void * s_malloc( size_t _size )
     {
         if( _size == 0 )
         {
@@ -98,7 +98,7 @@ namespace stdex
     p##i.free(mem_pool);\
     } else
     //////////////////////////////////////////////////////////////////////////
-    static void free( void * _mem )
+    static void s_free( void * _mem )
     {
         if( _mem == nullptr )
         {
@@ -118,20 +118,20 @@ namespace stdex
         }
     }
     //////////////////////////////////////////////////////////////////////////
-    static void * calloc( size_t _num, size_t _size )
+    static void * s_calloc( size_t _num, size_t _size )
     {
         size_t full_size = _num * _size;
-        void * mem = malloc( full_size );
+        void * mem = s_malloc( full_size );
         ::memset( mem, 0, full_size );
 
         return mem;
     }    
     //////////////////////////////////////////////////////////////////////////
-    static void * realloc( void * _mem, size_t _size )
+    static void * s_realloc( void * _mem, size_t _size )
     {
         if( _mem == nullptr )
         {
-            void * mem = malloc( _size );
+            void * mem = s_malloc( _size );
 
             return mem;
         }
@@ -161,11 +161,11 @@ namespace stdex
             return _mem;
         }
 
-        void * new_mem = malloc( _size );
+        void * new_mem = s_malloc( _size );
 
         ::memcpy( new_mem, _mem, pool_size );
         
-        free( _mem );
+        s_free( _mem );
         
         return new_mem;
     }
@@ -182,7 +182,7 @@ namespace stdex
         printf("block %d:%d %d alloc %d:%d\n", bs, cc, bc, bs * bc, bs * bt * cc ); \
     }
     //////////////////////////////////////////////////////////////////////////
-    void memoryinfo()
+    static void s_memoryinfo()
     {
         printf("-------------------------------------\n");
 
@@ -202,27 +202,27 @@ extern "C" {
 #endif
     void * stdex_malloc( size_t _size )
     {
-        return stdex::malloc( _size );
+        return stdex::s_malloc( _size );
     }
 
     void stdex_free( void * _mem )
     {
-        stdex::free( _mem );
+        stdex::s_free( _mem );
     }
 
     void * stdex_calloc( size_t _num, size_t _size )
     {
-        return stdex::calloc( _num, _size );
+        return stdex::s_calloc( _num, _size );
     }
 
     void * stdex_realloc( void * _mem, size_t _size )
     {
-        return stdex::realloc( _mem, _size );
+        return stdex::s_realloc( _mem, _size );
     }
 
     void stdex_memoryinfo()
     {
-        return stdex::memoryinfo();
+        return stdex::s_memoryinfo();
     }
 #ifdef __cplusplus
 };
