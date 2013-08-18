@@ -67,11 +67,12 @@ namespace stdex
         const char * str = _data;
 
         size_t hash = 5381;
-        int c;
-
-        while(c = *str++)
+        
+        for( const char * c = str; *c != 0; ++c )
         {
-            hash = ((hash << 5) + hash) + c;
+            int d = *c;
+
+            hash = ((hash << 5) + hash) + d;
         }
 
         return hash;
