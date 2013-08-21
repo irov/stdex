@@ -6,25 +6,49 @@
 
 #   include <stdio.h>
 
-#   ifndef stdex_os_malloc
-#   define stdex_os_malloc (::malloc)
+#   ifndef stdex_allocator_malloc
+#   define stdex_allocator_malloc (::malloc)
 #   endif
 
-#   ifndef stdex_os_realloc
-#   define stdex_os_realloc (::realloc)
+#   ifndef stdex_allocator_realloc
+#   define stdex_allocator_realloc (::realloc)
 #   endif
 
-#   ifndef stdex_os_free
-#   define stdex_os_free (::free)
+#   ifndef stdex_allocator_free
+#   define stdex_allocator_free (::free)
 #   endif
 
 
 namespace stdex
 {
+    //////////////////////////////////////////////////////////////////////////    
+    inline static unsigned int mem_get_le32( const unsigned char * _mem )
+    {
+        unsigned int val;
+        const unsigned char * bytes = static_cast<const unsigned char *>(_mem);
+
+        val = bytes[0];
+        val |= bytes[1] << 8;
+        val |= bytes[2] << 16;
+        val |= bytes[3] << 24;
+
+        return val;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    inline static void mem_set_le32( void * _mem, unsigned int _value )
+    {
+        unsigned char * bytes = static_cast<unsigned char *>(_mem);
+
+        bytes[0] = _value & 0xFF;
+        bytes[1] = (_value >> 8) & 0xFF;
+        bytes[2] = (_value >> 16) & 0xFF;
+        bytes[3] = (_value >> 24) & 0xFF;
+    }
+
 #   define memory_buf_allign(f) (f / 4 * 4 + (f % 4) * 4 + 4)
-#   define pool_setup_from_memory(m, i) static_cast<int *>(m)[0] = i
+#   define pool_setup_from_memory(m, i) mem_set_le32(m, i)
 #   define memory_to_pool(m) static_cast<void *>(static_cast<unsigned char *>(m) - sizeof(int))
-#   define memory_to_index(m) *reinterpret_cast<int *>(static_cast<unsigned char *>(m) - sizeof(int))
+#   define memory_to_index(m) mem_get_le32( (static_cast<unsigned char *>(m) - sizeof(int)) )
 #   define pool_to_memory(m) static_cast<void *>(static_cast<unsigned char *>(m) + sizeof(int))
 
 #   define allocator_pool_def(i, f, c)\
@@ -100,7 +124,7 @@ namespace stdex
         allocator_pool_loop( allocator_pool_alloc )
         {
             size_t allign_size = memory_buf_allign(_size);
-            mem = stdex_os_malloc(allign_size);
+            mem = stdex_allocator_malloc(allign_size);
             pi = si_global;
         }
 
@@ -129,18 +153,9 @@ namespace stdex
 
         allocator_pool_loop( allocator_pool_free )
         {
-            stdex_os_free(mem_pool);
+            stdex_allocator_free(mem_pool);
         }
     }
-    //////////////////////////////////////////////////////////////////////////
-    static void * s_calloc( size_t _num, size_t _size )
-    {
-        size_t full_size = _num * _size;
-        void * mem = s_malloc( full_size );
-        ::memset( mem, 0, full_size );
-
-        return mem;
-    }    
     //////////////////////////////////////////////////////////////////////////
     static void * s_realloc( void * _mem, size_t _size )
     {
@@ -157,7 +172,7 @@ namespace stdex
         {
             void * mem_pool = memory_to_pool(_mem);
 
-            void * realloc_mem = stdex_os_realloc( mem_pool, _size + 1 );
+            void * realloc_mem = stdex_allocator_realloc( mem_pool, memory_buf_allign(_size) );
                         
             void * realloc_mem_buff = pool_to_memory(realloc_mem);
 
@@ -210,30 +225,60 @@ namespace stdex
 #ifdef __cplusplus
 extern "C" {
 #endif
+#   ifdef stdex_allocator_disable
+    //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
     {
-        //return ::malloc( _size );
-        return stdex::s_malloc( _size );
+        return stdex_allocator_malloc( _size );
     }
-
+    //////////////////////////////////////////////////////////////////////////
     void stdex_free( void * _mem )
     {
-        //::free( _mem );
-        stdex::s_free( _mem );
+        stdex_allocator_free( _mem );
     }
-
+    //////////////////////////////////////////////////////////////////////////
     void * stdex_calloc( size_t _num, size_t _size )
     {
-        //return ::calloc( _num, _size );
-        return stdex::s_calloc( _num, _size );
-    }
+        size_t full_size = _num * _size;
+        void * mem = stdex_allocator_malloc( full_size );
+        ::memset( mem, 0, full_size );
 
+        return mem;
+    }
+    //////////////////////////////////////////////////////////////////////////
     void * stdex_realloc( void * _mem, size_t _size )
     {
-        //return ::realloc( _mem, _size );
+        return stdex_allocator_realloc( _mem, _size );
+    }
+    //////////////////////////////////////////////////////////////////////////
+#   else
+    //////////////////////////////////////////////////////////////////////////
+    void * stdex_malloc( size_t _size )
+    {
+        return stdex::s_malloc( _size );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void stdex_free( void * _mem )
+    {
+        stdex::s_free( _mem );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void * stdex_calloc( size_t _num, size_t _size )
+    {
+        size_t full_size = _num * _size;
+        void * mem = stdex::s_malloc( full_size );
+        ::memset( mem, 0, full_size );
+
+        return mem;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void * stdex_realloc( void * _mem, size_t _size )
+    {
         return stdex::s_realloc( _mem, _size );
     }
-
+    //////////////////////////////////////////////////////////////////////////
+#   endif
+    //////////////////////////////////////////////////////////////////////////
     void stdex_memoryinfo()
     {
         return stdex::s_memoryinfo();
