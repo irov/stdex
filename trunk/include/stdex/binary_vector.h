@@ -464,7 +464,7 @@ namespace stdex
 	public:
 		iterator find( const Key & _key )
 		{
-			binary_pair_type key_value = std::make_pair( _key, nullptr );
+			binary_pair_type key_value = std::make_pair( _key, (T*)nullptr );
 			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
 
 			iterator it_end = this->end();
@@ -484,7 +484,7 @@ namespace stdex
 
 		const_iterator find( const Key & _key ) const
 		{
-			binary_pair_type key_value = std::make_pair( _key, nullptr );
+			binary_pair_type key_value = std::make_pair( _key, (T*)nullptr );
 			const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
 
 			const_iterator it_end = this->end();
