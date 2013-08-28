@@ -10,7 +10,16 @@ extern "C" {
     void * stdex_calloc( size_t _num, size_t _size );
     void * stdex_realloc( void * _mem, size_t _size );
 
-    void stdex_memoryinfo();
+	struct stdex_memory_info_t
+	{
+		size_t block_size;
+		size_t chunk_count;
+		size_t block_count;
+		size_t block_total;
+	};
+
+    size_t stdex_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
+	size_t stdex_memorytotal();
 #ifdef __cplusplus
 };
 #endif
