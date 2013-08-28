@@ -4,8 +4,6 @@
 #   include <malloc.h>
 #   include <memory.h>
 
-#   include <stdio.h>
-
 #   ifndef stdex_allocator_malloc
 #   define stdex_allocator_malloc (::malloc)
 #   endif
@@ -198,28 +196,35 @@ namespace stdex
 #   define allocator_pool_info(i) \
     { \
         pool_type_p##i & p = p##i; \
-        size_t bs = p.getBlockSize(); \
-        size_t cc = p.getChunkCount(); \
-        size_t bc = p.getBlockCount(); \
-        size_t bt = p.getBlockTotal(); \
-        total_now += bs * bc; \
-        total_max += bs * bt * cc; \
-        printf("block %d:%d %d alloc %d:%d\n", bs, cc, bc, bs * bc, bs * bt * cc ); \
+        _info[i].block_size = p.getBlockSize(); \
+        _info[i].chunk_count = p.getChunkCount(); \
+        _info[i].block_count = p.getBlockCount(); \
+        _info[i].block_total = p.getBlockTotal(); \
+		++count; \
     }
     //////////////////////////////////////////////////////////////////////////
-    static void s_memoryinfo()
+    static size_t s_memoryinfo( stdex_memory_info_t * _info, size_t _count )
     {
-        printf("-------------------------------------\n");
-
-        size_t total_now = 0;
-        size_t total_max = 0;
+		size_t count = 0;
         allocator_pool_loop( allocator_pool_info );
-        
-        float total_now_mb = float(total_now / (1024.f * 1024.f));
-        float total_max_mb = float(total_max / (1024.f * 1024.f));
-        printf("-------------------------------------\n");
-        printf("total %.3f:%.3f\n", total_now_mb, total_max_mb);
+
+		return count;			 
     }
+	//////////////////////////////////////////////////////////////////////////
+	static size_t s_memorytotal()
+	{
+		stdex_memory_info_t mi[25];
+		size_t count = s_memoryinfo( mi, 25 );
+
+		size_t total_now = 0;
+		
+		for( size_t i = 0; i != count; ++i )
+		{
+			total_now += mi[i].block_size * mi[i].block_count;
+		}
+
+		return total_now;
+	}
 }
 
 #ifdef __cplusplus
@@ -279,10 +284,15 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
 #   endif
     //////////////////////////////////////////////////////////////////////////
-    void stdex_memoryinfo()
+    size_t stdex_memoryinfo( stdex_memory_info_t * _info, size_t _count )
     {
-        return stdex::s_memoryinfo();
+        return stdex::s_memoryinfo( _info, _count );
     }
+	//////////////////////////////////////////////////////////////////////////
+	size_t stdex_memorytotal()
+	{
+		return stdex::s_memorytotal();
+	}
 #ifdef __cplusplus
 };
 #endif
