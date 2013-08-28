@@ -12,8 +12,16 @@ namespace stdex
 	public:
 		typedef std::vector<size_t> free_type;
 		typedef std::vector<T> strore_type;
-		typedef std::pair<Key, size_t> binary_pair_type;
-		typedef std::vector<binary_pair_type> buffer_type;
+
+	public:
+		struct binary_value_store_type
+		{
+			Key key;
+			size_t index;
+			bool valid;
+		};
+
+		typedef std::vector<binary_value_store_type> buffer_type;
 
 	public:
 		typedef typename buffer_type::iterator iterator;
@@ -26,9 +34,9 @@ namespace stdex
 		struct binary_vector_less
 		{
 		public:
-			bool operator () ( const binary_pair_type & _left, const binary_pair_type & _right ) const
+			bool operator () ( const binary_value_store_type & _left, const binary_value_store_type & _right ) const
 			{
-				return L()( _left.first, _right.first );
+				return L()( _left.key, _right.key );
 			}
 		};
 
@@ -90,14 +98,14 @@ namespace stdex
 	public:
 		void set_value( iterator _it, const T & _value )
 		{
-			size_t index = _it->second;
+			size_t index = _it->index;
 
 			m_store[index] = _value;
 		}
 
 		T & get_value( iterator _it ) const
 		{
-			size_t index = _it->second;
+			size_t index = _it->index;
 
 			T & value = m_store[index];
 
@@ -106,7 +114,7 @@ namespace stdex
 
 		T & get_value( const_iterator _it ) const
 		{
-			size_t index = _it->second;
+			size_t index = _it->index;
 
 			T & value = m_store[index];
 
@@ -115,7 +123,7 @@ namespace stdex
 
 		const Key & get_key( const_iterator _it ) const
 		{
-			return _it->first;
+			return _it->key;
 		}
 
 	protected:
@@ -142,23 +150,41 @@ namespace stdex
 	public:
 		insert_type insert( const Key & _key, const T & _value )
 		{
-			size_t index = this->story_value_( _value );
+			binary_value_store_type bvst;
+			bvst.key = _key;
+			bvst.index = 0;
+			bvst.valid = true;
 
-			binary_pair_type bpt = std::make_pair( _key, index );
-
-			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), bpt, binary_vector_less() );
+			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), bvst, binary_vector_less() );
 
 			if( it_lower_bound != m_buffer.end() )
 			{
-				if( binary_vector_less()( bpt, *it_lower_bound ) == false )
+				if( binary_vector_less()( bvst, *it_lower_bound ) == false )
 				{
-					insert_type ret = std::make_pair(it_lower_bound, false);
+					if( it_lower_bound->valid == true )
+					{
+						insert_type ret = std::make_pair(it_lower_bound, false);
 
-					return ret;
+						return ret;
+					}
+					else
+					{
+						size_t index = it_lower_bound->index;
+						m_store[index] = _value;
+						it_lower_bound->valid = true;
+
+						insert_type ret = std::make_pair(it_lower_bound, true);
+
+						return ret;
+					}
 				}
 			}
 
-			iterator it_insert = m_buffer.insert( it_lower_bound, bpt );
+			size_t index = this->story_value_( _value );
+
+			bvst.index = index;
+
+			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
 
 			insert_type ret = std::make_pair(it_insert, true);
 
@@ -167,10 +193,10 @@ namespace stdex
 
 		void erase( iterator _it )
 		{
-			size_t index = _it->second;
+			size_t index = _it->index;
 			m_free.push_back( index );
 
-			m_buffer.erase( _it );
+			_it->valid = false;
 		}
 
 		bool erase( const Key & _key )
@@ -206,6 +232,11 @@ namespace stdex
 				return false;
 			}
 
+			if( it_found->valid == false )
+			{
+				return false;
+			}
+
 			if( _value != nullptr )
 			{
 				T & value = this->get_value( it_found );
@@ -225,6 +256,11 @@ namespace stdex
 				return false;
 			}
 
+			if( it_found->valid == false )
+			{
+				return false;
+			}
+
 			if( _value != nullptr )
 			{
 				const T & value = this->get_value( it_found );
@@ -238,11 +274,11 @@ namespace stdex
 	public:
 		iterator find( const Key & _key )
 		{
-			binary_pair_type key_value(_key, 0);
+			binary_value_store_type key_value = {_key, 0, true};
 			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
 
 			iterator it_end = this->end();
-
+			
 			if( it_lower_bound == it_end )
 			{
 				return it_end;
@@ -253,12 +289,17 @@ namespace stdex
 				return it_end;
 			}
 
+			if( it_lower_bound->valid == false )
+			{
+				return it_end;
+			}
+
 			return it_lower_bound;
 		}
 
 		const_iterator find( const Key & _key ) const
 		{
-			binary_pair_type key_value(_key, 0);
+			binary_value_store_type key_value = {_key, 0, true};
 			const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
 
 			const_iterator it_end = this->end();
@@ -269,6 +310,11 @@ namespace stdex
 			}
 
 			if( binary_vector_less()( key_value, *it_lower_bound ) == true )
+			{
+				return it_end;
+			}
+
+			if( it_lower_bound->valid == false )
 			{
 				return it_end;
 			}
