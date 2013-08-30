@@ -195,6 +195,7 @@ namespace stdex
 		{
 			size_t index = _it->index;
 			m_free.push_back( index );
+			m_buffer.erase( _it );
 
 			_it->valid = false;
 		}

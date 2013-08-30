@@ -3,16 +3,20 @@
 #   include <vector>
 #   include <algorithm>
 
-namespace Menge
+namespace stdex
 {
-    template<class Key, class L = std::less<Key> >
+	template<class K, class T, class LK, class L = std::less<K> >
     class binary_set
     {
-    public:
-        typedef std::vector<Key> buffer_type;
+    public:				
+		typedef std::vector<T> store_type;
+		typedef std::vector<size_t> free_type;
+        typedef std::vector<size_t> buffer_type;
 
         typedef typename buffer_type::iterator iterator;
         typedef typename buffer_type::const_iterator const_iterator;
+
+		typedef std::pair<iterator, bool> inserter_type;
 
     public:
         binary_set()
@@ -22,6 +26,7 @@ namespace Menge
     public:
         void reserve( size_t _size )
         {
+			m_store.reserve( _size );
             m_buffer.reserve( _size );
         }
 
@@ -34,7 +39,9 @@ namespace Menge
 
         void clear()
         {
+			m_store.clear();
             m_buffer.clear();
+			m_free.clear();
         }
 
     public:
@@ -66,23 +73,118 @@ namespace Menge
             return it;
         }
 
-    public:
-        typedef std::pair<iterator, bool> TInserter;
-        TInserter insert( const Key & _key )
+	public:
+		const K & get_key( iterator _it ) const
+		{
+			size_t index = *_it;
+
+			const T & value = m_store[index];
+
+			const K & key = LK()(value);
+
+			return key;
+		}
+
+		void set_value( iterator _it, const T & _value )
+		{
+			size_t index = *_it;
+
+			m_store[index] = _value;
+		}
+
+		T & get_value( iterator _it ) const
+		{
+			size_t index = *_it;
+
+			T & value = m_store[index];
+
+			return value;
+		}
+
+		T & get_value( const_iterator _it ) const
+		{
+			size_t index = *_it;
+
+			T & value = m_store[index];
+
+			return value;
+		}
+
+	protected:
+		size_t story_value_( const T & _value )
+		{
+			size_t index;
+
+			if( m_free.empty() == true )
+			{
+				index = m_store.size();
+				m_store.push_back( _value );
+			}
+			else
+			{
+				index = m_free.back();
+				m_free.pop_back();
+
+				m_store[index] = _value;
+			}
+
+			return index;
+		}
+
+	protected:
+		struct binary_set_less_key
+		{
+		public:
+			binary_set_less_key( const store_type & _store )
+				: m_store(_store)
+			{
+			}
+
+		protected:
+			void operator = ( const binary_set_less_key & )
+			{
+			}
+
+		public:
+			bool operator () ( size_t _left, const K & _right ) const
+			{
+				const T & v_l = m_store[_left];
+
+				return L()( LK()(v_l), _right );
+			}
+
+		protected:
+			const store_type & m_store;
+		};
+
+    public:        
+        inserter_type insert( const T & _value )
         {
-            iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), _key, L() );
+			const K & key = LK()(_value);
+
+            iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key, binary_set_less_key(m_store) );
 
             if( it_lower_bound != m_buffer.end() )
             {
-                if( L()( _key, *it_lower_bound ) == false && L()( *it_lower_bound, _key ) == false )
+				const T & lower_value = this->get_value( it_lower_bound );
+
+				const K & lower_key = LK()(lower_value);
+
+                if( L()( key, lower_key ) == false )
                 {
-                    return std::make_pair(it_lower_bound, false);
+					inserter_type ret = std::make_pair(it_lower_bound, false);
+
+                    return ret;
                 }                
             }
+
+			size_t index = this->story_value_( _value );
             
-            iterator it_insert = m_buffer.insert( it_lower_bound, _key );
+            iterator it_insert = m_buffer.insert( it_lower_bound, index );
             
-            return std::make_pair(it_insert, true);
+			inserter_type ret = std::make_pair(it_insert, true);
+
+            return ret;
         }
 
         void erase( iterator _erase )
@@ -90,7 +192,7 @@ namespace Menge
             m_buffer.erase( _erase );
         }
 
-        bool erase( const Key & _key )
+        bool erase( const K & _key )
         {
             iterator it_found = this->find( _key );
             
@@ -105,9 +207,9 @@ namespace Menge
         }        
 
     public:
-        bool has( const Key & _key ) const
+        bool has( const K & _key, T ** _value ) const
         {
-            const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), _key, L() );
+            const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), _key, binary_set_less_key(m_store) );
 
             const_iterator it_end = this->end();
 
@@ -116,15 +218,54 @@ namespace Menge
                 return false;
             }
 
-            if( L()( _key, *it_lower_bound ) == true )
+			T & lower_value = this->get_value( it_lower_bound );
+
+            if( L()( _key, LK()(lower_value) ) == true )
             {
                 return false;
             }
 
+			if( _value != nullptr )
+			{
+				T & value = lower_value;
+
+				*_value = &value;
+			}
+
             return true;
         }
 
+		bool has( const K & _key, const T ** _value ) const
+		{
+			const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), _key, binary_set_less_key(m_store) );
+
+			const_iterator it_end = this->end();
+
+			if( it_lower_bound == it_end )
+			{
+				return false;
+			}
+
+			const T & lower_value = this->get_value( it_lower_bound );
+
+			if( L()( _key, LK()(lower_value) ) == true )
+			{
+				return false;
+			}
+
+			if( _value != nullptr )
+			{
+				const T & value = lower_value;
+
+				*_value = &value;
+			}
+
+			return true;
+		}
+
     protected:
+		mutable store_type m_store;
         buffer_type m_buffer;
+		free_type m_free;
     };
 }
