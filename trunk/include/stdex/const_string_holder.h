@@ -89,7 +89,7 @@ namespace stdex
         void combine( const_string_holder * _holder );
 
     protected:        
-        class ForeachCombineOwner;      
+        class ForeachCombineOwner;
         class ForeachCombineOther;
 
         void combine_owner( const_string_holder * _out );
