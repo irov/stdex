@@ -18,7 +18,6 @@ namespace stdex
 		{
 			Key key;
 			size_t index;
-			bool valid;
 		};
 
 		typedef std::vector<binary_value_store_type> buffer_type;
@@ -150,33 +149,16 @@ namespace stdex
 	public:
 		insert_type insert( const Key & _key, const T & _value )
 		{
-			binary_value_store_type bvst;
-			bvst.key = _key;
-			bvst.index = 0;
-			bvst.valid = true;
-
+			binary_value_store_type bvst = {_key, 0};
 			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), bvst, binary_vector_less() );
 
 			if( it_lower_bound != m_buffer.end() )
 			{
 				if( binary_vector_less()( bvst, *it_lower_bound ) == false )
 				{
-					if( it_lower_bound->valid == true )
-					{
-						insert_type ret = std::make_pair(it_lower_bound, false);
+					insert_type ret = std::make_pair(it_lower_bound, false);
 
-						return ret;
-					}
-					else
-					{
-						size_t index = it_lower_bound->index;
-						m_store[index] = _value;
-						it_lower_bound->valid = true;
-
-						insert_type ret = std::make_pair(it_lower_bound, true);
-
-						return ret;
-					}
+					return ret;
 				}
 			}
 
@@ -196,8 +178,6 @@ namespace stdex
 			size_t index = _it->index;
 			m_free.push_back( index );
 			m_buffer.erase( _it );
-
-			_it->valid = false;
 		}
 
 		bool erase( const Key & _key )
@@ -233,11 +213,6 @@ namespace stdex
 				return false;
 			}
 
-			if( it_found->valid == false )
-			{
-				return false;
-			}
-
 			if( _value != nullptr )
 			{
 				T & value = this->get_value( it_found );
@@ -257,11 +232,6 @@ namespace stdex
 				return false;
 			}
 
-			if( it_found->valid == false )
-			{
-				return false;
-			}
-
 			if( _value != nullptr )
 			{
 				const T & value = this->get_value( it_found );
@@ -275,7 +245,7 @@ namespace stdex
 	public:
 		iterator find( const Key & _key )
 		{
-			binary_value_store_type key_value = {_key, 0, true};
+			binary_value_store_type key_value = {_key, 0};
 			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
 
 			iterator it_end = this->end();
@@ -290,17 +260,12 @@ namespace stdex
 				return it_end;
 			}
 
-			if( it_lower_bound->valid == false )
-			{
-				return it_end;
-			}
-
 			return it_lower_bound;
 		}
 
 		const_iterator find( const Key & _key ) const
 		{
-			binary_value_store_type key_value = {_key, 0, true};
+			binary_value_store_type key_value = {_key, 0};
 			const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
 
 			const_iterator it_end = this->end();
@@ -311,11 +276,6 @@ namespace stdex
 			}
 
 			if( binary_vector_less()( key_value, *it_lower_bound ) == true )
-			{
-				return it_end;
-			}
-
-			if( it_lower_bound->valid == false )
 			{
 				return it_end;
 			}
