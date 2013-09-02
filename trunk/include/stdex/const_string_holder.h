@@ -53,7 +53,7 @@ namespace stdex
     protected:
         void releaseString()
         {
-            m_data = nullptr;
+            m_data = m_owner->c_str();
 
             this->_releaseString();
         }
