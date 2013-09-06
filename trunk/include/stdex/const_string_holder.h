@@ -28,13 +28,17 @@ namespace stdex
             return *this;
         }
 
+	public:
+		typedef size_t size_type;
+		typedef size_t hash_type;
+
     public:
         inline const char * c_str() const
         {
             return m_owner->_c_str();
         }
 
-        inline size_t size() const
+        inline size_type size() const
         {
             return m_size;
         }
@@ -76,7 +80,7 @@ namespace stdex
             return m_owner;
         }
 
-        inline size_t hash() const
+        inline hash_type hash() const
         {
             return m_hash;
         }
@@ -107,9 +111,9 @@ namespace stdex
         size_t m_reference;
 
         const char * m_data;
+		size_type m_size;
 
-        size_t m_hash;
-        size_t m_size;
+        hash_type m_hash;        
 
         mutable const_string_holder * m_owner;
     };

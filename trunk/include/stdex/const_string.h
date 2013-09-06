@@ -6,6 +6,8 @@
 #	include "stdex/intrusive_ptr.h"
 #	include "stdex/intrusive_linked.h"
 
+#	include <algorithm>
+
 namespace stdex
 {
 	class const_string
@@ -22,7 +24,8 @@ namespace stdex
         }
 
     public:
-        typedef size_t size_type;
+		typedef const_string_holder::size_type size_type;
+		typedef const_string_holder::hash_type hash_type;
 
 	public:
         explicit const_string( const_string_holder * _holder )
@@ -35,29 +38,42 @@ namespace stdex
         static const const_string & none();
 
 	public:
-		inline size_t size() const
+		inline size_type size() const
 		{
-			return m_holder->size();
+			size_type holder_size = m_holder->size();
+
+			return holder_size;
 		}
 
 		inline const char * c_str() const
 		{
-			return m_holder->c_str();
+			const char * holder_str = m_holder->c_str();
+
+			return holder_str;
 		}
 
 		inline bool empty() const
 		{
-			return m_holder->empty();
+			bool holder_empty = m_holder->empty();
+
+			return holder_empty;
 		}
 
-        inline size_t hash() const
+        inline hash_type hash() const
         {
-            return m_holder->hash();
+			hash_type holder_hash = m_holder->hash();
+
+            return holder_hash;
         }
 
 		inline void clear()
 		{
             *this = const_string::none();
+		}
+
+		inline void swap( const_string & _cs )
+		{
+			m_holder.swap( _cs.m_holder );
 		}
 
 	public:
@@ -132,4 +148,12 @@ namespace stdex
 	bool operator == ( const const_string & _left, const char * _right );
     //////////////////////////////////////////////////////////////////////////
 	bool operator == ( const char * _left, const const_string & _right );
+}
+
+namespace std
+{
+	template<> inline void swap( stdex::const_string & _left, stdex::const_string & _right )
+	{
+		_left.swap( _right );
+	}
 }
