@@ -89,11 +89,11 @@ namespace stdex
     {
         if( m_owner->m_reference > _holder->m_owner->m_reference )
         {
-            this->combine_from( _holder, this );
+            this->combine_from_( _holder, this );
         }
         else
         {
-            this->combine_from( this, _holder );
+            this->combine_from_( this, _holder );
         }
     }
     //////////////////////////////////////////////////////////////////////////       
@@ -110,7 +110,7 @@ namespace stdex
         {
             const_string_holder * elem = static_cast<const_string_holder *>(_linked);
 
-            elem->combine_owner( m_out );
+            elem->combine_owner_( m_out );
         }
 
     protected:
@@ -130,14 +130,14 @@ namespace stdex
         {
             const_string_holder * elem = static_cast<const_string_holder *>(_linked);
 
-            elem->combine_other( m_out );
+            elem->combine_other_( m_out );
         }
 
     protected:
         const_string_holder * m_out;
     };
     //////////////////////////////////////////////////////////////////////////
-    void const_string_holder::combine_owner( const_string_holder * _out )
+    void const_string_holder::combine_owner_( const_string_holder * _out )
     {
         this->m_owner = _out->m_owner;
         this->m_reference >>= 1;
@@ -145,7 +145,7 @@ namespace stdex
         _out->m_owner->m_reference += this->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
-    void const_string_holder::combine_other( const_string_holder * _out )
+    void const_string_holder::combine_other_( const_string_holder * _out )
     {
         this->m_owner->m_reference -= this->m_reference;
         this->m_owner = _out->m_owner;
@@ -153,9 +153,12 @@ namespace stdex
         _out->m_owner->m_reference += this->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
-    void const_string_holder::combine_from( const_string_holder * _from, const_string_holder * _out )
+    void const_string_holder::combine_from_( const_string_holder * _from, const_string_holder * _out )
     {
-        _from->m_owner->releaseString();
+		const_string_holder * from_owner = _from->m_owner;
+
+		const char * out_data = _out->m_owner->c_str();
+        from_owner->releaseString( out_data );
 
         if( _from->unique() == true )
         {
@@ -164,8 +167,6 @@ namespace stdex
         }
         else
         {
-            const_string_holder * from_owner = _from->m_owner;
-
             ForeachCombineOther combineother(_out);
             from_owner->foreach_other( combineother );
 

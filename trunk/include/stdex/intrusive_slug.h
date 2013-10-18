@@ -16,6 +16,8 @@ namespace stdex
 			, m_end(*_list.end())
 		{
 			_list.push_front( this );
+
+			m_eof = _list.empty();
 		}
 
 	public:
@@ -31,13 +33,13 @@ namespace stdex
 
 			this->unlink();
 			pos->link_before( this );
+
+			m_eof = (pos == m_end);
 		}
 
 		inline bool eof() const
 		{
-			slug_linked_type * pos = this->current();
-
-			return pos == m_end;
+			return m_eof;
 		}
 
 		inline T * operator -> () const
@@ -66,15 +68,18 @@ namespace stdex
 
 		inline slug_linked_type * adapt_( slug_linked_type * _pos ) const
 		{
-			while( _pos->getIntrusiveTag() == EILT_SLUG )
+			slug_linked_type * pos = _pos;
+
+			while( pos->getIntrusiveTag() == EILT_SLUG )
 			{
-				_pos = _pos->right();
+				pos = pos->right();
 			}
 
-			return _pos;
+			return pos;
 		}
 		
 	protected:
 		const slug_linked_type * m_end;
+		bool m_eof;
 	};
 }
