@@ -35,7 +35,9 @@ namespace stdex
     public:
         inline const char * c_str() const
         {
-            return m_owner->_c_str();
+			const char * data = m_owner->m_data;
+
+            return data;
         }
 
         inline size_type size() const
@@ -49,15 +51,9 @@ namespace stdex
         }
 
     protected:
-        const char * _c_str() const
+        void releaseString( const char * _data )
         {
-            return m_data;
-        }
-
-    protected:
-        void releaseString()
-        {
-            m_data = m_owner->c_str();
+            m_data = _data;
 
             this->_releaseString();
         }
@@ -96,9 +92,9 @@ namespace stdex
         class ForeachCombineOwner;
         class ForeachCombineOther;
 
-        void combine_owner( const_string_holder * _out );
-        void combine_other( const_string_holder * _out );
-        void combine_from( const_string_holder * _from, const_string_holder * _out );
+        void combine_owner_( const_string_holder * _out );
+        void combine_other_( const_string_holder * _out );
+        void combine_from_( const_string_holder * _from, const_string_holder * _out );
 
     protected:
         friend inline void intrusive_ptr_add_ref( const_string_holder * _ptr );
