@@ -61,7 +61,7 @@ namespace stdex
         }
 
     public:
-        void * alloc()
+        void * alloc_block()
         {
             if( m_free == nullptr )
             {
@@ -78,7 +78,7 @@ namespace stdex
             return impl;
         }
 
-        void free( void * _buff )
+        void free_block( void * _buff )
         {
             block_t * block = reinterpret_cast<block_t*>(_buff);
 
@@ -158,7 +158,7 @@ namespace stdex
     public:
         T * createT()
         {
-            void * impl = m_pool.alloc();
+            void * impl = m_pool.alloc_block();
 
             T * t = new (impl) T;
 
@@ -169,7 +169,7 @@ namespace stdex
         {
             _t->~T();
 
-            m_pool.free( _t );
+            m_pool.free_block( _t );
         }
 
     public:

@@ -105,7 +105,7 @@ namespace stdex
 #   define allocator_pool_alloc( i )\
     if( _size < s##i )\
     {\
-        mem = p##i.alloc();\
+        mem = p##i.alloc_block();\
         pi = i;\
     } else
     //////////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ namespace stdex
 #   define allocator_pool_free(i)\
     if( pi == i )\
     {\
-    p##i.free(mem_pool);\
+    p##i.free_block(mem_pool);\
     } else
     //////////////////////////////////////////////////////////////////////////
     static void s_free( void * _mem )
