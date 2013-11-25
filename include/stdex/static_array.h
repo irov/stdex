@@ -27,6 +27,11 @@ namespace stdex
             return *(m_current - 1);
         }
 
+		const T & back() const
+		{
+			return *(m_current - 1);
+		}
+
     public:
         typedef T * iterator;
         typedef const T * const_iterator;
@@ -71,6 +76,14 @@ namespace stdex
             return *element;
         }
 
+		T * emplace_count( size_t _count )
+		{
+			T * element = m_current;
+			m_current += _count;
+
+			return element;
+		}
+
         void clear()
         {
             m_current = m_buff;
@@ -84,13 +97,21 @@ namespace stdex
         bool full() const
         {
             const T * end = m_buff + I;
+
             return m_current == end;
         }
 
         size_t size() const
         {
-            return m_current - m_buff;
+			size_t countElement = m_current - m_buff;
+			
+            return countElement;
         }
+
+		size_t capacity() const
+		{
+			return I;
+		}
 
     public:
         T & operator [] ( size_t _index )
