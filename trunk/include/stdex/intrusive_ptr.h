@@ -1,5 +1,7 @@
 #	pragma once
 
+#	include <cstddef>
+
 namespace stdex
 {
 	template<class T> 
@@ -10,6 +12,11 @@ namespace stdex
 
 	public:
 		intrusive_ptr()
+			: m_ptr(nullptr)
+		{
+		}
+
+		intrusive_ptr( std::nullptr_t )
 			: m_ptr(nullptr)
 		{
 		}
