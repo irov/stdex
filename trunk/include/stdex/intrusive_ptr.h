@@ -68,6 +68,14 @@ namespace stdex
 			return *this;
 		}
 
+		intrusive_ptr & operator = ( std::nullptr_t )
+		{
+            intrusive_ptr swap_ptr;
+            swap_ptr.swap( *this );
+
+			return *this;
+		}
+		 
 	public:
 		T * get() const
 		{
