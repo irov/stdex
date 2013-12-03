@@ -16,10 +16,12 @@ namespace stdex
 		{
 		}
 
+#	ifndef STDEX_UNSUPPOT_NULLPTR_T
 		intrusive_ptr( nullptr_t )
 			: m_ptr(nullptr)
 		{
 		}
+#	endif
 
 		intrusive_ptr( T * _ptr )
 			: m_ptr(_ptr)
@@ -68,6 +70,7 @@ namespace stdex
 			return *this;
 		}
 
+#	ifndef STDEX_UNSUPPOT_NULLPTR_T
 		intrusive_ptr & operator = ( nullptr_t )
 		{
             intrusive_ptr swap_ptr;
@@ -75,6 +78,7 @@ namespace stdex
 
 			return *this;
 		}
+#	endif
 		 
 	public:
 		T * get() const
