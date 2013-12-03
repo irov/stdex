@@ -1,6 +1,6 @@
 #	pragma once
 
-#	include <cstddef>
+#	include <stddef.h>
 
 namespace stdex
 {
@@ -16,7 +16,7 @@ namespace stdex
 		{
 		}
 
-		intrusive_ptr( std::nullptr_t )
+		intrusive_ptr( nullptr_t )
 			: m_ptr(nullptr)
 		{
 		}
@@ -68,7 +68,7 @@ namespace stdex
 			return *this;
 		}
 
-		intrusive_ptr & operator = ( std::nullptr_t )
+		intrusive_ptr & operator = ( nullptr_t )
 		{
             intrusive_ptr swap_ptr;
             swap_ptr.swap( *this );
@@ -86,11 +86,6 @@ namespace stdex
 		{
 			return m_ptr;
 		}
-
-        //operator T * () const
-        //{
-        //    return m_ptr;
-        //}
 
 		void swap( intrusive_ptr & _rhs )
 		{
