@@ -15,17 +15,14 @@ namespace stdex
             : m_reference(0)
             , m_data(nullptr)
             , m_hash(0)
-            , m_size(0)
+            , m_size(0)			
         {
             m_owner = this;
         }
 
     private:
-        const_string_holder & operator = ( const const_string_holder & _holder )
+        void operator = ( const const_string_holder & )
         {
-            (void)_holder;
-
-            return *this;
         }
 
 	public:
@@ -113,6 +110,22 @@ namespace stdex
 
         mutable const_string_holder * m_owner;
     };
+	//////////////////////////////////////////////////////////////////////////
+	inline size_t const_string_make_hash( const char * _data )
+	{
+		const char * str = _data;
+
+		size_t hash = 5381;
+
+		for( const char * c = str; *c != 0; ++c )
+		{
+			int d = *c;
+
+			hash = ((hash << 5) + hash) + d;
+		}
+
+		return hash;			 
+	}
     //////////////////////////////////////////////////////////////////////////
     inline void intrusive_ptr_add_ref( const_string_holder * _ptr )
     {
