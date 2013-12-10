@@ -65,6 +65,13 @@ namespace stdex
 			m_free.clear();
 		}
 
+		bool empty() const
+		{
+			bool empty = m_buffer.empty();
+
+			return empty;
+		}
+
 	public:
 		iterator begin()
 		{
@@ -177,6 +184,7 @@ namespace stdex
 		{
 			size_t index = _it->index;
 			m_free.push_back( index );
+			m_store[index] = T();
 			m_buffer.erase( _it );
 		}
 
@@ -242,6 +250,22 @@ namespace stdex
 			return true;
 		}
 
+		bool has_copy( const Key & _key, T & _value ) const
+		{
+			const_iterator it_found = this->find( _key );
+
+			if( it_found == this->end() )
+			{
+				return false;
+			}
+
+			const T & value = this->get_value( it_found );
+
+			_value = value;
+	
+			return true;
+		}
+
 	public:
 		iterator find( const Key & _key )
 		{
@@ -281,6 +305,11 @@ namespace stdex
 			}
 
 			return it_lower_bound;
+		}
+
+		const buffer_type & get_buffer_() const
+		{
+			return m_buffer;
 		}
 
 	protected:		
@@ -327,6 +356,13 @@ namespace stdex
 			size_t size = m_buffer.size();
 
 			return size;
+		}
+
+		bool empty() const
+		{
+			bool empty = m_buffer.empty();
+
+			return empty;
 		}
 
 		void clear()
