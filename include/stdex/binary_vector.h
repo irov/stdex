@@ -207,7 +207,7 @@ namespace stdex
 		{
 			const_iterator it_found = this->find( _key );
 
-			bool result = (it_found == this->end());
+			bool result = (it_found != this->end());
 
 			return result;
 		}
@@ -465,7 +465,7 @@ namespace stdex
 		{
 			const_iterator it_found = this->find( _key );
 
-			bool result = (it_found == this->end());
+			bool result = (it_found != this->end());
 
 			return result;
 		}

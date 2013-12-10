@@ -62,26 +62,10 @@ namespace stdex
         return true;
     }
     //////////////////////////////////////////////////////////////////////////
-    static size_t s_make_hash( const char * _data )
-    {
-        const char * str = _data;
-
-        size_t hash = 5381;
-        
-        for( const char * c = str; *c != 0; ++c )
-        {
-            int d = *c;
-
-            hash = ((hash << 5) + hash) + d;
-        }
-
-        return hash;
-    }
-    //////////////////////////////////////////////////////////////////////////
     void const_string_holder::setup( const char * _data, size_t _size )
     {
         m_data = _data;
-        m_hash = s_make_hash( m_data );
+        m_hash = const_string_make_hash( m_data );
         m_size = _size;
     }
     //////////////////////////////////////////////////////////////////////////
