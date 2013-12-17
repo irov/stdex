@@ -6,21 +6,22 @@
 namespace stdex
 {
 	template<class T>
-	class intrusive_slug_list
+	class intrusive_slug_list_size
 	{
 	public:
 		typedef intrusive_slug_linked<T> linked_type;
         typedef T * value_type;
 
 	public:
-		intrusive_slug_list()
+		intrusive_slug_list_size()
             : m_head(EILT_END)
+			, m_size(0)
 		{
 			m_head.m_right = &m_head;
 			m_head.m_left = &m_head;
 		}
 
-		~intrusive_slug_list()
+		~intrusive_slug_list_size()
 		{
 			this->clear();
 
@@ -350,12 +351,6 @@ namespace stdex
 			this->erase( --it );
 		}
 
-		inline void splice( iterator _from, iterator _where )
-		{
-			this->erase( _from );
-			this->insert( --_where, *_from );
-		}
-
 		inline void clear()
 		{
 			iterator it = this->begin();
@@ -367,41 +362,20 @@ namespace stdex
 		}
 
 		inline size_t size() const
-		{
-            const_iterator it = this->begin();
-            const_iterator it_end = this->end();
-			size_t count = intrusive_distance( it, it_end );
-
-			return count;
+		{            
+			return m_size;
 		}
 
 		inline bool empty() const
 		{
-			return this->begin() == this->end();
-			//return m_head.m_right == &m_head;
+			return m_size == 0;
 		}
 
 		inline iterator insert( iterator _where, linked_type * _node )
 		{	
 			this->insert_( _where, _node );
-
+			
 			return (--_where);
-		}
-
-		inline void insert( iterator _where, iterator _begin, iterator _end )
-		{	
-			if( _begin == _end )
-			{
-				return;
-			}
-
-			_end->m_left->m_right = nullptr;
-			_end->m_left = _begin->m_left;
-
-			_begin->m_left->m_right = *_end;
-			_begin->m_left = nullptr;
-
-			_begin->linkall( *_where );
 		}
 
 		inline iterator erase( iterator _where )
@@ -412,6 +386,7 @@ namespace stdex
 			{	
 				linked_type * node = it.get();
 				node->unlink();
+				--m_size;
 			}
 
 			return (_where);
@@ -435,8 +410,10 @@ namespace stdex
 		{	
             linked_type * linked = _where.get();
 			linked->link_before( _node );
+			++m_size;
 		}
 
+	public:
         inline iterator pure_begin_()
         {
             return iterator(m_head.m_right, true);
@@ -444,5 +421,6 @@ namespace stdex
 
 	protected:
 		mutable linked_type m_head;
+		size_t m_size;
 	};
 }
