@@ -392,6 +392,12 @@ namespace stdex
 			return (_where);
 		}
 
+		inline void remove( linked_type * _node )
+		{
+			_node->unlink();
+			--m_size;
+		}
+
 		template<class F>
 		inline iterator erase_if( F _pred )
 		{
