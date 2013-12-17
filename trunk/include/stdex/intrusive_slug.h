@@ -1,23 +1,29 @@
 #	pragma once
 
-#	include "stdex/intrusive_slug_list.h"
-
 namespace stdex
 {
 	template<class T>
 	class intrusive_slug
-		: public intrusive_slug_linked<T>
+		: public T::linked_type
 	{
     public:
-        typedef typename intrusive_slug_linked<T>::linked_type slug_linked_type;
-	public:
-		inline intrusive_slug( intrusive_slug_list<T> & _list )
-			: intrusive_slug_linked<T>(EILT_SLUG)
-			, m_end(*_list.end())
-		{
-			_list.push_front( this );
+		typedef typename T::value_type value_type;
+		typedef typename T::linked_type slug_linked_type;
 
+	public:
+		inline intrusive_slug( T & _list )
+			: T::linked_type(EILT_SLUG)			
+		{
 			m_eof = _list.empty();
+
+			if( m_eof == false )
+			{
+				typename T::iterator it = _list.pure_begin_();
+				linked_type * linked = it.get();
+				linked->link_before( this );
+
+				m_end = *_list.end();
+			}
 		}
 
 	public:
@@ -42,18 +48,18 @@ namespace stdex
 			return m_eof;
 		}
 
-		inline T * operator -> () const
+		inline value_type operator -> () const
 		{
             slug_linked_type * linked = this->current();
 
-			return static_cast<T *>(linked);
+			return static_cast<value_type>(linked);
 		}
 
-		inline T * operator * () const
+		inline value_type operator * () const
 		{
             slug_linked_type * linked = this->current();
 
-			return static_cast<T *>(linked);
+			return static_cast<value_type>(linked);
 		}
 
 	protected:
