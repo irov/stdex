@@ -19,7 +19,7 @@ namespace stdex
 			if( m_eof == false )
 			{
 				typename T::iterator it = _list.pure_begin_();
-				linked_type * linked = it.get();
+				slug_linked_type * linked = it.get();
 				linked->link_before( this );
 
 				m_end = *_list.end();
