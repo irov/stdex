@@ -8,7 +8,7 @@ namespace stdex
 	{
     public:
 		typedef typename T::value_type value_type;
-		typedef typename T::linked_type slug_linked_type;
+		typedef typename T::linked_type linked_type;
 
 	public:
 		inline intrusive_slug( T & _list )
@@ -19,7 +19,7 @@ namespace stdex
 			if( m_eof == false )
 			{
 				typename T::iterator it = _list.pure_begin_();
-				slug_linked_type * linked = it.get();
+				linked_type * linked = it.get();
 				linked->link_before( this );
 
 				m_end = *_list.end();
@@ -29,7 +29,7 @@ namespace stdex
 	public:
 		void next_shuffle()
 		{
-			slug_linked_type * pos = this->right();
+			linked_type * pos = this->right();
 
 			pos = this->adapt_( pos );
 
@@ -50,31 +50,31 @@ namespace stdex
 
 		inline value_type operator -> () const
 		{
-            slug_linked_type * linked = this->current();
+            linked_type * linked = this->current();
 
 			return static_cast<value_type>(linked);
 		}
 
 		inline value_type operator * () const
 		{
-            slug_linked_type * linked = this->current();
+            linked_type * linked = this->current();
 
 			return static_cast<value_type>(linked);
 		}
 
 	protected:
-		inline slug_linked_type * current() const
+		inline linked_type * current() const
 		{
-			slug_linked_type * pos = this->right();
+			linked_type * pos = this->right();
 
-			slug_linked_type * current = this->adapt_( pos );
+			linked_type * current = this->adapt_( pos );
 
 			return current;
 		}
 
-		inline slug_linked_type * adapt_( slug_linked_type * _pos ) const
+		inline linked_type * adapt_( linked_type * _pos ) const
 		{
-			slug_linked_type * pos = _pos;
+			linked_type * pos = _pos;
 
 			while( pos->getIntrusiveTag() == EILT_SLUG )
 			{
@@ -85,7 +85,7 @@ namespace stdex
 		}
 		
 	protected:
-		const slug_linked_type * m_end;
+		const linked_type * m_end;
 		bool m_eof;
 	};
 }
