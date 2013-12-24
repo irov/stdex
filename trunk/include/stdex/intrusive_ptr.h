@@ -21,6 +21,11 @@ namespace stdex
 			: m_ptr(nullptr)
 		{
 		}
+#	else
+		intrusive_ptr( int )
+			: m_ptr(nullptr)
+		{
+		}
 #	endif
 
 		intrusive_ptr( element_type * _ptr )
@@ -226,6 +231,38 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	template<class T>
 	inline bool operator == ( const intrusive_ptr<T> & _left, nullptr_t )
+	{
+		const T * ptr = _left.get();
+
+		return ptr == nullptr;
+	}
+#	else
+	template<class T> 
+	inline bool operator != ( const intrusive_ptr<T> & _left, int )
+	{
+		const T * ptr = _left.get();
+
+		return ptr != nullptr;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T> 
+	inline bool operator != ( int , const intrusive_ptr<T> & _right )
+	{
+		const T * ptr = intrusive_get<T *>(_right);
+
+		return ptr != nullptr;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T> 
+	inline bool operator == ( int , const intrusive_ptr<T> & _right )
+	{
+		const T * ptr = intrusive_get<T *>(_right);
+
+		return ptr == nullptr;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	inline bool operator == ( const intrusive_ptr<T> & _left, int )
 	{
 		const T * ptr = _left.get();
 
