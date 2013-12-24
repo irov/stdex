@@ -23,7 +23,7 @@ namespace stdex
 		}
 #	endif
 
-		intrusive_ptr( T * _ptr )
+		intrusive_ptr( element_type * _ptr )
 			: m_ptr(_ptr)
 		{
 			this->incref();
@@ -31,7 +31,7 @@ namespace stdex
 
         template<class U>
         intrusive_ptr( U * _ptr )
-            : m_ptr(static_cast<T *>(_ptr))
+            : m_ptr(static_cast<element_type *>(_ptr))
         {
             this->incref();
         }
@@ -62,7 +62,7 @@ namespace stdex
 			return *this;
 		}
 
-		intrusive_ptr & operator = ( T * _rhs )
+		intrusive_ptr & operator = ( element_type * _rhs )
 		{
             intrusive_ptr swap_ptr(_rhs);
             swap_ptr.swap( *this );
@@ -81,12 +81,12 @@ namespace stdex
 #	endif
 		 
 	public:
-		T * get() const
+		element_type * get() const
 		{
 			return m_ptr;
 		}
 
-		T * operator -> () const
+		element_type * operator -> () const
 		{
 			return m_ptr;
 		}
@@ -116,7 +116,7 @@ namespace stdex
 		}
 
     protected:
-		T * m_ptr;
+		element_type * m_ptr;
 	};
     //////////////////////////////////////////////////////////////////////////
     template<class T> 
@@ -159,44 +159,77 @@ namespace stdex
 	template<class T> 
 	inline bool operator == ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
 	{
-		return _left.get() == _right.get();
+		const T * l = _left.get();
+		const T * r = _right.get();
+
+		return l == r;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
 	inline bool operator != ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
 	{
-		return _left.get() != _right.get();
+		return !(_left == _right);
 	}
-    //////////////////////////////////////////////////////////////////////////
-    template<class T>
-    inline bool operator == ( const intrusive_ptr<T> & _left, void * )
-    {
-        T * ptr = _left.get();
+	//////////////////////////////////////////////////////////////////////////
+	template<class T, class U> 
+	inline bool operator != ( const intrusive_ptr<T> & _left, const U * _right )
+	{
+		const T * ptr = _left.get();
 
-        return ptr == nullptr;
-    }
-    //////////////////////////////////////////////////////////////////////////
-    template<class T> 
-    inline bool operator != ( const intrusive_ptr<T> & _left, void * )
-    {
-        T * ptr = _left.get();
+		return ptr != static_cast<T *>(_right);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T, class U> 
+	inline bool operator != ( const U * _left , const intrusive_ptr<T> & _right )
+	{
+		const T * ptr = intrusive_get<T>(_right);
 
-        return ptr != nullptr;
-    }
-    //////////////////////////////////////////////////////////////////////////
-    template<class T> 
-    inline bool operator == ( void * , const intrusive_ptr<T> & _right )
-    {
-        T * ptr = intrusive_get<T *>(_right);
+		return ptr != static_cast<const T *>(_left);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T, class U> 
+	inline bool operator == ( const U * _left , const intrusive_ptr<T> & _right )
+	{
+		return !(_left != _right);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T, class U> 
+	inline bool operator == ( const intrusive_ptr<T> & _left, const U * _right )
+	{
+		return !(_left != _right);
+	}
+	//////////////////////////////////////////////////////////////////////////
+#	ifndef STDEX_UNSUPPOT_NULLPTR_T
+	template<class T> 
+	inline bool operator != ( const intrusive_ptr<T> & _left, nullptr_t )
+	{
+		const T * ptr = _left.get();
 
-        return ptr == nullptr;
-    }
-    //////////////////////////////////////////////////////////////////////////
-    template<class T> 
-    inline bool operator != ( void * , const intrusive_ptr<T> & _right )
-    {
-        T * ptr = intrusive_get<T *>(_right);
+		return ptr != nullptr;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T> 
+	inline bool operator != ( nullptr_t , const intrusive_ptr<T> & _right )
+	{
+		const T * ptr = intrusive_get<T *>(_right);
 
-        return ptr != nullptr;
-    }
+		return ptr != nullptr;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T> 
+	inline bool operator == ( nullptr_t , const intrusive_ptr<T> & _right )
+	{
+		const T * ptr = intrusive_get<T *>(_right);
+
+		return ptr == nullptr;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	inline bool operator == ( const intrusive_ptr<T> & _left, nullptr_t )
+	{
+		const T * ptr = _left.get();
+
+		return ptr == nullptr;
+	}
+#	endif
 }
