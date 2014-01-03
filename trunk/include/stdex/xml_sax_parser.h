@@ -142,6 +142,16 @@ namespace stdex
 	bool xml_sax_parse( char * _xml, t_xml_sax_callback & _callback )
 	{
 		char * begin_node = _xml;
+		
+		uint32_t BOM = 0;
+		BOM |= (unsigned char)(begin_node[0]) << 16;
+		BOM |= (unsigned char)(begin_node[1]) << 8;
+		BOM |= (unsigned char)(begin_node[2]);
+
+		if( BOM == 0x00EFBBBF )
+		{
+			begin_node += 3;
+		}
 
 		do
 		{
