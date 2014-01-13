@@ -52,7 +52,7 @@ namespace stdex
 #   define allocator_pool_def(i, f, c)\
     const static size_t s##i = f;\
     typedef pool<memory_buf_allign(f), c> pool_type_p##i;\
-    pool_type_p##i p##i;
+    static pool_type_p##i p##i;
 
     allocator_pool_def(0, 8, 128);
     allocator_pool_def(1, 21, 128);
@@ -205,6 +205,8 @@ namespace stdex
     //////////////////////////////////////////////////////////////////////////
     static size_t s_memoryinfo( stdex_memory_info_t * _info, size_t _count )
     {
+		(void)_count;
+
 		size_t count = 0;
         allocator_pool_loop( allocator_pool_info );
 

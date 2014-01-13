@@ -11,23 +11,30 @@ namespace stdex
     public:
         struct pool_block
         {
-            char buff[TBlockSize];
+            unsigned char buff[TBlockSize];
             pool_block * next;
         };
 
     public:
-        pool_template_chunk( pool_block ** _free, chunk_t * _prev )
+        pool_template_chunk( chunk_t * _prev )
             : prev(_prev)
         {
-            for( pool_block * it = buffer_block, 
-                *it_end = buffer_block + TBlockCount; 
-                it != it_end; 
-            ++it )
-            {
-                it->next = *_free;
-                *_free = it;
-            }
         }
+
+	public:
+		pool_block * initialize( pool_block * _free )
+		{
+			for( pool_block * it = buffer_block, 
+				*it_end = buffer_block + TBlockCount; 
+				it != it_end; 
+			++it )
+			{
+				it->next = _free;
+				_free = it;
+			}
+
+			return _free;
+		}
 
     public:
         chunk_t * getPrev() const
@@ -36,8 +43,8 @@ namespace stdex
         }
 
     protected:
-        pool_block buffer_block[TBlockCount];
-        chunk_t * prev;
+		chunk_t * prev;
+        pool_block buffer_block[TBlockCount];        
     };
 
     template<size_t TBlockSize, size_t TBlockCount>
@@ -73,7 +80,7 @@ namespace stdex
 
             ++m_blockCount;
 
-            void * impl = static_cast<void *>(free);
+            void * impl = reinterpret_cast<void *>(free);
 
             return impl;
         }
@@ -83,11 +90,12 @@ namespace stdex
             block_t * block = reinterpret_cast<block_t*>(_buff);
 
             block->next = m_free;
-
             m_free = block;
+
             --m_blockCount;
         }
 
+	public:
         size_t getBlockCount() const
         {
             return m_blockCount;
@@ -107,6 +115,12 @@ namespace stdex
         {
             return TBlockCount;
         }
+
+	public:
+		bool empty() const
+		{
+			return m_blockCount == 0;
+		}
 
     public:
         void clear()
@@ -132,8 +146,9 @@ namespace stdex
     protected:
         void addChunk_()
         {
-            chunk_t * chunk = new chunk_t(&m_free, m_chunk);
+            chunk_t * chunk = new chunk_t(m_chunk);
 
+			m_free = chunk->initialize( m_free );
             m_chunk = chunk;
 
             ++m_chunkCount;
