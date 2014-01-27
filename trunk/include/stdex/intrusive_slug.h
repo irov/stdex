@@ -12,7 +12,8 @@ namespace stdex
 
 	public:
 		inline intrusive_slug( T & _list )
-			: T::linked_type(EILT_SLUG)			
+			: T::linked_type(EILT_SLUG)
+			, m_end(nullptr)
 		{
 			m_eof = _list.empty();
 
@@ -31,16 +32,26 @@ namespace stdex
 		{
 			linked_type * pos = this->right();
 
-			pos = this->adapt_( pos );
+			linked_type * pos_adapt = this->adapt_( pos );
 
-			pos = pos->right();
+			if( pos_adapt == m_end )
+			{
+				m_eof = true;
+				return;
+			}
 
-			pos = this->adapt_( pos );
+			linked_type * pos_adapt_right = pos_adapt->right();
+
+			linked_type * pos_adapt_right_adapt = this->adapt_( pos_adapt_right );
+
+			if( pos_adapt_right_adapt == m_end )
+			{
+				m_eof = true;
+				return;
+			}
 
 			this->unlink();
-			pos->link_before( this );
-
-			m_eof = (pos == m_end);
+			pos_adapt_right_adapt->link_before( this );
 		}
 
 		inline bool eof() const
@@ -85,7 +96,8 @@ namespace stdex
 		}
 		
 	protected:
-		const linked_type * m_end;
 		bool m_eof;
+		const linked_type * m_end;
+		
 	};
 }
