@@ -74,6 +74,7 @@
     <ClCompile Include="..\src\const_string.cpp" />
     <ClCompile Include="..\src\const_string_holder.cpp" />
     <ClCompile Include="..\src\const_string_holder_none.cpp" />
+    <ClCompile Include="..\src\ini.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\stdex\allocator.h" />
@@ -82,6 +83,7 @@
     <ClInclude Include="..\include\stdex\const_string.h" />
     <ClInclude Include="..\include\stdex\const_string_holder.h" />
     <ClInclude Include="..\include\stdex\const_string_holder_none.h" />
+    <ClInclude Include="..\include\stdex\ini.h" />
     <ClInclude Include="..\include\stdex\intrusive_algorithm.h" />
     <ClInclude Include="..\include\stdex\intrusive_linked.h" />
     <ClInclude Include="..\include\stdex\intrusive_list.h" />
