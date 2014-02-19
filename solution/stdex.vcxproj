@@ -90,6 +90,7 @@
     <ClInclude Include="..\include\stdex\intrusive_ptr.h" />
     <ClInclude Include="..\include\stdex\intrusive_slug.h" />
     <ClInclude Include="..\include\stdex\pool.h" />
+    <ClInclude Include="..\include\stdex\queue.h" />
     <ClInclude Include="..\include\stdex\static_array.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
