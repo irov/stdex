@@ -34,8 +34,6 @@ namespace stdex
 				if( b >= e && e != 0 )
 				{					
 					size_type replace_n = s - b;
-					size_type i = s;
-					size_type j = new_s;
 					for( size_type i = 0; i != replace_n; i++ )
 					{
 						size_t l = s - i - 1; 
