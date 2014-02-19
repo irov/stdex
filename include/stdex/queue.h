@@ -25,35 +25,33 @@ namespace stdex
 	public:
 		void push( const value_type& _value )
 		{
-			if( b == e )
+			if( n == s )
 			{
 				container_type new_c;
 				size_type new_s = (s + 1) * 2;
-				new_c.resize( new_s );
+				c.resize( new_s );
 
-				if( s > 0 )
+				if( b >= e && e != 0 )
+				{					
+					size_type replace_n = s - b;
+					size_type i = s;
+					size_type j = new_s;
+					for( size_type i = 0; i != replace_n; i++ )
+					{
+						size_t l = s - i - 1; 
+						size_t k = new_s - i - 1;
+
+						std::swap( c[l], c[k] );
+					}
+
+					b = new_s - s + b;
+				}
+				else
 				{
-					if( e > b )
-					{
-						value_type * data = &c[b];
-						value_type * end = data + e - b + 1;
-						std::copy( data, end, &new_c[0] );
-					}
-					else
-					{
-						value_type * data1 = &c[b];
-						value_type * end1 = data1 + s - b;
-						std::copy( data1, end1, &new_c[0] );
-
-						value_type * data2 = &c[0];
-						value_type * end2 = data2 + e;
-						std::copy( data2, end2, &new_c[s - b] );
-					}
+					e = n;
+					b = 0;
 				}
 
-				c.swap( new_c );
-				e = s;
-				b = 0;
 				s = new_s;
 			}
 
