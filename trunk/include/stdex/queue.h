@@ -15,86 +15,86 @@ namespace stdex
 
 	public:
 		queue()
-			: b(0)
-			, e(0)
-			, s(0)
-			, n(0)
+			: m_begin(0)
+			, m_end(0)
+			, m_size(0)
+			, m_count(0)
 		{
 		}
 
 	public:
 		void push( const value_type& _value )
 		{
-			if( n == s )
+			if( m_count == m_size )
 			{
 				container_type new_c;
-				size_type new_s = (s + 1) * 2;
-				c.resize( new_s );
+				size_type new_s = (m_size + 1) * 2;
+				m_container.resize( new_s );
 
-				if( b >= e && e != 0 )
+				if( m_begin >= m_end && m_end != 0 )
 				{					
-					size_type replace_n = s - b;
+					size_type replace_n = m_size - m_begin;
 					for( size_type i = 0; i != replace_n; i++ )
 					{
-						size_t l = s - i - 1; 
+						size_t l = m_size - i - 1; 
 						size_t k = new_s - i - 1;
 
-						std::swap( c[l], c[k] );
+						std::swap( m_container[l], m_container[k] );
 					}
 
-					b = new_s - s + b;
+					m_begin = new_s - m_size + m_begin;
 				}
 				else
 				{
-					e = n;
-					b = 0;
+					m_end = m_count;
+					m_begin = 0;
 				}
 
-				s = new_s;
+				m_size = new_s;
 			}
 
-			size_type l = (s + e) % s;
-			c[l] = _value;
-			e += 1;
-			e %= s;
-			++n;
+			size_type l = (m_size + m_end) % m_size;
+			m_container[l] = _value;
+			m_end += 1;
+			m_end %= m_size;
+			++m_count;
 		}
 
 		size_type size() const
 		{
-			return n;
+			return m_count;
 		}
 
 		bool empty() const
 		{
-			return n == 0;
+			return m_count == 0;
 		}
 
 		reference pop()
 		{	// erase element at end
-			size_type ret_b = b;
+			size_type ret_b = m_begin;
 
-			b += 1;
-			b %= s;
-			--n;
+			m_begin += 1;
+			m_begin %= m_size;
+			--m_count;
 			
-			return c[ret_b];
+			return m_container[ret_b];
 		}
 
 		void clear()
 		{
-			c.clear();
-			s = 0;
-			n = 0;
-			b = 0;
-			e = 0;
+			m_container.clear();
+			m_size = 0;
+			m_count = 0;
+			m_begin = 0;
+			m_end = 0;
 		}
 
 	protected:		
-		container_type c;
-		size_type s;
-		size_type n;
-		size_type b;
-		size_type e;
+		container_type m_container;
+		size_type m_size;
+		size_type m_count;
+		size_type m_begin;
+		size_type m_end;
 	};
 }
