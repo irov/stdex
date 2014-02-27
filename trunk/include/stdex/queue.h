@@ -11,7 +11,7 @@ namespace stdex
 		typedef std::vector<T> container_type;
 		typedef typename container_type::size_type size_type;
 		typedef typename container_type::value_type value_type;
-		typedef typename container_type::reference reference;		
+		typedef typename container_type::reference reference;
 
 	public:
 		queue()
@@ -27,7 +27,6 @@ namespace stdex
 		{
 			if( m_count == m_size )
 			{
-				container_type new_c;
 				size_type new_s = (m_size + 1) * 2;
 				m_container.resize( new_s );
 
@@ -70,15 +69,18 @@ namespace stdex
 			return m_count == 0;
 		}
 
-		reference pop()
+		T pop()
 		{	// erase element at end
 			size_type ret_b = m_begin;
 
 			m_begin += 1;
 			m_begin %= m_size;
 			--m_count;
+
+			T element = m_container[ret_b];
+			m_container[ret_b] = T();
 			
-			return m_container[ret_b];
+			return element;
 		}
 
 		void clear()
