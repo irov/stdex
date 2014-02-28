@@ -16,7 +16,6 @@
 #   define stdex_allocator_free (::free)
 #   endif
 
-
 namespace stdex
 {
     //////////////////////////////////////////////////////////////////////////    
@@ -74,6 +73,13 @@ namespace stdex
     allocator_pool_def(17, 46368, 4);
     allocator_pool_def(18, 75025, 4);
     allocator_pool_def(19, 121393, 4);
+
+#	ifdef stdex_allocator_threadsafe
+	void * g_thread_ptr = nullptr;
+	stdex_thread_lock_t g_thread_lock = nullptr;
+	stdex_thread_unlock_t g_thread_unlock = nullptr;
+#	endif
+
     //////////////////////////////////////////////////////////////////////////
     const static size_t s[] = {s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19};
     //////////////////////////////////////////////////////////////////////////
@@ -227,11 +233,45 @@ namespace stdex
 
 		return total_now;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	inline static void s_thread_lock()
+	{
+#	ifdef stdex_allocator_threadsafe
+		if( stdex::g_thread_lock == nullptr )
+		{
+			return;
+		}
+		
+		(*stdex::g_thread_lock)( g_thread_ptr );
+#	endif
+	}
+	//////////////////////////////////////////////////////////////////////////
+	inline static void s_thread_unlock()
+	{
+#	ifdef stdex_allocator_threadsafe
+		if( stdex::g_thread_unlock == nullptr )
+		{
+			return;
+		}
+
+		(*stdex::g_thread_unlock)( g_thread_ptr );
+#	endif
+	}
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+#	ifdef stdex_allocator_threadsafe
+	//////////////////////////////////////////////////////////////////////////
+	void stdex_threadsafe( void * _ptr, stdex_thread_lock_t _lock, stdex_thread_unlock_t _unlock )
+	{
+		stdex::g_thread_ptr = _ptr;
+		stdex::g_thread_lock = _lock;
+		stdex::g_thread_unlock = _unlock;
+	}
+#	endif
+
 #   ifdef stdex_allocator_disable
     //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
@@ -262,12 +302,18 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
     {
-        return stdex::s_malloc( _size );
+		stdex::s_thread_lock();
+        void * memory = stdex::s_malloc( _size );
+		stdex::s_thread_unlock();
+
+		return memory;
     }
     //////////////////////////////////////////////////////////////////////////
     void stdex_free( void * _mem )
     {
+		stdex::s_thread_lock();
         stdex::s_free( _mem );
+		stdex::s_thread_unlock();
     }
     //////////////////////////////////////////////////////////////////////////
     void * stdex_calloc( size_t _num, size_t _size )
@@ -281,7 +327,11 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_realloc( void * _mem, size_t _size )
     {
-        return stdex::s_realloc( _mem, _size );
+		stdex::s_thread_lock();
+        void * memory = stdex::s_realloc( _mem, _size );
+		stdex::s_thread_unlock();
+
+		return memory;
     }
     //////////////////////////////////////////////////////////////////////////
 #   endif
