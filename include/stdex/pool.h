@@ -1,5 +1,7 @@
 #	pragma once
 
+#	include <new>
+
 namespace stdex
 {
     template<size_t TBlockSize, size_t TBlockCount>
