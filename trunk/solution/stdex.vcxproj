@@ -87,9 +87,14 @@
     <ClInclude Include="..\include\stdex\ini.h" />
     <ClInclude Include="..\include\stdex\intrusive_algorithm.h" />
     <ClInclude Include="..\include\stdex\intrusive_linked.h" />
+    <ClInclude Include="..\include\stdex\intrusive_linked_ptr.h" />
     <ClInclude Include="..\include\stdex\intrusive_list.h" />
     <ClInclude Include="..\include\stdex\intrusive_ptr.h" />
+    <ClInclude Include="..\include\stdex\intrusive_ptr_base.h" />
     <ClInclude Include="..\include\stdex\intrusive_slug.h" />
+    <ClInclude Include="..\include\stdex\intrusive_slug_linked.h" />
+    <ClInclude Include="..\include\stdex\intrusive_slug_list.h" />
+    <ClInclude Include="..\include\stdex\intrusive_slug_list_size.h" />
     <ClInclude Include="..\include\stdex\memory_cache.h" />
     <ClInclude Include="..\include\stdex\pool.h" />
     <ClInclude Include="..\include\stdex\queue.h" />

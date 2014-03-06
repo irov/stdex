@@ -91,4 +91,76 @@ namespace stdex
 
 		return count;
 	}
+
+	template<class T, class P>
+	void intrusive_sort( T & _container, P _predicate )
+	{
+		typedef typename T::linked_type linked_type;
+
+		typename T::iterator it_begin = _container.begin();
+		typename T::iterator it_end = _container.end();
+
+		for( typename T::iterator it = it_begin; it != it_end; )
+		{
+			typename T::iterator it_next = it;
+			++it_next;
+
+			while( it != _container.begin() )
+			{
+				typename T::iterator it_prev = it;
+				--it_prev;
+
+				if( _predicate( *it_prev, *it ) == false )
+				{
+					linked_type * it_linked = *it;
+					linked_type * it_prev_linked = *it_prev;
+
+					it_linked->unlink();
+					it_prev_linked->link_before( it_linked );
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			it = it_next;
+		}
+	}
+
+	template<class T, class P>
+	void intrusive_sort_stable( T & _container, P _predicate )
+	{
+		typedef typename T::linked_type linked_type;
+
+		typename T::iterator it_begin = _container.begin();
+		typename T::iterator it_end = _container.end();
+
+		for( typename T::iterator it = it_begin; it != it_end; )
+		{
+			typename T::iterator it_next = it;
+			++it_next;
+
+			while( it != _container.begin() )
+			{
+				typename T::iterator it_prev = it;
+				--it_prev;
+
+				if( _predicate( *it_prev, *it ) == false && _predicate( *it, *it_prev ) == true )
+				{
+					linked_type * it_linked = *it;
+					linked_type * it_prev_linked = *it_prev;
+
+					it_linked->unlink();
+					it_prev_linked->link_before( it_linked );
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			it = it_next;
+		}
+	}
 }
