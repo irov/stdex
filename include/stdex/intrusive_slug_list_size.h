@@ -16,6 +16,7 @@ namespace stdex
 		intrusive_slug_list_size()
             : m_head(EILT_END)
 			, m_size(0)
+			, m_slugs(0)
 		{
 			m_head.m_right = &m_head;
 			m_head.m_left = &m_head;
@@ -411,6 +412,22 @@ namespace stdex
 			return this->erase( it_found );			
 		}
 
+	public:
+		void increfSlug()
+		{
+			++m_slugs;
+		}
+
+		void decrefSlug()
+		{
+			--m_slugs;
+		}
+
+		size_t countSlugs() const
+		{
+			return m_slugs;
+		}
+
 	protected:
 		inline void insert_( iterator _where, linked_type * _node )
 		{	
@@ -428,5 +445,6 @@ namespace stdex
 	protected:
 		mutable linked_type m_head;
 		size_t m_size;
+		size_t m_slugs;
 	};
 }
