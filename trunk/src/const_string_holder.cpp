@@ -62,15 +62,21 @@ namespace stdex
         return true;
     }
     //////////////////////////////////////////////////////////////////////////
-    void const_string_holder::setup( const char * _data, size_t _size )
+    void const_string_holder::setup( const char * _data, size_t _size, bool _combine )
     {
         m_data = _data;
         m_hash = const_string_make_hash( m_data );
         m_size = _size;
+		m_combine = _combine;
     }
     //////////////////////////////////////////////////////////////////////////
     void const_string_holder::combine( const_string_holder * _holder )
     {
+		if( m_combine == false || _holder->m_combine == false )
+		{
+			return;
+		}
+
         if( m_owner->m_reference > _holder->m_owner->m_reference )
         {
             this->combine_from_( _holder, this );
