@@ -15,7 +15,8 @@ namespace stdex
             : m_reference(0)
             , m_data(nullptr)
             , m_hash(0)
-            , m_size(0)			
+            , m_size(0)
+			, m_combine(true)
         {
             m_owner = this;
         }
@@ -98,7 +99,7 @@ namespace stdex
         friend inline void intrusive_ptr_dec_ref( const_string_holder * _ptr );
 
     protected:
-        void setup( const char * _data, size_t _size );
+        void setup( const char * _data, size_t _size, bool _combine );
 
     protected:
         size_t m_reference;
@@ -109,6 +110,8 @@ namespace stdex
         hash_type m_hash;        
 
         mutable const_string_holder * m_owner;
+
+		bool m_combine;
     };
 	//////////////////////////////////////////////////////////////////////////
 	inline size_t const_string_make_hash( const char * _data )
