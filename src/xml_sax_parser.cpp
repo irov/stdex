@@ -91,9 +91,10 @@ namespace stdex
 					{
 						if( src[2] == 'b' && src[3] == 's' && src[4] == 'p' && src[5] == ';' )
 						{
-							*src = ' ';
-							strcpy( src + 1, src + 6 );
-							src += 1;
+							*(src + 0) = 0xC2;
+							*(src + 1) = 0xA0;
+							strcpy( src + 2, src + 6 );
+							src += 2;
 						}
 					}break;
 
