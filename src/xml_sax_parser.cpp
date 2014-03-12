@@ -87,6 +87,16 @@ namespace stdex
 						}
 					}break;
 
+				case 'n': // &nbsp;
+					{
+						if( src[2] == 'b' && src[3] == 's' && src[4] == 'p' && src[5] == ';' )
+						{
+							*src = ' ';
+							strcpy( src + 1, src + 6 );
+							src += 1;
+						}
+					}break;
+
 				case '#':
 					{
 						unsigned long code = 0;
