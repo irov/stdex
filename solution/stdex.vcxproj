@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\stdex\allocator.h" />
+    <ClInclude Include="..\include\stdex\array_string.h" />
     <ClInclude Include="..\include\stdex\auto_array.h" />
     <ClInclude Include="..\include\stdex\binary_vector.h" />
     <ClInclude Include="..\include\stdex\const_string.h" />
