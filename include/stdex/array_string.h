@@ -1,6 +1,9 @@
 #	pragma once
 
 #	include "stdex/const_string.h"
+
+#	include <string>
+#	include <memory.h>
 #	include <string.h>
 
 namespace stdex
