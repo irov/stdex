@@ -5,6 +5,10 @@ namespace stdex
     template<class T, size_t I>
     class static_array
     {
+	public:
+		typedef size_t size_type;
+		typedef T value_type;
+
     public:
         static_array()
         {
