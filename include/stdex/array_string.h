@@ -1,10 +1,13 @@
 #	pragma once
 
 #	include "stdex/const_string.h"
+#	include "stdex/memorycopy.h"
 
 #	include <string>
 #	include <memory.h>
 #	include <string.h>
+
+#	include <algorithm>
 
 namespace stdex
 {
@@ -36,7 +39,8 @@ namespace stdex
 				return;
 			}
 
-			memcpy( m_buffer + m_pos, _value, _size );
+			memorycopy( m_buffer + m_pos, _value, _size );
+
 			m_pos += _size;
 			m_buffer[m_pos] = 0;
 		}
@@ -86,7 +90,7 @@ namespace stdex
 				return;
 			}
 
-			memcpy( m_buffer + m_pos - size, _value, size );
+			memorycopy( m_buffer + m_pos - size, _value, size );			
 		}
 
 		void cut_before_last_of( char _ch )
