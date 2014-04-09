@@ -1,8 +1,10 @@
 #   include "stdex/allocator.h"
 #   include "stdex/pool.h"
+#	include "stdex/memorycopy.h"
 
 #   include <malloc.h>
 #   include <memory.h>
+
 
 #   ifndef stdex_allocator_malloc
 #   define stdex_allocator_malloc (::malloc)
@@ -192,7 +194,7 @@ namespace stdex
 
         void * new_mem = s_malloc( _size );
 
-        ::memcpy( new_mem, _mem, pool_size );
+		stdex::memorycopy( new_mem, _mem, pool_size );
         
         s_free( _mem );
         
