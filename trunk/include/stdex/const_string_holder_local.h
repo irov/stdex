@@ -9,7 +9,11 @@ namespace stdex
         : public const_string_holder
     {
 	public:
+		const_string_holder_local();
 		const_string_holder_local( const char * _data, size_t _size );
+
+	public:
+		void setup( const char * _data, size_t _size );
 
     protected:
         void _releaseString() override;
