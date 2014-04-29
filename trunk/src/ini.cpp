@@ -69,6 +69,11 @@ namespace stdex
 			return true;
 		}
 
+		if( trim_line[0] == '#' )
+		{
+			return true;
+		}
+
 		if( trim_line[0] == '[' && trim_line[len-1] == ']' )
 		{   
 			char name[64];
