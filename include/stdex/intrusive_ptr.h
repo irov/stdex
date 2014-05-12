@@ -21,11 +21,6 @@ namespace stdex
 			: m_ptr(nullptr)
 		{
 		}
-#	else
-		intrusive_ptr( int )
-			: m_ptr(nullptr)
-		{
-		}
 #	endif
 
 		intrusive_ptr( element_type * _ptr )
@@ -74,6 +69,8 @@ namespace stdex
 
 			return *this;
 		}
+
+		
 
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
 		intrusive_ptr & operator = ( nullptr_t )

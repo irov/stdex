@@ -6,6 +6,73 @@
 
 namespace stdex
 {
+	namespace helper
+	{
+		//////////////////////////////////////////////////////////////////////////
+		template<class C, class Key, class L>
+		inline size_t binary_vector_binary_lower_bound( const C & _container, const Key & _key, size_t _begin, size_t _count )
+		{
+			while( _count > 0 )
+			{				
+				size_t it = _begin; 
+				size_t step = _count / 2;
+				it += step;
+
+				const typename C::value_type & buffer_it = _container[it];
+
+				const Key & key_it = buffer_it.key;
+
+				if( L()( key_it, _key ) == true )
+				{
+					_begin = ++it;
+					_count -= step + 1;
+				}
+				else 
+				{
+					_count = step;
+				}
+			}
+
+			return _begin;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		template<class C, class Key, class L>
+		inline size_t binary_vector_binary_search( const C & _container, const Key & _key, size_t _begin, size_t _end )
+		{
+			while( _begin < _end )
+			{			
+				size_t middle = (_begin + _end) / 2;
+
+				const typename C::value_type & buffer_middle = _container[middle];
+
+				const Key & middle_key = buffer_middle.key;
+
+				if( L()( middle_key, _key ) == true )
+				{
+					_begin = middle + 1;
+				}
+				else
+				{
+					_end = middle;
+				}
+			}
+
+			if( _begin == _end )
+			{
+				const typename C::value_type & buffer_begin = _container[_begin];
+
+				const Key & begin_key = buffer_begin.key;
+
+				if( L()( _key, begin_key ) == false && L()( begin_key, _key ) == false )
+				{
+					return _begin;
+				}
+			}
+
+			return (size_t)-1;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	template<class Key, class T, class L = std::less<Key> >
 	class binary_vector
 	{
@@ -30,14 +97,84 @@ namespace stdex
 		typedef std::pair<iterator, bool> insert_type;
 
 	protected:
-		struct binary_vector_less
+		iterator binary_vector_binary_search( const Key & _key )
 		{
-		public:
-			bool operator () ( const binary_value_store_type & _left, const binary_value_store_type & _right ) const
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
 			{
-				return L()( _left.key, _right.key );
+				return m_buffer.end();
 			}
-		};
+			
+			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
+
+			if( index == (size_t)-1 )
+			{
+				return m_buffer.end();
+			}
+
+			iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
+
+		const_iterator binary_vector_binary_search( const Key & _key ) const
+		{
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
+			{
+				return m_buffer.end();
+			}
+
+			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
+
+			if( index == (size_t)-1 )
+			{
+				return m_buffer.end();
+			}
+
+			const_iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
+
+	protected:
+		iterator binary_vector_binary_lower_bound( const Key & _key )
+		{
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
+			{
+				return m_buffer.end();
+			}
+
+			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
+
+			iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
+
+		const_iterator binary_vector_binary_lower_bound( const Key & _key ) const
+		{
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
+			{
+				return m_buffer.end();
+			}
+
+			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
+
+			const_iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
 
 	public:
 		binary_vector()
@@ -156,12 +293,12 @@ namespace stdex
 	public:
 		insert_type insert( const Key & _key, const T & _value )
 		{
-			binary_value_store_type bvst = {_key, 0};
-			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), bvst, binary_vector_less() );
+			iterator it_lower_bound = this->binary_vector_binary_lower_bound( _key );
 
 			if( it_lower_bound != m_buffer.end() )
 			{
-				if( binary_vector_less()( bvst, *it_lower_bound ) == false )
+				const Key & lower_bound_key = it_lower_bound->key;
+				if( L()( _key, lower_bound_key ) == false )
 				{
 					insert_type ret = std::make_pair(it_lower_bound, false);
 
@@ -171,8 +308,7 @@ namespace stdex
 
 			size_t index = this->story_value_( _value );
 
-			bvst.index = index;
-
+			binary_value_store_type bvst = {_key, index};
 			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
 
 			insert_type ret = std::make_pair(it_insert, true);
@@ -269,17 +405,11 @@ namespace stdex
 	public:
 		iterator find( const Key & _key )
 		{
-			binary_value_store_type key_value = {_key, 0};
-			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
+			iterator it_lower_bound = this->binary_vector_binary_search( _key );
 
 			iterator it_end = this->end();
 			
 			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
-
-			if( binary_vector_less()( key_value, *it_lower_bound ) == true )
 			{
 				return it_end;
 			}
@@ -289,17 +419,11 @@ namespace stdex
 
 		const_iterator find( const Key & _key ) const
 		{
-			binary_value_store_type key_value = {_key, 0};
-			const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
+			const_iterator it_lower_bound = this->binary_vector_binary_search( _key );
 
 			const_iterator it_end = this->end();
 
 			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
-
-			if( binary_vector_less()( key_value, *it_lower_bound ) == true )
 			{
 				return it_end;
 			}
@@ -322,8 +446,13 @@ namespace stdex
 	class binary_vector<Key, T *, L>
 	{
 	public:
-		typedef std::pair<Key, T *> binary_pair_type;
-		typedef std::vector<binary_pair_type> buffer_type;
+		struct binary_value_store_type
+		{
+			Key key;
+			T * value;
+		};
+
+		typedef std::vector<binary_value_store_type> buffer_type;
 
 		typedef typename buffer_type::iterator iterator;
 		typedef typename buffer_type::const_iterator const_iterator;
@@ -331,20 +460,90 @@ namespace stdex
 		typedef std::pair<iterator, bool> insert_type;
 
 	protected:
-		struct binary_vector_less
+		iterator binary_vector_binary_search( const Key & _key )
 		{
-		public:
-			bool operator () ( const binary_pair_type & _left, const binary_pair_type & _right ) const
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
 			{
-				return L()( _left.first, _right.first );
+				return m_buffer.end();
 			}
-		};
+
+			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
+
+			if( index == (size_t)-1 )
+			{
+				return m_buffer.end();
+			}
+
+			iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
+
+		const_iterator binary_vector_binary_search( const Key & _key ) const
+		{
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
+			{
+				return m_buffer.end();
+			}
+
+			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
+
+			if( index == (size_t)-1 )
+			{
+				return m_buffer.end();
+			}
+
+			const_iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
+
+	protected:
+		iterator binary_vector_binary_lower_bound( const Key & _key )
+		{
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
+			{
+				return m_buffer.end();
+			}
+
+			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
+
+			iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
+
+		const_iterator binary_vector_binary_lower_bound( const Key & _key ) const
+		{
+			size_t count = m_buffer.size();
+
+			if( count == 0 )
+			{
+				return m_buffer.end();
+			}
+
+			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
+
+			const_iterator it = m_buffer.begin();
+			std::advance(it, index);
+
+			return it;
+		}
 
 	public:
 		binary_vector()
 		{
 		}
-
+		
 	public:
 		void reserve( size_t _size )
 		{
@@ -373,22 +572,22 @@ namespace stdex
 	public:
 		T * get_value( iterator _it ) const
 		{
-			return _it->second;
+			return _it->value;
 		}
 
 		T * get_value( const_iterator _it ) const
 		{
-			return _it->second;
+			return _it->value;
 		}
 
 		void set_value( iterator _it, T * _value )
 		{
-			_it->second = _value;
+			_it->value = _value;
 		}
 
 		const Key & get_key( const_iterator it ) const
 		{
-			return it->first;
+			return it->key;
 		}
 
 	public:
@@ -423,18 +622,20 @@ namespace stdex
 	public:
 		insert_type insert( const Key & _key, T * _value )
 		{
-			binary_pair_type pair = std::make_pair( _key, _value );
-			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), pair, binary_vector_less() );
+			iterator it_lower_bound = this->binary_vector_binary_lower_bound( _key );
 
 			if( it_lower_bound != m_buffer.end() )
 			{
-				if( binary_vector_less()( pair, *it_lower_bound ) == false )
+				if( L()( _key, it_lower_bound->key ) == false )
 				{
-					return std::make_pair(it_lower_bound, false);
+					insert_type ret = std::make_pair(it_lower_bound, false);
+
+					return ret;
 				}
 			}
 
-			iterator it_insert = m_buffer.insert( it_lower_bound, pair );
+			binary_value_store_type bvst = {_key, _value};
+			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
 
 			insert_type ret = std::make_pair(it_insert, true);
 
@@ -481,7 +682,7 @@ namespace stdex
 
 			if( _it != nullptr )
 			{
-				*_it = it_found->second;
+				*_it = it_found->value;
 			}
 
 			return true;
@@ -498,7 +699,7 @@ namespace stdex
 
 			if( _it != nullptr )
 			{
-				*_it = it_found->second;
+				*_it = it_found->value;
 			}
 
 			return true;
@@ -507,17 +708,11 @@ namespace stdex
 	public:
 		iterator find( const Key & _key )
 		{
-			binary_pair_type key_value = std::make_pair( _key, (T*)nullptr );
-			iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
+			iterator it_lower_bound = this->binary_vector_binary_search( _key );
 
 			iterator it_end = this->end();
 
 			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
-
-			if( binary_vector_less()( key_value, *it_lower_bound ) == true )
 			{
 				return it_end;
 			}
@@ -527,17 +722,11 @@ namespace stdex
 
 		const_iterator find( const Key & _key ) const
 		{
-			binary_pair_type key_value = std::make_pair( _key, (T*)nullptr );
-			const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), key_value, binary_vector_less() );
+			const_iterator it_lower_bound = this->binary_vector_binary_search( _key );
 
 			const_iterator it_end = this->end();
 
 			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
-
-			if( binary_vector_less()( key_value, *it_lower_bound ) == true )
 			{
 				return it_end;
 			}
