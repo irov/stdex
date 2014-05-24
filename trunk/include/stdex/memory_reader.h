@@ -18,18 +18,16 @@ namespace stdex
 	class memory_reader
 	{
 	public:
-		memory_reader( const unsigned char * _buff, size_t _size, size_t & _read )
+		memory_reader( const unsigned char * _buff, size_t _capacity, size_t & _read )
 			: m_buff(_buff)
-			, m_size(_size)
+			, m_capacity(_capacity)
 			, m_read(_read)
 		{
 		}
 
 	private:
-		memory_reader & operator = ( const memory_reader & _ar )
+		memory_reader & operator = ( const memory_reader & )
 		{
-			(void)_ar;
-
 			return *this;
 		}
 
@@ -42,7 +40,7 @@ namespace stdex
 		}
 
 		template<class T>
-		inline void readCount( T * _t, uint32_t _size )
+		inline void readCount( T * _t, size_t _size )
 		{
 			void * buff = (void *)(_t);
 			this->readBuffer( buff, sizeof(T) * _size );
@@ -51,9 +49,9 @@ namespace stdex
 	public:        
 		inline void readBuffer( void * _begin, size_t _size )
 		{
-			if( m_read + _size > m_size )
+			if( m_read + _size > m_capacity )
 			{
-				throw memory_reader_exception();
+				throw_memory_reader_exception();
 			}
 
 			const unsigned char * read_buff = m_buff + m_read;
@@ -97,7 +95,7 @@ namespace stdex
 
 	protected:
 		const unsigned char * m_buff;
-		size_t m_size;
+		size_t m_capacity;
 		size_t & m_read;
 	};
 }
