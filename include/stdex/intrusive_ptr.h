@@ -36,14 +36,14 @@ namespace stdex
             this->incref();
         }
         
-		intrusive_ptr(const intrusive_ptr & _rhs)
+		intrusive_ptr( const intrusive_ptr & _rhs )
 			: m_ptr(_rhs.get())
 		{
 			this->incref();
 		}
 
         template<class U>
-        intrusive_ptr(const intrusive_ptr<U> & _rhs)
+        intrusive_ptr( const intrusive_ptr<U> & _rhs )
             : m_ptr(static_cast<T *>(_rhs.get()))
         {
             this->incref();
@@ -228,38 +228,6 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	template<class T>
 	inline bool operator == ( const intrusive_ptr<T> & _left, nullptr_t )
-	{
-		const T * ptr = _left.get();
-
-		return ptr == nullptr;
-	}
-#	else
-	template<class T> 
-	inline bool operator != ( const intrusive_ptr<T> & _left, int )
-	{
-		const T * ptr = _left.get();
-
-		return ptr != nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator != ( int , const intrusive_ptr<T> & _right )
-	{
-		const T * ptr = intrusive_get<T *>(_right);
-
-		return ptr != nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator == ( int , const intrusive_ptr<T> & _right )
-	{
-		const T * ptr = intrusive_get<T *>(_right);
-
-		return ptr == nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T>
-	inline bool operator == ( const intrusive_ptr<T> & _left, int )
 	{
 		const T * ptr = _left.get();
 
