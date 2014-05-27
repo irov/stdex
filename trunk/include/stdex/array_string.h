@@ -32,6 +32,11 @@ namespace stdex
 		}
 
 	public:
+		void clear()
+		{
+			m_pos = 0;
+		}
+
 		void append( const char * _value, size_t _size )
 		{			
 			if( m_pos + _size >= Size )
