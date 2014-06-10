@@ -99,6 +99,7 @@
     <ClInclude Include="..\include\stdex\intrusive_slug_linked.h" />
     <ClInclude Include="..\include\stdex\intrusive_slug_list.h" />
     <ClInclude Include="..\include\stdex\intrusive_slug_list_size.h" />
+    <ClInclude Include="..\include\stdex\intrusive_splay_tree.h" />
     <ClInclude Include="..\include\stdex\memorycopy.h" />
     <ClInclude Include="..\include\stdex\memory_cache.h" />
     <ClInclude Include="..\include\stdex\pool.h" />
