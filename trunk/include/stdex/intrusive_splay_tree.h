@@ -28,7 +28,7 @@ namespace stdex
 		typedef typename T::key_getter_type key_getter_type;
 
 	protected:
-		struct key_getter_type_t
+		struct key_getter_type_cast
 		{
 			const key_type & operator () ( const node_type * _node ) const
 			{
@@ -44,11 +44,11 @@ namespace stdex
 		{
 		}
 
+	public:
 		bool insert( node_type * _node )
 		{
 			node_type * z = m_root;
 			node_type * p = nullptr;
-
 
 			bool less_z_node = false;
 
@@ -56,7 +56,7 @@ namespace stdex
 			{
 				p = z;
 
-				less_z_node = less_type()( key_getter_type_t()(z), key_getter_type_t()(_node) );
+				less_z_node = less_type()( key_getter_type_cast()(z), key_getter_type_cast()(_node) );
 
 				if( less_z_node == true )
 				{
@@ -76,7 +76,7 @@ namespace stdex
 			}
 
 			if( less_z_node == false && 
-				less_type()( key_getter_type_t()(_node), key_getter_type_t()(p) ) == false )
+				less_type()( key_getter_type_cast()(_node), key_getter_type_cast()(p) ) == false )
 			{
 				return false;
 			}
@@ -84,7 +84,7 @@ namespace stdex
 			z = _node;
 			z->parent = p;
 
-			if( less_type()( key_getter_type_t()(p), key_getter_type_t()(z) ) == true )
+			if( less_type()( key_getter_type_cast()(p), key_getter_type_cast()(z) ) == true )
 			{
 				p->right = z;
 			}
@@ -94,6 +94,31 @@ namespace stdex
 			}
 
 			return true;
+		}
+
+		bool exist( const key_type & key ) const
+		{
+			node_type * z = m_root;
+
+			while( z != nullptr )
+			{
+				if( less_type()( key_getter_type_cast()(z), key ) == true )
+				{
+					z = z->right;
+				}
+				else if( less_type()( key, key_getter_type_cast()(z) ) == true )
+				{
+					z = z->left;
+				}
+				else 
+				{
+					this->splay_( z );
+
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		T * find( const key_type & key ) 
@@ -214,11 +239,11 @@ namespace stdex
 
 			while( z != nullptr )
 			{
-				if( less_type()( key_getter_type_t()(z), key ) == true )
+				if( less_type()( key_getter_type_cast()(z), key ) == true )
 				{
 					z = z->right;
 				}
-				else if( less_type()( key, key_getter_type_t()(z) ) == true )
+				else if( less_type()( key, key_getter_type_cast()(z) ) == true )
 				{
 					z = z->left;
 				}
@@ -237,11 +262,11 @@ namespace stdex
 
 			while( z != nullptr )
 			{
-				if( less_type()( key_getter_type_t()(z), key ) == true )
+				if( less_type()( key_getter_type_cast()(z), key ) == true )
 				{
 					z = z->right;
 				}
-				else if( less_type()( key, key_getter_type_t()(z) ) == true )
+				else if( less_type()( key, key_getter_type_cast()(z) ) == true )
 				{
 					z = z->left;
 				}
