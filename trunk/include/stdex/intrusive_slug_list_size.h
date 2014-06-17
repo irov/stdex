@@ -328,15 +328,13 @@ namespace stdex
 	public:
 		inline void push_front( linked_type * _node )
 		{	
-            iterator it = this->pure_begin_();
-
+            iterator it = this->begin();
 			this->insert_( it, _node );
 		}
 
 		inline void pop_front()
 		{	
             iterator it = this->begin();
-
 			this->erase( it );
 		}
 
@@ -386,8 +384,8 @@ namespace stdex
 			if( it != this->end() )
 			{	
 				linked_type * node = it.get();
-				node->unlink();
-				--m_size;
+
+				this->remove( node );
 			}
 
 			return (_where);
@@ -428,6 +426,11 @@ namespace stdex
 			return m_slugs;
 		}
 
+		linked_type * head() const
+		{
+			return &m_head;
+		}
+
 	protected:
 		inline void insert_( iterator _where, linked_type * _node )
 		{	
@@ -435,12 +438,6 @@ namespace stdex
 			linked->link_before( _node );
 			++m_size;
 		}
-
-	public:
-        inline iterator pure_begin_()
-        {
-            return iterator(m_head.m_right, true);
-        }
 
 	protected:
 		mutable linked_type m_head;
