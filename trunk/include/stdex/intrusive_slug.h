@@ -38,18 +38,18 @@ namespace stdex
 
 			linked_type * head = m_list.head();
 
-			if( pos_right == head )
-			{
-				m_eof = true;
-				return;
-			}
-
 			linked_type * pos_right_adapt_right_adapt = nullptr;
 
 			size_t countSlugs = m_list.countSlugs();
 
 			if( countSlugs == 1 )
 			{
+				if( pos_right == head )
+				{
+					m_eof = true;
+					return;
+				}
+
 				pos_right_adapt_right_adapt = pos_right->right();
 			}
 			else
