@@ -40,7 +40,7 @@ namespace stdex
 		}
 
 		template<class T>
-		inline void writeCount( const T * _t, size_t _size )
+		inline void writePODs( const T * _t, size_t _size )
 		{
 			const void * buff = (void *)(_t);
 			this->writeBuffer( buff, sizeof(T) * _size );
@@ -89,6 +89,13 @@ namespace stdex
 		inline void skip( size_t _size )
 		{
 			m_write += _size;
+		}
+
+	public:
+		template<class T>
+		void operator << ( const T & _t )
+		{
+			this->writePOD( _t );
 		}
 
 	protected:
