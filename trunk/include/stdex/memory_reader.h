@@ -40,7 +40,7 @@ namespace stdex
 		}
 
 		template<class T>
-		inline void readCount( T * _t, size_t _size )
+		inline void readPODs( T * _t, size_t _size )
 		{
 			void * buff = (void *)(_t);
 			this->readBuffer( buff, sizeof(T) * _size );
@@ -91,6 +91,13 @@ namespace stdex
 		inline void skip( size_t _size )
 		{
 			m_read += _size;
+		}
+
+	public:
+		template<class T>
+		void operator << ( T & _t )
+		{
+			this->readPOD( _t );
 		}
 
 	protected:
