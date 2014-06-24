@@ -163,8 +163,6 @@ namespace stdex
 				return;
 			}
 
-			this->splay_( z );
-
 			if( z->left == nullptr )
 			{
 				this->replace_( z, z->right );
