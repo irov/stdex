@@ -41,6 +41,7 @@ namespace stdex
 	public:
 		intrusive_splay_tree()
 			: m_root(nullptr)
+			, m_lock(false)
 		{
 		}
 
@@ -162,6 +163,8 @@ namespace stdex
 				return;
 			}
 
+			this->splay_( z );
+
 			if( z->left == nullptr )
 			{
 				this->replace_( z, z->right );
@@ -207,7 +210,11 @@ namespace stdex
 				return;
 			}
 
+			m_lock = true;
+
 			this->foreach_node_( m_root, f );
+
+			m_lock = false;
 		}
 
 	protected:
@@ -339,6 +346,11 @@ namespace stdex
 
 		void splay_( const node_type * x ) const
 		{
+			if( m_lock == true )
+			{
+				return;
+			}
+
 			while( x->parent != nullptr)
 			{
 				if( x->parent->parent == nullptr )
@@ -408,5 +420,6 @@ namespace stdex
 
 	protected:
 		mutable node_type * m_root;
+		mutable bool m_lock;
 	};
 }
