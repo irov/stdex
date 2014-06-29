@@ -357,11 +357,11 @@ namespace stdex
 				return;
 			}
 
-			_end->m_left->m_right = 0;
+			_end->m_left->m_right = nullptr;
 			_end->m_left = _begin->m_left;
 
 			_begin->m_left->m_right = *_end;
-			_begin->m_left = 0;
+			_begin->m_left = nullptr;
 
 			_begin->linkall( *_where );
 		}

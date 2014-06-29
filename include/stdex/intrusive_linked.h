@@ -115,7 +115,7 @@ namespace stdex
 		{
 			linked_type * other_right = _other->m_right;
 
-			if( m_left )
+			if( m_left != nullptr )
 			{
 				linked_type * left = this->leftcast();
 
@@ -128,7 +128,7 @@ namespace stdex
 				_other->m_right = (this);
 			}
 
-			if( m_right )
+			if( m_right != nullptr )
 			{
 				if( other_right )
 				{
@@ -166,14 +166,16 @@ namespace stdex
 		void foreach_other( F _pred ) const
 		{
 			linked_type * it_right = m_right;
-			while( it_right )
+
+			while( it_right != nullptr )
 			{
 				_pred( it_right );
 				it_right = it_right->m_right;
 			}
 
 			linked_type * it_left = m_left;
-			while( it_left )
+
+			while( it_left != nullptr )
 			{
 				_pred( (it_left) );
 				it_left = it_left->m_left;
@@ -185,7 +187,7 @@ namespace stdex
 		{
 			linked_type * node_found = this->find_self( _pred );
 
-			if( node_found )
+			if( node_found != nullptr )
 			{
 				return node_found;
 			}
@@ -198,7 +200,7 @@ namespace stdex
 		template<class F>
 		const linked_type * find_self( F _pred ) const
 		{
-			if( _pred(this) == true )
+			if( _pred( this ) == true )
 			{
 				return this;
 			}
@@ -210,9 +212,10 @@ namespace stdex
 		const linked_type * find_other( F _pred ) const
 		{
 			linked_type * it_right = m_right;
-			while( it_right )
+
+			while( it_right != nullptr )
 			{
-				if( _pred( it_right ) )
+				if( _pred( it_right ) == true )
 				{
 					return this;
 				}
@@ -221,9 +224,10 @@ namespace stdex
 			}
 
 			linked_type * it_left = m_left;
-			while( it_left )
+
+			while( it_left != nullptr )
 			{
-				if( _pred( it_left ) )
+				if( _pred( it_left ) == true )
 				{
 					return this;
 				}
