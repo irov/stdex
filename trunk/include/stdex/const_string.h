@@ -24,11 +24,13 @@ namespace stdex
 		}
 
 	public:
-		typedef const_string_holder::size_type size_type;
-		typedef const_string_holder::hash_type hash_type;
+		typedef const_string_holder holder;
+
+		typedef holder::size_type size_type;
+		typedef holder::hash_type hash_type;		
 
 	public:
-		explicit const_string( const_string_holder * _holder )
+		explicit const_string( holder * _holder )
 			: m_holder(_holder)
 		{
 
@@ -149,8 +151,8 @@ namespace stdex
 		};
 
 	protected:
-		typedef intrusive_ptr<const_string_holder> t_const_string_holder_ptr;
-		t_const_string_holder_ptr m_holder;
+		typedef intrusive_ptr<holder> holder_ptr;
+		holder_ptr m_holder;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	bool operator == ( const const_string & _left, const char * _right );

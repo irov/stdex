@@ -154,40 +154,34 @@ namespace stdex
 			return t;
 		}
 
-		void erase( const key_type & key ) 
+		bool erase( const key_type & key ) 
 		{
 			node_type * z = this->find_node_( key );
 
 			if( z == nullptr )
 			{
-				return;
+				return false;
 			}
 
-			if( z->left == nullptr )
+			this->erase_( z );
+
+			return true;
+		}
+
+		T * pop( const key_type & key )
+		{
+			node_type * z = this->find_node_( key );
+
+			if( z == nullptr )
 			{
-				this->replace_( z, z->right );
+				return nullptr;
 			}
-			else if( z->right == nullptr )
-			{
-				this->replace( z, z->left );
-			}
-			else 
-			{
-				node_type * y = this->subtree_minimum_( z->right );
 
-				if( y->parent != z ) 
-				{
-					this->replace_( y, y->right );
+			this->erase_( z );
 
-					y->right = z->right;
-					y->right->parent = y;
-				}
+			T * t = static_cast<T *>(z);
 
-				this->replace_( z, y );
-
-				y->left = z->left;
-				y->left->parent = y;
-			}
+			return t;
 		}
 		
 		bool empty() const 
@@ -260,7 +254,7 @@ namespace stdex
 
 			return nullptr;
 		}
-
+		
 		const node_type * find_node_( const key_type & key ) const
 		{
 			const node_type * z = m_root;
@@ -282,6 +276,35 @@ namespace stdex
 			}
 
 			return nullptr;
+		}
+
+		void erase_( node_type * z )
+		{
+			if( z->left == nullptr )
+			{
+				this->replace_( z, z->right );
+			}
+			else if( z->right == nullptr )
+			{
+				this->replace( z, z->left );
+			}
+			else 
+			{
+				node_type * y = this->subtree_minimum_( z->right );
+
+				if( y->parent != z ) 
+				{
+					this->replace_( y, y->right );
+
+					y->right = z->right;
+					y->right->parent = y;
+				}
+
+				this->replace_( z, y );
+
+				y->left = z->left;
+				y->left->parent = y;
+			}
 		}
 
 		void left_rotate_( node_type * x ) const

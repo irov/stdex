@@ -23,15 +23,15 @@ namespace stdex
 		}
 #	endif
 
-		intrusive_ptr( element_type * _ptr )
-			: m_ptr(_ptr)
+		intrusive_ptr( const element_type * _ptr )
+			: m_ptr(const_cast<element_type * >(_ptr))
 		{
 			this->incref();
 		}
 
 		template<class U>
-		intrusive_ptr( U * _ptr )
-			: m_ptr(static_cast<element_type *>(_ptr))
+		intrusive_ptr( const U * _ptr )
+			: m_ptr(static_cast<element_type *>(const_cast<U *>(_ptr)))
 		{
 			this->incref();
 		}
@@ -105,7 +105,7 @@ namespace stdex
 		{
 			if( m_ptr != nullptr ) 
 			{
-				intrusive_ptr_add_ref( m_ptr );
+				T::intrusive_ptr_add_ref( m_ptr );
 			}
 		}
 
@@ -113,7 +113,7 @@ namespace stdex
 		{
 			if( m_ptr != nullptr )
 			{
-				intrusive_ptr_dec_ref( m_ptr );
+				T::intrusive_ptr_dec_ref( m_ptr );
 			}
 		}
 
