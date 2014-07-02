@@ -20,10 +20,11 @@ namespace stdex
 			this->unlink();
 		}
 
-    private:
+    public:
         intrusive_linked & operator = ( const intrusive_linked & _linked )
         {
-            (void)_linked;
+            m_right = _linked.m_right;
+			m_left = _linked.m_left;
 
             return *this;
         }
