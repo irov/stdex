@@ -93,10 +93,12 @@ namespace stdex
         void combine_owner_( const_string_holder * _out );
         void combine_other_( const_string_holder * _out );
         void combine_from_( const_string_holder * _from, const_string_holder * _out );
-
+		
     protected:
-        friend inline void intrusive_ptr_add_ref( const_string_holder * _ptr );
-        friend inline void intrusive_ptr_dec_ref( const_string_holder * _ptr );
+		friend class stdex::intrusive_ptr<const_string_holder>;
+
+        inline static void intrusive_ptr_add_ref( const_string_holder * _ptr );
+        inline static void intrusive_ptr_dec_ref( const_string_holder * _ptr );
 
     protected:
         void setup( const char * _data, size_t _size, bool _combine );
@@ -130,13 +132,13 @@ namespace stdex
 		return hash;			 
 	}
     //////////////////////////////////////////////////////////////////////////
-    inline void intrusive_ptr_add_ref( const_string_holder * _ptr )
+	inline void const_string_holder::intrusive_ptr_add_ref( const_string_holder * _ptr )
     {
         ++_ptr->m_reference;
         ++_ptr->m_owner->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
-    inline void intrusive_ptr_dec_ref( const_string_holder * _ptr )
+    inline void const_string_holder::intrusive_ptr_dec_ref( const_string_holder * _ptr )
     {
         if( --_ptr->m_owner->m_reference == 0 )
         {
