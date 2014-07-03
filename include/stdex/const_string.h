@@ -144,7 +144,7 @@ namespace stdex
 
 		struct less_type
 		{
-			bool operator () ( const stdex::const_string & _left, const stdex::const_string & _right )
+			bool operator () ( const stdex::const_string & _left, const stdex::const_string & _right ) const
 			{
 				return _left < _right;
 			}
