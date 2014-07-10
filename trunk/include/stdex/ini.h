@@ -2,8 +2,12 @@
 
 #   include <stddef.h>
 
+#	ifndef STDEX_INI_MAX_SETTINGS
+#	define STDEX_INI_MAX_SETTINGS 256
+#	endif
+
 namespace stdex
-{    
+{   
 	//////////////////////////////////////////////////////////////////////////
 	class ini
 	{
@@ -23,9 +27,11 @@ namespace stdex
 		size_t countSettingValues( const char * _section, const char * _key ) const;
 		const char * getSettingValues( const char * _section, const char * _key, size_t _index ) const;
 
-	public:
-		size_t countSettings( const char * _section ) const;
+	public:		
+		bool addSetting( const char * _section, const char * _key, const char * _value );
+		bool mergeSetting( const char * _section, const char * _key, const char * _value );
 		bool getSettings( const char * _section, size_t _index, const char ** _key, const char ** _value ) const;
+		size_t countSettings( const char * _section ) const;
 
 	protected:
 		bool loadLine_( char * _buf );       
@@ -40,7 +46,7 @@ namespace stdex
 			const char * value;
 		};
 
-		Setting m_settings[256];
+		Setting m_settings[STDEX_INI_MAX_SETTINGS];
 		size_t m_settingsCount;
 	};
 }

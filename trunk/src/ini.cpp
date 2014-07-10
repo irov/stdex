@@ -113,15 +113,9 @@ namespace stdex
 			value_str[value_len] = '\0';
 			s_rtrim( value_str );
 
-			Setting & setting = m_settings[m_settingsCount];
+			bool successful = this->addSetting( m_currentSection, key_str, value_str );
 
-			setting.section = m_currentSection;
-			setting.key = key_str;
-			setting.value = value_str;
-
-			++m_settingsCount;
-
-			return true;
+			return successful;
 		}
 
 		if( sscanf( trim_line, "%[^=] =", key ) == 1 )
@@ -131,15 +125,9 @@ namespace stdex
 			key_str[key_len] = '\0';
 			s_rtrim( key_str );
 
-			Setting & setting = m_settings[m_settingsCount];
-
-			setting.section = m_currentSection;
-			setting.key = key_str;
-			setting.value = key_str + key_len;
-
-			++m_settingsCount;
-
-			return true;
+			bool successful = this->addSetting( m_currentSection, key_str, key_str + key_len );
+						
+			return successful;
 		}
 
 		return false;
@@ -260,6 +248,61 @@ namespace stdex
 		}
 
 		return count;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	bool ini::addSetting( const char * _section, const char * _key, const char * _value )
+	{
+		Setting & setting = m_settings[m_settingsCount];
+
+		setting.section = _section;
+		setting.key = _key;
+		setting.value = _value;
+
+		++m_settingsCount;
+
+		if( m_settingsCount == STDEX_INI_MAX_SETTINGS )
+		{
+			return false;
+		}
+
+		return true;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	bool ini::mergeSetting( const char * _section, const char * _key, const char * _value )
+	{
+		for( size_t index = 0; index != m_settingsCount; ++index )
+		{
+			Setting & setting = m_settings[index];
+
+			if( strcmp( setting.section, _section ) != 0 )
+			{
+				continue;
+			}
+
+			if( strcmp( setting.key, _key ) != 0 )
+			{
+				continue;
+			}
+
+			setting.value = _value;
+
+			return true;
+		}
+
+		Setting & setting = m_settings[m_settingsCount];
+
+		setting.section = _section;
+		setting.key = _key;
+		setting.value = _value;
+
+		++m_settingsCount;
+
+		if( m_settingsCount == STDEX_INI_MAX_SETTINGS )
+		{
+			return false;
+		}
+
+		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	bool ini::getSettings( const char * _section, size_t _index, const char ** _key, const char ** _value ) const
