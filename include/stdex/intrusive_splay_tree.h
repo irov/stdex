@@ -12,16 +12,260 @@ namespace stdex
 		{
 		}
 
-		intrusive_splay_node<T> * parent;
-		intrusive_splay_node<T> * left;
-		intrusive_splay_node<T> * right;
+		intrusive_splay_node * parent;
+		intrusive_splay_node * left;
+		intrusive_splay_node * right;
 	};
 
-	template<class T>
+	namespace detail
+	{
+		template<class T>
+		class intrusive_splay_tree_base
+		{
+		public:
+			typedef intrusive_splay_node<T> node_type;
+
+		public:
+			template<bool v>
+			struct policy_splay;
+
+			template<>
+			struct policy_splay<true>
+			{
+				void operator () ( const class detail::intrusive_splay_tree_base<T> * _tree, const stdex::intrusive_splay_node<T> * _node ) const
+				{
+					_tree->splay_( _node );
+				}
+			};
+
+			template<>
+			struct policy_splay<false>
+			{
+				void operator () ( const class detail::intrusive_splay_tree_base<T> * _tree, const stdex::intrusive_splay_node<T> * _node ) const
+				{
+					(void)_tree;
+					(void)_node;
+					//Empty
+				}
+			};
+
+		public:
+			intrusive_splay_tree_base()
+				: m_root(nullptr)
+				, m_lock(false)
+			{
+			}
+
+		public:
+			bool empty() const 
+			{ 
+				return m_root == nullptr;
+			}
+
+			void clear()
+			{
+				m_root = nullptr;
+			}
+
+		protected:
+			inline node_type * getRoot_() const
+			{
+				return m_root;
+			}
+
+			inline void setRoot_( node_type * _node ) const
+			{
+				m_root = _node;
+			}
+
+			inline void lockSplay_() const
+			{
+				m_lock = true;
+			}
+
+			inline void unlockSplay_() const
+			{
+				m_lock = false;
+			}
+
+		protected:
+			void erase_( node_type * z )
+			{
+				if( z->left == nullptr )
+				{
+					this->replace_( z, z->right );
+				}
+				else if( z->right == nullptr )
+				{
+					this->replace_( z, z->left );
+				}
+				else 
+				{
+					node_type * y = this->subtree_minimum_( z->right );
+
+					if( y->parent != z ) 
+					{
+						this->replace_( y, y->right );
+
+						y->right = z->right;
+						y->right->parent = y;
+					}
+
+					this->replace_( z, y );
+
+					y->left = z->left;
+					y->left->parent = y;
+				}
+			}
+
+			void left_rotate_( node_type * x ) const
+			{
+				node_type * y = x->right;
+				x->right = y->left;
+
+				if( y->left != nullptr ) 
+				{
+					y->left->parent = x;
+				}
+
+				y->parent = x->parent;
+
+				if( x->parent == nullptr ) 
+				{
+					m_root = y;
+				}
+				else if( x == x->parent->left ) 
+				{
+					x->parent->left = y;
+				}
+				else 
+				{
+					x->parent->right = y;
+				}
+
+				y->left = x;
+				x->parent = y;
+			}
+
+			void right_rotate_( node_type * x ) const
+			{
+				node_type * y = x->left;
+				x->left = y->right;
+
+				if( y->right != nullptr ) 
+				{
+					y->right->parent = x;
+				}
+
+				y->parent = x->parent;
+
+				if( x->parent == nullptr )
+				{
+					m_root = y;
+				}
+				else if( x == x->parent->left )
+				{
+					x->parent->left = y;
+				}
+				else 
+				{
+					x->parent->right = y;
+				}
+
+				y->right = x;
+				x->parent = y;
+			}
+
+			void splay_( const node_type * x ) const
+			{
+				if( m_lock == true )
+				{
+					return;
+				}
+
+				while( x->parent != nullptr)
+				{
+					if( x->parent->parent == nullptr )
+					{
+						if( x->parent->left == x ) 
+						{
+							this->right_rotate_( x->parent );
+						}
+						else 
+						{
+							this->left_rotate_( x->parent );
+						}
+					} 
+					else if( x->parent->left == x && x->parent->parent->left == x->parent ) 
+					{
+						this->right_rotate_( x->parent->parent );
+						this->right_rotate_( x->parent );
+					} 
+					else if( x->parent->right == x && x->parent->parent->right == x->parent ) 
+					{
+						this->left_rotate_( x->parent->parent );
+						this->left_rotate_( x->parent );
+					} 
+					else if( x->parent->left == x && x->parent->parent->right == x->parent ) 
+					{
+						this->right_rotate_( x->parent );
+						this->left_rotate_( x->parent );
+					} 
+					else 
+					{
+						this->left_rotate_( x->parent );
+						this->right_rotate_( x->parent );
+					}
+				}
+			}
+
+			void replace_( node_type * u, node_type * v ) const
+			{
+				if( u->parent == nullptr )
+				{
+					m_root = v;
+				}
+				else if( u == u->parent->left )
+				{
+					u->parent->left = v;
+				}
+				else 
+				{
+					u->parent->right = v;
+				}
+
+				if( v != nullptr )
+				{
+					v->parent = u->parent;
+				}
+			}
+
+			node_type * subtree_minimum_( node_type * u ) const
+			{
+				while( u->left != nullptr )
+				{
+					u = u->left;
+				}
+
+				return u;
+			}
+
+		protected:
+			mutable node_type * m_root;
+			mutable bool m_lock;
+		};
+	}
+
+	template<class T
+		, bool enableSplayFind = false
+		, bool enableSplayModify = true>
 	class intrusive_splay_tree
+		: public detail::intrusive_splay_tree_base<T>
 	{
 	public:
-		typedef intrusive_splay_node<T> node_type;
+		typedef typename detail::intrusive_splay_tree_base<T>::node_type node_type;
+		typedef typename detail::intrusive_splay_tree_base<T>::policy_splay<enableSplayFind> SplayFind;
+		typedef typename detail::intrusive_splay_tree_base<T>::policy_splay<enableSplayModify> SplayModify;
 
 		typedef typename T::key_type key_type;
 		typedef typename T::less_type less_type;
@@ -40,15 +284,13 @@ namespace stdex
 
 	public:
 		intrusive_splay_tree()
-			: m_root(nullptr)
-			, m_lock(false)
 		{
 		}
 
 	public:
 		bool insert( node_type * _node )
 		{
-			node_type * z = m_root;
+			node_type * z = this->getRoot_();
 			node_type * p = nullptr;
 
 			bool less_z_node = false;
@@ -71,7 +313,7 @@ namespace stdex
 
 			if( p == nullptr )
 			{
-				m_root = _node;
+				this->setRoot_( _node );
 
 				return true;
 			}
@@ -94,12 +336,14 @@ namespace stdex
 				p->left = z;
 			}
 
+			SplayModify()( this, _node );
+
 			return true;
 		}
 
 		bool exist( const key_type & key ) const
 		{
-			node_type * z = m_root;
+			const node_type * z = this->getRoot_();
 
 			while( z != nullptr )
 			{
@@ -113,7 +357,7 @@ namespace stdex
 				}
 				else 
 				{
-					this->splay_( z );
+					SplayFind()( this, z );
 
 					return true;
 				}
@@ -131,7 +375,7 @@ namespace stdex
 				return nullptr;
 			}
 
-			this->splay_( z );
+			SplayFind()( this, z );
 
 			T * t = static_cast<T *>(z);
 
@@ -147,7 +391,7 @@ namespace stdex
 				return nullptr;
 			}
 
-			this->splay_( z );
+			SplayFind()( this, z );
 
 			const T * t = static_cast<const T *>(z);
 
@@ -163,6 +407,8 @@ namespace stdex
 				return false;
 			}
 
+			SplayModify()( this, z );
+
 			this->erase_( z );
 
 			return true;
@@ -177,36 +423,30 @@ namespace stdex
 				return nullptr;
 			}
 
+			SplayModify()( this, z );
+
 			this->erase_( z );
 
 			T * t = static_cast<T *>(z);
 
 			return t;
 		}
-		
-		bool empty() const 
-		{ 
-			return m_root == nullptr;
-		}
-
-		void clear()
-		{
-			m_root = nullptr;
-		}
 
 		template<class F>
 		void foreach( F f ) const
 		{
-			if( m_root == nullptr )
+			node_type * root = this->getRoot_();
+
+			if( root == nullptr )
 			{
 				return;
 			}
 
-			m_lock = true;
+			this->lockSplay_();
 
-			this->foreach_node_( m_root, f );
+			this->foreach_node_( root, f );
 
-			m_lock = false;
+			this->unlockSplay_();				
 		}
 
 	protected:
@@ -234,7 +474,7 @@ namespace stdex
 	protected:
 		node_type * find_node_( const key_type & key )
 		{
-			node_type * z = m_root;
+			node_type * z = this->getRoot_();
 
 			while( z != nullptr )
 			{
@@ -254,10 +494,10 @@ namespace stdex
 
 			return nullptr;
 		}
-		
+
 		const node_type * find_node_( const key_type & key ) const
 		{
-			const node_type * z = m_root;
+			const node_type * z = this->getRoot_();
 
 			while( z != nullptr )
 			{
@@ -277,170 +517,5 @@ namespace stdex
 
 			return nullptr;
 		}
-
-		void erase_( node_type * z )
-		{
-			if( z->left == nullptr )
-			{
-				this->replace_( z, z->right );
-			}
-			else if( z->right == nullptr )
-			{
-				this->replace( z, z->left );
-			}
-			else 
-			{
-				node_type * y = this->subtree_minimum_( z->right );
-
-				if( y->parent != z ) 
-				{
-					this->replace_( y, y->right );
-
-					y->right = z->right;
-					y->right->parent = y;
-				}
-
-				this->replace_( z, y );
-
-				y->left = z->left;
-				y->left->parent = y;
-			}
-		}
-
-		void left_rotate_( node_type * x ) const
-		{
-			node_type * y = x->right;
-			x->right = y->left;
-
-			if( y->left != nullptr ) 
-			{
-				y->left->parent = x;
-			}
-
-			y->parent = x->parent;
-
-			if( x->parent == nullptr ) 
-			{
-				m_root = y;
-			}
-			else if( x == x->parent->left ) 
-			{
-				x->parent->left = y;
-			}
-			else 
-			{
-				x->parent->right = y;
-			}
-
-			y->left = x;
-			x->parent = y;
-		}
-
-		void right_rotate_( node_type * x ) const
-		{
-			node_type * y = x->left;
-			x->left = y->right;
-
-			if( y->right != nullptr ) 
-			{
-				y->right->parent = x;
-			}
-
-			y->parent = x->parent;
-
-			if( x->parent == nullptr )
-			{
-				m_root = y;
-			}
-			else if( x == x->parent->left )
-			{
-				x->parent->left = y;
-			}
-			else 
-			{
-				x->parent->right = y;
-			}
-
-			y->right = x;
-			x->parent = y;
-		}
-
-		void splay_( const node_type * x ) const
-		{
-			if( m_lock == true )
-			{
-				return;
-			}
-
-			while( x->parent != nullptr)
-			{
-				if( x->parent->parent == nullptr )
-				{
-					if( x->parent->left == x ) 
-					{
-						this->right_rotate_( x->parent );
-					}
-					else 
-					{
-						this->left_rotate_( x->parent );
-					}
-				} 
-				else if( x->parent->left == x && x->parent->parent->left == x->parent ) 
-				{
-					this->right_rotate_( x->parent->parent );
-					this->right_rotate_( x->parent );
-				} 
-				else if( x->parent->right == x && x->parent->parent->right == x->parent ) 
-				{
-					this->left_rotate_( x->parent->parent );
-					this->left_rotate_( x->parent );
-				} 
-				else if( x->parent->left == x && x->parent->parent->right == x->parent ) 
-				{
-					this->right_rotate_( x->parent );
-					this->left_rotate_( x->parent );
-				} 
-				else 
-				{
-					this->left_rotate_( x->parent );
-					this->right_rotate_( x->parent );
-				}
-			}
-		}
-
-		void replace_( node_type * u, node_type * v ) const
-		{
-			if( u->parent == nullptr )
-			{
-				m_root = v;
-			}
-			else if( u == u->parent->left )
-			{
-				u->parent->left = v;
-			}
-			else 
-			{
-				u->parent->right = v;
-			}
-
-			if( v != nullptr )
-			{
-				v->parent = u->parent;
-			}
-		}
-
-		node_type * subtree_minimum_( node_type * u ) const
-		{
-			while( u->left != nullptr )
-			{
-				u = u->left;
-			}
-
-			return u;
-		}
-
-	protected:
-		mutable node_type * m_root;
-		mutable bool m_lock;
 	};
 }
