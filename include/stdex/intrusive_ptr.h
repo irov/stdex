@@ -11,50 +11,50 @@ namespace stdex
 		typedef T element_type;
 
 	public:
-		intrusive_ptr()
+		inline intrusive_ptr()
 			: m_ptr(nullptr)
 		{
 		}
 
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
-		intrusive_ptr( nullptr_t )
+		inline intrusive_ptr( nullptr_t )
 			: m_ptr(nullptr)
 		{
 		}
 #	endif
 
-		intrusive_ptr( const element_type * _ptr )
+		inline intrusive_ptr( const element_type * _ptr )
 			: m_ptr(const_cast<element_type * >(_ptr))
 		{
 			this->incref();
 		}
 
 		template<class U>
-		intrusive_ptr( const U * _ptr )
+		inline intrusive_ptr( const U * _ptr )
 			: m_ptr(static_cast<element_type *>(const_cast<U *>(_ptr)))
 		{
 			this->incref();
 		}
 
-		intrusive_ptr( const intrusive_ptr & _rhs )
+		inline intrusive_ptr( const intrusive_ptr & _rhs )
 			: m_ptr(_rhs.get())
 		{
 			this->incref();
 		}
 
 		template<class U>
-		intrusive_ptr( const intrusive_ptr<U> & _rhs )
+		inline intrusive_ptr( const intrusive_ptr<U> & _rhs )
 			: m_ptr(static_cast<T *>(_rhs.get()))
 		{
 			this->incref();
 		}
 
-		~intrusive_ptr()
+		inline ~intrusive_ptr()
 		{
 			this->decref();
 		}
 
-		intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
+		inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
 		{
 			intrusive_ptr swap_ptr(_rhs);
 			swap_ptr.swap( *this );
@@ -62,7 +62,7 @@ namespace stdex
 			return *this;
 		}
 
-		intrusive_ptr & operator = ( element_type * _rhs )
+		inline intrusive_ptr & operator = ( element_type * _rhs )
 		{
 			intrusive_ptr swap_ptr(_rhs);
 			swap_ptr.swap( *this );
@@ -73,7 +73,7 @@ namespace stdex
 
 
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
-		intrusive_ptr & operator = ( nullptr_t )
+		inline intrusive_ptr & operator = ( nullptr_t )
 		{
 			intrusive_ptr swap_ptr;
 			swap_ptr.swap( *this );
@@ -83,17 +83,17 @@ namespace stdex
 #	endif
 
 	public:
-		element_type * get() const
+		inline element_type * get() const
 		{
 			return m_ptr;
 		}
 
-		element_type * operator -> () const
+		inline element_type * operator -> () const
 		{
 			return m_ptr;
 		}
 
-		void swap( intrusive_ptr & _rhs )
+		inline void swap( intrusive_ptr & _rhs )
 		{
 			T * tmp = m_ptr;
 			m_ptr = _rhs.m_ptr;
@@ -101,7 +101,7 @@ namespace stdex
 		}
 
 	protected:
-		void incref()
+		inline void incref()
 		{
 			if( m_ptr != nullptr ) 
 			{
@@ -109,7 +109,7 @@ namespace stdex
 			}
 		}
 
-		void decref()
+		inline void decref()
 		{
 			if( m_ptr != nullptr )
 			{
@@ -159,6 +159,24 @@ namespace stdex
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
+	inline bool operator < ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+	{
+		const T * l = _left.get();
+		const T * r = _right.get();
+
+		return l < r;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T> 
+	inline bool operator > ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+	{
+		const T * l = _left.get();
+		const T * r = _right.get();
+
+		return l > r;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T> 
 	inline bool operator == ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
 	{
 		const T * l = _left.get();
@@ -178,7 +196,7 @@ namespace stdex
 	{
 		const T * ptr = _left.get();
 
-		return ptr != static_cast<T *>(_right);
+		return ptr != static_cast<const T *>(_right);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class T, class U> 

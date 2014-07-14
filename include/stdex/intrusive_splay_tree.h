@@ -15,6 +15,24 @@ namespace stdex
 		intrusive_splay_node * parent;
 		intrusive_splay_node * left;
 		intrusive_splay_node * right;
+
+		template<class K>
+		struct less_type
+		{
+			bool operator() ( const K & _l, const K & _r ) const
+			{
+				return _l < _r;
+			}
+		};
+
+		template<class K>
+		struct less_type<K *>
+		{
+			bool operator() ( const K * _l, const K * _r ) const
+			{
+				return _l < _r;
+			}
+		};
 	};
 
 	namespace detail
@@ -24,30 +42,6 @@ namespace stdex
 		{
 		public:
 			typedef intrusive_splay_node<T> node_type;
-
-		public:
-			template<bool v>
-			struct policy_splay;
-
-			template<>
-			struct policy_splay<true>
-			{
-				void operator () ( const class detail::intrusive_splay_tree_base<T> * _tree, const stdex::intrusive_splay_node<T> * _node ) const
-				{
-					_tree->splay_( _node );
-				}
-			};
-
-			template<>
-			struct policy_splay<false>
-			{
-				void operator () ( const class detail::intrusive_splay_tree_base<T> * _tree, const stdex::intrusive_splay_node<T> * _node ) const
-				{
-					(void)_tree;
-					(void)_node;
-					//Empty
-				}
-			};
 
 		public:
 			intrusive_splay_tree_base()
@@ -86,6 +80,50 @@ namespace stdex
 			inline void unlockSplay_() const
 			{
 				m_lock = false;
+			}
+
+		public:
+			void splay( const node_type * x ) const
+			{
+				if( m_lock == true )
+				{
+					return;
+				}
+
+				while( x->parent != nullptr)
+				{
+					if( x->parent->parent == nullptr )
+					{
+						if( x->parent->left == x ) 
+						{
+							this->right_rotate_( x->parent );
+						}
+						else 
+						{
+							this->left_rotate_( x->parent );
+						}
+					} 
+					else if( x->parent->left == x && x->parent->parent->left == x->parent ) 
+					{
+						this->right_rotate_( x->parent->parent );
+						this->right_rotate_( x->parent );
+					} 
+					else if( x->parent->right == x && x->parent->parent->right == x->parent ) 
+					{
+						this->left_rotate_( x->parent->parent );
+						this->left_rotate_( x->parent );
+					} 
+					else if( x->parent->left == x && x->parent->parent->right == x->parent ) 
+					{
+						this->right_rotate_( x->parent );
+						this->left_rotate_( x->parent );
+					} 
+					else 
+					{
+						this->left_rotate_( x->parent );
+						this->right_rotate_( x->parent );
+					}
+				}
 			}
 
 		protected:
@@ -176,49 +214,6 @@ namespace stdex
 				x->parent = y;
 			}
 
-			void splay_( const node_type * x ) const
-			{
-				if( m_lock == true )
-				{
-					return;
-				}
-
-				while( x->parent != nullptr)
-				{
-					if( x->parent->parent == nullptr )
-					{
-						if( x->parent->left == x ) 
-						{
-							this->right_rotate_( x->parent );
-						}
-						else 
-						{
-							this->left_rotate_( x->parent );
-						}
-					} 
-					else if( x->parent->left == x && x->parent->parent->left == x->parent ) 
-					{
-						this->right_rotate_( x->parent->parent );
-						this->right_rotate_( x->parent );
-					} 
-					else if( x->parent->right == x && x->parent->parent->right == x->parent ) 
-					{
-						this->left_rotate_( x->parent->parent );
-						this->left_rotate_( x->parent );
-					} 
-					else if( x->parent->left == x && x->parent->parent->right == x->parent ) 
-					{
-						this->right_rotate_( x->parent );
-						this->left_rotate_( x->parent );
-					} 
-					else 
-					{
-						this->left_rotate_( x->parent );
-						this->right_rotate_( x->parent );
-					}
-				}
-			}
-
 			void replace_( node_type * u, node_type * v ) const
 			{
 				if( u->parent == nullptr )
@@ -254,6 +249,31 @@ namespace stdex
 			mutable node_type * m_root;
 			mutable bool m_lock;
 		};
+		//////////////////////////////////////////////////////////////////////////
+		template<class T, bool v>
+		struct policy_splay
+		{
+		};
+		//////////////////////////////////////////////////////////////////////////
+		template<class T>
+		struct policy_splay<T, true>
+		{
+			void operator () ( const class detail::intrusive_splay_tree_base<T> * _tree, const stdex::intrusive_splay_node<T> * _node ) const
+			{
+				_tree->splay( _node );
+			}
+		};
+		//////////////////////////////////////////////////////////////////////////
+		template<class T>
+		struct policy_splay<T, false>
+		{
+			void operator () ( const class detail::intrusive_splay_tree_base<T> * _tree, const stdex::intrusive_splay_node<T> * _node ) const
+			{
+				(void)_tree;
+				(void)_node;
+				//Empty
+			}
+		};
 	}
 
 	template<class T
@@ -264,17 +284,18 @@ namespace stdex
 	{
 	public:
 		typedef typename detail::intrusive_splay_tree_base<T>::node_type node_type;
-		typedef typename detail::intrusive_splay_tree_base<T>::policy_splay<enableSplayFind> SplayFind;
-		typedef typename detail::intrusive_splay_tree_base<T>::policy_splay<enableSplayModify> SplayModify;
+		typedef typename detail::policy_splay<T, enableSplayFind> SplayFind;
+		typedef typename detail::policy_splay<T, enableSplayModify> SplayModify;
 
 		typedef typename T::key_type key_type;
 		typedef typename T::less_type less_type;
 		typedef typename T::key_getter_type key_getter_type;
 
 	protected:
-		struct key_getter_type_cast
+		template<class K>
+		struct key_getter_type_cast_t
 		{
-			const key_type & operator () ( const node_type * _node ) const
+			const K & operator () ( const node_type * _node ) const
 			{
 				const T * t = static_cast<const T *>(_node);
 
@@ -282,13 +303,26 @@ namespace stdex
 			}
 		};
 
+		template<class K>
+		struct key_getter_type_cast_t<K *>
+		{
+			K * operator () ( const node_type * _node ) const
+			{
+				const T * t = static_cast<const T *>(_node);
+
+				return key_getter_type()(t);
+			}
+		};
+		
+		typedef key_getter_type_cast_t<key_type> key_getter_type_cast;
+
 	public:
 		intrusive_splay_tree()
 		{
 		}
 
 	public:
-		bool insert( node_type * _node )
+		T * insert( T * _node )
 		{
 			node_type * z = this->getRoot_();
 			node_type * p = nullptr;
@@ -315,13 +349,15 @@ namespace stdex
 			{
 				this->setRoot_( _node );
 
-				return true;
+				return _node;
 			}
 
 			if( less_z_node == false && 
 				less_type()( key_getter_type_cast()(_node), key_getter_type_cast()(p) ) == false )
 			{
-				return false;
+				T * node = static_cast<T *>(p);
+
+				return node;
 			}
 
 			z = _node;
@@ -338,7 +374,7 @@ namespace stdex
 
 			SplayModify()( this, _node );
 
-			return true;
+			return _node;
 		}
 
 		bool exist( const key_type & key ) const
@@ -398,6 +434,7 @@ namespace stdex
 			return t;
 		}
 
+	public:
 		bool erase( const key_type & key ) 
 		{
 			node_type * z = this->find_node_( key );
