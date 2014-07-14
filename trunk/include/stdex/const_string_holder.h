@@ -4,6 +4,7 @@
 #	include "stdex/intrusive_linked.h"
 
 #   include <stddef.h>
+#	include <stdint.h>
 
 namespace stdex
 {
@@ -28,7 +29,7 @@ namespace stdex
 
 	public:
 		typedef size_t size_type;
-		typedef size_t hash_type;
+		typedef uint32_t hash_type;
 
     public:
         inline const char * c_str() const
@@ -109,18 +110,18 @@ namespace stdex
         const char * m_data;
 		size_type m_size;
 
-        hash_type m_hash;        
+        hash_type m_hash;
 
         mutable const_string_holder * m_owner;
 
 		bool m_combine;
     };
 	//////////////////////////////////////////////////////////////////////////
-	inline size_t const_string_make_hash( const char * _data )
+	inline uint32_t const_string_make_hash( const char * _data )
 	{
 		const char * str = _data;
 
-		size_t hash = 5381;
+		uint32_t hash = 5381;
 
 		for( const char * c = str; *c != 0; ++c )
 		{
