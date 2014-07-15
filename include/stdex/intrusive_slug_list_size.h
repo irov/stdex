@@ -360,6 +360,23 @@ namespace stdex
 			}
 		}
 
+		inline value_type single() const
+		{            
+			if( m_size != 1 )
+			{
+				return nullptr;					 
+			}
+
+			if( m_slugs != 0 )
+			{
+				return nullptr;
+			}
+
+			linked_type * first = m_head.right();
+
+			return static_cast<value_type>(first);
+		}
+
 		inline size_t size() const
 		{            
 			return m_size;
