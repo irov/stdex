@@ -2,29 +2,19 @@
 
 #	include <algorithm>
 
-#	ifdef _MSC_VER
-#	include <iterator>
-#	endif
+#	include "stdex/unchecked_array_iterator.h"
 
 namespace stdex
 {	
 	inline void memorycopy( void * _dist, const void * _src, size_t _size )
 	{
-#	ifdef _MSC_VER
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size, stdext::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist) );
-#	else
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size, (unsigned char *)_dist );
-#	endif
+		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size, stdex::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist) );
 	}
 
 	template<class T>
 	inline void memorycopy_pod( T * _dist, const T * _src, size_t _size )
 	{
-#	ifdef _MSC_VER
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size * sizeof(T), stdext::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist) );
-#	else
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size * sizeof(T), (unsigned char *)_dist );		
-#	endif
+		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size * sizeof(T), stdex::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist) );
 	}
 
 	inline bool memorycopy_safe( void * _dist, size_t _offset, size_t _capacity, const void * _src, size_t _size )
@@ -34,11 +24,7 @@ namespace stdex
 			return false;
 		}
 
-#	ifdef _MSC_VER
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size, stdext::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist + _offset) );		
-#	else
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size, (unsigned char *)_dist + _offset );
-#	endif
+		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size, stdex::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist + _offset) );		
 
 		return true;
 	}
@@ -52,11 +38,7 @@ namespace stdex
 		}
 
 		//unchecked_array_iterator<unsigned char *> chkd_dist((unsigned char *)_dist + _offset);
-#	ifdef _MSC_VER
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size * sizeof(T), stdext::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist + _offset * sizeof(T)) );
-#	else
-		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size * sizeof(T), (unsigned char *)_dist + _offset * sizeof(T) );
-#	endif
+		std::copy( (unsigned char *)_src, (unsigned char *)_src + _size * sizeof(T), stdex::unchecked_array_iterator<unsigned char *>((unsigned char *)_dist + _offset * sizeof(T)) );
 
 		return true;
 	}
