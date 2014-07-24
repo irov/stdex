@@ -4,149 +4,156 @@
 
 namespace stdex
 {
-	template<class _Iterator>
+	template<class T>
 	class unchecked_array_iterator
-	{	// wrap an iterator (actually, a pointer) without checking, in order to silence warnings
+	{
 	public:
-		typedef unchecked_array_iterator<_Iterator> _Myt;
+		typedef T unchecked_type;
+		typedef unchecked_array_iterator<T> my_type;		
 
-		typedef typename std::iterator_traits<_Iterator>::iterator_category iterator_category;
-		typedef typename std::iterator_traits<_Iterator>::value_type value_type;
-		typedef typename std::iterator_traits<_Iterator>::difference_type difference_type;
-		typedef typename std::iterator_traits<_Iterator>::difference_type distance_type;	// retained
-		typedef typename std::iterator_traits<_Iterator>::pointer pointer;
-		typedef typename std::iterator_traits<_Iterator>::reference reference;
+		typedef typename std::iterator_traits<T>::iterator_category iterator_category;
+		typedef typename std::iterator_traits<T>::value_type value_type;
+		typedef typename std::iterator_traits<T>::difference_type difference_type;
+		typedef typename std::iterator_traits<T>::difference_type distance_type;
+		typedef typename std::iterator_traits<T>::pointer pointer;
+		typedef typename std::iterator_traits<T>::reference reference;
 
 		unchecked_array_iterator()
-			: _Myptr()
-		{	// default construct
+			: m_ptr()
+		{
 		}
 
-		explicit unchecked_array_iterator(_Iterator _Ptr)
-			: _Myptr(_Ptr)
-		{	// construct with pointer
+		explicit unchecked_array_iterator( T _ptr )
+			: m_ptr(_ptr)
+		{
 		}
 
-		_Iterator base() const
-		{	// return unwrapped iterator
-			return (_Myptr);
-		}
+		typedef T _Unchecked_type;
 
-
-		typedef _Iterator _Unchecked_type;
-
-		_Myt& _Rechecked(_Unchecked_type _Right)
+		my_type & _Rechecked( unchecked_type _right )
 		{	// reset from unchecked iterator
-			_Myptr = _Right;
+			m_ptr = _right;
 			return (*this);
 		}
 
-		_Unchecked_type _Unchecked() const
+		unchecked_type _Unchecked() const
 		{	// make an unchecked iterator
 			return (base());
 		}
 
-
-		reference operator*() const
-		{	// return designated object
-			return (*_Myptr);
+		T base() const
+		{
+			return (m_ptr);
+		}
+	
+		reference operator * () const
+		{
+			return *m_ptr;
 		}
 
-		pointer operator->() const
-		{	// return pointer to class object
-			return (&**this);
+		pointer operator -> () const
+		{
+			return &**this;
 		}
 
-		_Myt& operator++()
-		{	// preincrement
-			++_Myptr;
-			return (*this);
+		my_type & operator ++ ()
+		{
+			++m_ptr;
+
+			return *this;
 		}
 
-		_Myt operator++(int)
-		{	// postincrement
-			_Myt _Tmp = *this;
+		my_type operator ++ (int)
+		{
+			my_type tmp = *this;
+
 			++*this;
-			return (_Tmp);
+
+			return tmp;
 		}
 
-		_Myt& operator--()
-		{	// predecrement
-			--_Myptr;
-			return (*this);
+		my_type & operator -- ()
+		{
+			--m_ptr;
+
+			return *this;
 		}
 
-		_Myt operator--(int)
-		{	// postdecrement
-			_Myt _Tmp = *this;
+		my_type operator -- (int)
+		{
+			my_type tmp = *this;
 			--*this;
-			return (_Tmp);
+
+			return tmp;
 		}
 
-		_Myt& operator+=(difference_type _Off)
-		{	// increment by integer
-			_Myptr += _Off;
-			return (*this);
+		my_type & operator += ( difference_type _offset )
+		{
+			m_ptr += _offset;
+
+			return *this;
 		}
 
-		_Myt operator+(difference_type _Off) const
-		{	// return this + integer
-			_Myt _Tmp = *this;
-			return (_Tmp += _Off);
+		my_type operator + ( difference_type _offset ) const
+		{
+			my_type tmp = *this;
+
+			return tmp += _offset;
 		}
 
-		_Myt& operator-=(difference_type _Off)
-		{	// decrement by integer
-			return (*this += -_Off);
+		my_type & operator -= ( difference_type _offset )
+		{
+			return *this += -_offset;
 		}
 
-		_Myt operator-(difference_type _Off) const
-		{	// return this - integer
-			_Myt _Tmp = *this;
-			return (_Tmp -= _Off);
+		my_type operator - ( difference_type _offset ) const
+		{
+			my_type tmp = *this;
+
+			return tmp -= _offset;
 		}
 
-		difference_type operator-(const _Myt& _Right) const
-		{	// return difference of iterators
-			return (_Myptr - _Right._Myptr);
+		difference_type operator - ( const my_type & _right ) const
+		{
+			return m_ptr - _right.m_ptr;
 		}
 
-		reference operator[](difference_type _Off) const
-		{	// subscript
-			return (*(*this + _Off));
+		reference operator [] ( difference_type _index ) const
+		{
+			return *(*this + _index);
 		}
 
-		bool operator==(const _Myt& _Right) const
-		{	// test for iterator equality
-			return (_Myptr == _Right._Myptr);
+		bool operator == ( const my_type & _right ) const
+		{
+			return m_ptr == _right.m_ptr;
 		}
 
-		bool operator!=(const _Myt& _Right) const
-		{	// test for iterator inequality
-			return (!(*this == _Right));
+		bool operator != ( const my_type & _right) const
+		{
+			return !(*this == _right);
 		}
 
-		bool operator<(const _Myt& _Right) const
-		{	// test if this < _Right
-			return (_Myptr < _Right._Myptr);
+		bool operator < ( const my_type & _right ) const
+		{
+			return m_ptr < _right.m_ptr;
 		}
 
-		bool operator>(const _Myt& _Right) const
-		{	// test if this > _Right
-			return (_Right < *this);
+		bool operator > ( const my_type & _right ) const
+		{
+			return _right < *this;
 		}
 
-		bool operator<=(const _Myt& _Right) const
-		{	// test if this <= _Right
-			return (!(_Right < *this));
+		bool operator <= ( const my_type & _right ) const
+		{
+			return !(_right < *this);
 		}
 
-		bool operator>=(const _Myt& _Right) const
-		{	// test if this >= _Right
-			return (!(*this < _Right));
+		bool operator >= ( const my_type & _right ) const
+		{
+			return !(*this < _right);
 		}
 
 	private:
-		_Iterator _Myptr;	// underlying pointer
+		T m_ptr;
 	};
 }
