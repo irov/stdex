@@ -31,24 +31,23 @@ namespace stdex
 		}
 
 	protected:
-		template<class It>
-		class base_iterator
+		class base_slug_iterator
 		{
 		public:
-			inline explicit base_iterator( linked_type * _node )
+			inline explicit base_slug_iterator( linked_type * _node )
 				: m_node(_node)
 			{
                 this->adapt_node();
 			}
 
-            inline base_iterator( linked_type * _node, bool _stable )
+            inline explicit base_slug_iterator( linked_type * _node, bool _stable )
                 : m_node(_node)
             {
                 (void)_stable;
             }
 
-            inline base_iterator( const base_iterator & _node )
-                : m_node(_node.get())
+            inline base_slug_iterator( const base_slug_iterator & _it )
+                : m_node(_it.get())
             {
             }
 
@@ -63,20 +62,15 @@ namespace stdex
 				return static_cast<T *>(m_node);
 			}
 
-			inline linked_type * get() const
-			{
-				return m_node;
-			}
-
 		public:
-			inline bool operator == ( It _it ) const
+			inline bool equal_iterator( const base_slug_iterator & _it ) const
 			{
 				return m_node == _it.m_node;
 			}
 
-			inline bool operator != ( It _it ) const
+			inline linked_type * get() const
 			{
-				return !this->operator == ( _it );
+				return m_node;
 			}
 
 		protected:
@@ -110,178 +104,277 @@ namespace stdex
 			linked_type * m_node;
 		};
 
-	public:
-		class const_iterator
-			: public base_iterator<const_iterator>
+		class base_unslug_iterator
 		{
 		public:
-			inline explicit const_iterator( linked_type * _node )
-				: base_iterator<const_iterator>(_node)
+			inline explicit base_unslug_iterator( linked_type * _node )
+				: m_node(_node)
 			{
 			}
 
-            inline const_iterator( linked_type * _node, bool _stable )
-                : base_iterator<const_iterator>(_node, _stable)
+			inline explicit base_unslug_iterator( linked_type * _node, bool _stable )
+				: m_node(_node)
+			{
+				(void)_stable;
+			}
+
+			inline base_unslug_iterator( const base_unslug_iterator & _it )
+				: m_node(_it.get())
+			{
+			}
+
+		public:
+			inline T * operator -> () const
+			{
+				return static_cast<T *>(m_node);
+			}
+
+			inline T * operator * () const
+			{
+				return static_cast<T *>(m_node);
+			}
+
+		public:
+			inline bool equal_iterator( const base_unslug_iterator & _it ) const
+			{
+				return m_node == _it.m_node;
+			}
+
+		public:
+			inline linked_type * get() const
+			{
+				return m_node;
+			}
+
+		protected:
+			inline void shuffle_next()
+			{
+				m_node = m_node->right();
+			}
+
+			inline void shuffle_prev()
+			{
+				m_node = m_node->left();
+			}
+
+			inline void adapt_node() const
+			{
+			}
+
+		protected:
+			linked_type * m_node;
+		};
+
+	public:
+		template<class It>
+		class base_iterator
+			: public It
+		{
+		public:
+			inline explicit base_iterator( linked_type * _node )
+				: It(_node)
+			{
+			}
+
+            inline base_iterator( linked_type * _node, bool _stable)
+                : It(_node, _stable)
             {
             }
 
-            inline const_iterator( const const_iterator & _node )
-                : base_iterator<const_iterator>(_node)
+            inline base_iterator( const base_iterator & _it )
+                : It(_it)
             {
             }
 
 		public:
-			inline const_iterator & operator = ( const const_iterator & _it )
+			inline bool operator == ( base_iterator _it ) const
+			{
+				return this->equal_iterator( _it );
+			}
+
+			inline bool operator != ( base_iterator _it ) const
+			{
+				return !this->operator == ( _it );
+			}
+
+		public:
+            inline base_iterator & operator = ( const base_iterator & _it )
+            {
+                this->m_node = _it.get();
+
+                this->adapt_node();
+
+                return *this;
+            }
+
+			inline base_iterator & operator ++ ()
+			{
+				this->shuffle_next();
+
+				return *this;
+			}
+
+			inline base_iterator operator ++ (int)
+			{
+				base_iterator tmp = *this;
+				++*this;
+				return tmp;
+			}
+
+			inline base_iterator & operator -- ()
+			{
+				this->shuffle_prev();
+
+				return *this;
+			}
+
+			inline base_iterator operator -- ( int )
+			{
+				base_iterator tmp = *this;
+				--*this;
+				return tmp;
+			}
+		};
+
+		template<class It>
+		class base_const_iterator
+			: public It
+		{
+		public:
+			inline explicit base_const_iterator( linked_type * _node )
+				: It(_node)
+			{
+			}
+
+			inline base_const_iterator( linked_type * _node, bool _stable )
+				: It(_node, _stable)
+			{
+			}
+
+			inline base_const_iterator( const base_const_iterator & _it )
+				: It(_it)
+			{
+			}
+
+		public:
+			inline base_const_iterator & operator = ( const base_const_iterator & _it )
 			{
 				this->m_node = _it.m_node;
 
-                this->adapt_node();
+				this->adapt_node();
 
 				return *this;
 			}
 
 		public:
-			inline const_iterator & operator ++ ()
+			inline bool operator == ( base_const_iterator _it ) const
+			{
+				return this->equal_iterator( _it );
+			}
+
+			inline bool operator != ( base_const_iterator _it ) const
+			{
+				return !this->operator == ( _it );
+			}
+
+		public:
+			inline base_const_iterator & operator ++ ()
 			{
 				this->shuffle_next();
 
 				return *this;
 			}
 
-			inline const_iterator operator ++ (int)
+			inline base_const_iterator operator ++ (int)
 			{
-				const_iterator tmp = *this;
+				base_const_iterator tmp = *this;
 				++*this;
 				return tmp;
 			}
 
-			inline const_iterator & operator -- ()
+			inline base_const_iterator & operator -- ()
 			{
 				this->shuffle_prev();
 
 				return *this;
 			}
 
-			inline const_iterator operator -- ( int )
+			inline base_const_iterator operator -- ( int )
 			{
-				const_iterator tmp = *this;
+				base_const_iterator tmp = *this;
 				--*this;
 				return tmp;
 			}
 		};
 
-		class iterator
-			: public base_iterator<iterator>
+		template<class It>
+		class base_reverse_iterator
+			: public It
 		{
 		public:
-			inline explicit iterator( linked_type * _node )
-				: base_iterator<iterator>(_node)
+			inline explicit base_reverse_iterator( linked_type * _node )
+				: It(_node)
 			{
 			}
 
-            inline iterator( linked_type * _node, bool _stable)
-                : base_iterator<iterator>(_node, _stable)
+            inline base_reverse_iterator( linked_type * _node, bool _stable )
+                : It(_node, _stable)
             {
             }
 
-            inline iterator( const iterator & _node )
-                : base_iterator<iterator>(_node)
+            inline base_reverse_iterator( const base_reverse_iterator & _it )
+                : It(_it)
             {
             }
 
 		public:
-            inline iterator & operator = ( const iterator & _it )
-            {
-                this->m_node = _it.m_node;
-
-                this->adapt_node();
-
-                return *this;
-            }
-
-			inline iterator & operator ++ ()
+			inline bool operator == ( base_reverse_iterator _it ) const
 			{
-				this->shuffle_next();
-
-				return *this;
+				return this->equal_iterator( _it );
 			}
 
-			inline iterator operator ++ (int)
+			inline bool operator != ( base_reverse_iterator _it ) const
 			{
-				iterator tmp = *this;
-				++*this;
-				return tmp;
+				return !this->operator == ( _it );
 			}
-
-			inline iterator & operator -- ()
-			{
-				this->shuffle_prev();
-
-				return *this;
-			}
-
-			inline iterator operator -- ( int )
-			{
-				iterator tmp = *this;
-				--*this;
-				return tmp;
-			}
-		};
-
-		class reverse_iterator
-			: public base_iterator<reverse_iterator>
-		{
-		public:
-			inline explicit reverse_iterator( linked_type * _node )
-				: base_iterator<reverse_iterator>(_node)
-			{
-			}
-
-            inline reverse_iterator( linked_type * _node, bool _stable )
-                : base_iterator<reverse_iterator>(_node, _stable)
-            {
-            }
-
-            inline reverse_iterator( const reverse_iterator & _node )
-                : base_iterator<reverse_iterator>(_node)
-            {
-            }
-
-        private:
-            inline reverse_iterator & operator = ( const reverse_iterator & _it )
-            {
-                return *this;
-            }
 
         public:
-			inline reverse_iterator & operator ++ ()
+			inline base_reverse_iterator & operator ++ ()
 			{
 				this->shuffle_prev();
 
 				return *this;
 			}
 
-			inline reverse_iterator operator ++ (int)
+			inline base_reverse_iterator operator ++ (int)
 			{
-				reverse_iterator tmp = *this;
+				base_reverse_iterator tmp = *this;
 				--*this;
 				return tmp;
 			}
 
-			inline reverse_iterator & operator -- () const
+			inline base_reverse_iterator & operator -- () const
 			{
 				this->shuffle_next();
 
 				return *this;
 			}
 
-			inline reverse_iterator operator -- ( int ) const
+			inline base_reverse_iterator operator -- ( int ) const
 			{
-				reverse_iterator tmp = *this;
+				base_reverse_iterator tmp = *this;
 				++*this;
 				return tmp;
 			}
 		};
+
+		typedef base_iterator<base_slug_iterator> iterator;
+		typedef base_const_iterator<base_slug_iterator> const_iterator;
+		typedef base_reverse_iterator<base_slug_iterator> reverse_iterator;
+
+		typedef base_iterator<base_unslug_iterator> unslug_iterator;
+		typedef base_const_iterator<base_unslug_iterator> unslug_const_iterator;
+		typedef base_reverse_iterator<base_unslug_iterator> unslug_reverse_iterator;		
 
 	public:
 		inline iterator begin()
@@ -313,6 +406,38 @@ namespace stdex
 		{
 			return reverse_iterator(&m_head, true);
 		}
+
+	public:
+		inline unslug_iterator ubegin()
+		{
+			return unslug_iterator(m_head.m_right);
+		}
+
+		inline unslug_iterator uend()
+		{
+			return unslug_iterator(&m_head);
+		}
+
+		inline unslug_const_iterator ubegin() const
+		{
+			return unslug_const_iterator(m_head.m_right);
+		}
+
+		inline unslug_const_iterator uend() const
+		{
+			return unslug_const_iterator(&m_head);
+		}
+
+		inline unslug_reverse_iterator urbegin()
+		{
+			return unslug_reverse_iterator(m_head.m_left);
+		}
+
+		inline unslug_reverse_iterator urend()
+		{
+			return unslug_reverse_iterator(&m_head);
+		}
+
 
 	public:
 		inline T * front() const
