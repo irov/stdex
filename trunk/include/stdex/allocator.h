@@ -25,7 +25,8 @@ extern "C" {
 		size_t block_total;
 	};
 
-    size_t stdex_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
+    size_t stdex_globalmemoryuse();
+	size_t stdex_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
 	size_t stdex_memorytotal();
 #ifdef __cplusplus
 };

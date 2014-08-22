@@ -1,8 +1,9 @@
 #   pragma once
 
-#   include <vector>
-#   include <algorithm>
-#   include <functional>
+#	include <stdex/stl_vector.h>
+#	include <stdex/stl_allocator.h>
+
+#	include <functional>
 
 namespace stdex
 {
@@ -77,8 +78,11 @@ namespace stdex
 	class binary_vector
 	{
 	public:
-		typedef std::vector<size_t> free_type;
-		typedef std::vector<T> strore_type;
+		typedef stdex::stl_allocator<size_t> free_type_allocator;
+		typedef stdex::stl_allocator<T> strore_type_allocator;
+
+		typedef std::vector<size_t, free_type_allocator> free_type;
+		typedef std::vector<T, strore_type_allocator> strore_type;
 
 	public:
 		struct binary_value_store_type
@@ -87,14 +91,20 @@ namespace stdex
 			size_t index;
 		};
 
-		typedef std::vector<binary_value_store_type> buffer_type;
+		typedef stdex::stl_allocator<binary_value_store_type> binary_value_store_type_allocator;
+
+		typedef std::vector<binary_value_store_type, binary_value_store_type_allocator> buffer_type;
 
 	public:
 		typedef typename buffer_type::iterator iterator;
 		typedef typename buffer_type::const_iterator const_iterator;
 
 	public:
-		typedef std::pair<iterator, bool> insert_type;
+		typedef struct
+		{
+			iterator first;
+			bool second;
+		} insert_type;
 
 	protected:
 		iterator binary_vector_binary_search( const Key & _key )
@@ -300,7 +310,7 @@ namespace stdex
 				const Key & lower_bound_key = it_lower_bound->key;
 				if( L()( _key, lower_bound_key ) == false )
 				{
-					insert_type ret = std::make_pair(it_lower_bound, false);
+					insert_type ret = {it_lower_bound, false};
 
 					return ret;
 				}
@@ -311,7 +321,7 @@ namespace stdex
 			binary_value_store_type bvst = {_key, index};
 			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
 
-			insert_type ret = std::make_pair(it_insert, true);
+			insert_type ret = {it_insert, true};
 
 			return ret;
 		}
@@ -452,12 +462,18 @@ namespace stdex
 			T * value;
 		};
 
-		typedef std::vector<binary_value_store_type> buffer_type;
+		typedef stdex::stl_allocator<binary_value_store_type> binary_value_store_type_allocator;
+
+		typedef std::vector<binary_value_store_type, binary_value_store_type_allocator> buffer_type;
 
 		typedef typename buffer_type::iterator iterator;
 		typedef typename buffer_type::const_iterator const_iterator;
 
-		typedef std::pair<iterator, bool> insert_type;
+		typedef struct
+		{
+			iterator first;
+			bool second;
+		} insert_type;
 
 	protected:
 		iterator binary_vector_binary_search( const Key & _key )
@@ -628,7 +644,7 @@ namespace stdex
 			{
 				if( L()( _key, it_lower_bound->key ) == false )
 				{
-					insert_type ret = std::make_pair(it_lower_bound, false);
+					insert_type ret = {it_lower_bound, false};
 
 					return ret;
 				}
@@ -637,7 +653,7 @@ namespace stdex
 			binary_value_store_type bvst = {_key, _value};
 			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
 
-			insert_type ret = std::make_pair(it_insert, true);
+			insert_type ret = {it_insert, true};
 
 			return ret;
 		}
