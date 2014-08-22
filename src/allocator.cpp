@@ -3,6 +3,7 @@
 #	include "stdex/memorycopy.h"
 
 #   include <malloc.h>
+#   include <stdint.h>
 #   include <memory.h>
 
 
@@ -20,40 +21,59 @@
 
 namespace stdex
 {
-    //////////////////////////////////////////////////////////////////////////    
-    inline static unsigned int mem_get_le32( const unsigned char * _mem )
-    {
-        unsigned int val;
-        const unsigned char * bytes = static_cast<const unsigned char *>(_mem);
+	//////////////////////////////////////////////////////////////////////////    
+	inline static unsigned int mem_get_value( const void * _mem )
+	{
+		const unsigned char * bytes = static_cast<const unsigned char *>(_mem);
 
-        val = bytes[0];
-        val |= bytes[1] << 8;
-        val |= bytes[2] << 16;
-        val |= bytes[3] << 24;
+		unsigned int value = bytes[0];
+		value |= bytes[1] << 8;
+		value |= bytes[2] << 16;
+		value |= bytes[3] << 24;
 
-        return val;
-    }
-    //////////////////////////////////////////////////////////////////////////
-    inline static void mem_set_le32( void * _mem, unsigned int _value )
-    {
-        unsigned char * bytes = static_cast<unsigned char *>(_mem);
+		return value;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	inline static void mem_set_value( void * _mem, unsigned int _value, size_t _offset )
+	{
+		unsigned char * bytes = static_cast<unsigned char *>(_mem) + sizeof(int) * _offset;
 
-        bytes[0] = _value & 0xFF;
-        bytes[1] = (_value >> 8) & 0xFF;
-        bytes[2] = (_value >> 16) & 0xFF;
-        bytes[3] = (_value >> 24) & 0xFF;
-    }
+		bytes[0] = _value & 0xFF;
+		bytes[1] = (_value >> 8) & 0xFF;
+		bytes[2] = (_value >> 16) & 0xFF;
+		bytes[3] = (_value >> 24) & 0xFF;
+	}
+	//////////////////////////////////////////////////////////////////////////
+#   define memory_buf_allign(f) (((f + 3) / 4) * 4 + 4)
 
-#   define memory_buf_allign(f) (f / 4 * 4 + (f % 4) * 4 + 4)
-#   define pool_setup_from_memory(m, i) mem_set_le32(m, i)
-#   define memory_to_pool(m) static_cast<void *>(static_cast<unsigned char *>(m) - sizeof(int))
-#   define memory_to_index(m) mem_get_le32( (static_cast<unsigned char *>(m) - sizeof(int)) )
 #   define pool_to_memory(m) static_cast<void *>(static_cast<unsigned char *>(m) + sizeof(int))
 
+#   define pool_setup_index(m, i) mem_set_value(m, i, 0)
+
+#   define memory_ptr(m) (static_cast<unsigned char *>(m) - sizeof(int))
+#   define memory_to_pool(m) static_cast<void *>(memory_ptr(m))
+#   define memory_to_index(m) mem_get_value( memory_ptr(m) )
+
+#   define global_memory_buf_allign(f) (((f + 3) / 4) * 4 + 4 + 4)
+
+#   define global_pool_to_memory(m) static_cast<void *>(static_cast<unsigned char *>(m) + sizeof(int) + sizeof(int))
+
+#   define global_pool_setup_index(m, i) mem_set_value(m, i, 1)
+#   define global_pool_setup_size(m, i) mem_set_value(m, i, 0)
+
+#   define global_memory_ptr(m) (static_cast<unsigned char *>(m) - sizeof(int) - sizeof(int))
+#   define global_memory_to_pool(m) static_cast<void *>(global_memory_ptr(m))
+#   define global_memory_to_size(m) mem_get_value( global_memory_ptr(m) )
+
+
+
+#	define allocator_pool(i) s_p##i
+#	define allocator_pool_size(i) s_s##i
+
 #   define allocator_pool_def(i, f, c)\
-    const static size_t s##i = f;\
-    typedef pool<memory_buf_allign(f), c> pool_type_p##i;\
-    static pool_type_p##i p##i;
+    const static size_t allocator_pool_size(i) = f;\
+    typedef pool<memory_buf_allign(f), c> t_pool_type_p##i;\
+    static t_pool_type_p##i allocator_pool(i);
 
     allocator_pool_def(0, 8, 128);
     allocator_pool_def(1, 21, 128);
@@ -75,6 +95,12 @@ namespace stdex
     allocator_pool_def(17, 46368, 4);
     allocator_pool_def(18, 75025, 4);
     allocator_pool_def(19, 121393, 4);
+	//////////////////////////////////////////////////////////////////////////
+	const static int si_count = 20;
+	//////////////////////////////////////////////////////////////////////////
+	const static int si_global = 20;
+	//////////////////////////////////////////////////////////////////////////
+	static unsigned int s_global_memory_use = 0U;
 
 #	ifdef stdex_allocator_threadsafe
 	void * g_thread_ptr = nullptr;
@@ -83,9 +109,28 @@ namespace stdex
 #	endif
 
     //////////////////////////////////////////////////////////////////////////
-    const static size_t s[] = {s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19};
-    //////////////////////////////////////////////////////////////////////////
-    const static int si_global = 20;
+	const static size_t s[] = 
+	{ allocator_pool_size(0)
+	, allocator_pool_size(1)
+	, allocator_pool_size(2)
+	, allocator_pool_size(3)
+	, allocator_pool_size(4)
+	, allocator_pool_size(5)
+	, allocator_pool_size(6)
+	, allocator_pool_size(7)
+	, allocator_pool_size(8)
+	, allocator_pool_size(9)
+	, allocator_pool_size(10)
+	, allocator_pool_size(11)
+	, allocator_pool_size(12)
+	, allocator_pool_size(13)
+	, allocator_pool_size(14)
+	, allocator_pool_size(15)
+	, allocator_pool_size(16)
+	, allocator_pool_size(17)
+	, allocator_pool_size(18)
+	, allocator_pool_size(19) 
+	};
     //////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_loop( function )\
         function(0) \
@@ -111,9 +156,9 @@ namespace stdex
 
     //////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_alloc( i )\
-    if( _size < s##i )\
+    if( _size < allocator_pool_size(i) )\
     {\
-        mem = p##i.alloc_block();\
+        mem = allocator_pool(i).alloc_block();\
         pi = i;\
     } else
     //////////////////////////////////////////////////////////////////////////
@@ -124,17 +169,25 @@ namespace stdex
             _size = 1;
         }
 
-        void * mem = 0;
-        int pi = 0;
+        void * mem = nullptr;
+        unsigned int pi = 0;
 
         allocator_pool_loop( allocator_pool_alloc )
         {
-            size_t allign_size = memory_buf_allign(_size);
-            mem = stdex_allocator_malloc(allign_size);
-            pi = si_global;
+			unsigned int allign_size = global_memory_buf_allign(_size);
+			mem = stdex_allocator_malloc(allign_size);
+		
+			global_pool_setup_size(mem, allign_size);
+			global_pool_setup_index(mem, si_global);
+
+			s_global_memory_use += allign_size;
+			
+			void * mem_buff = global_pool_to_memory(mem);
+
+			return mem_buff;
         }
 
-        pool_setup_from_memory(mem, pi);
+        pool_setup_index(mem, pi);
 
         void * mem_buff = pool_to_memory(mem);
 
@@ -144,7 +197,7 @@ namespace stdex
 #   define allocator_pool_free(i)\
     if( pi == i )\
     {\
-    p##i.free_block(mem_pool);\
+    allocator_pool(i).free_block(mem_pool);\
     } else
     //////////////////////////////////////////////////////////////////////////
     static void s_free( void * _mem )
@@ -154,12 +207,16 @@ namespace stdex
             return;
         }
 
-        int pi = memory_to_index(_mem);
+        unsigned int pi = memory_to_index(_mem);
         void * mem_pool = memory_to_pool(_mem);
 
         allocator_pool_loop( allocator_pool_free )
-        {
-            stdex_allocator_free(mem_pool);
+        {			
+			unsigned int global_mem_size = global_memory_to_size(_mem);
+			s_global_memory_use -= global_mem_size;
+
+			void * global_mem_pool = global_memory_to_pool(_mem);			
+            stdex_allocator_free(global_mem_pool);		
         }
     }
     //////////////////////////////////////////////////////////////////////////
@@ -172,22 +229,28 @@ namespace stdex
             return mem;
         }
 
-        int pi = memory_to_index(_mem);
+        unsigned int pi = memory_to_index(_mem);
 
         if( pi == si_global )
         {
-            void * mem_pool = memory_to_pool(_mem);
+			size_t mem_size = global_memory_to_size(_mem);
+			s_global_memory_use -= mem_size;
 
-            void * realloc_mem = stdex_allocator_realloc( mem_pool, memory_buf_allign(_size) );
-                        
-            void * realloc_mem_buff = pool_to_memory(realloc_mem);
+            void * mem_pool = global_memory_to_pool(_mem);
+			size_t allign_size = global_memory_buf_allign(_size);
+            void * realloc_mem = stdex_allocator_realloc( mem_pool, allign_size );
+			
+			s_global_memory_use += allign_size;
+			global_pool_setup_size(realloc_mem, allign_size);
+
+            void * realloc_mem_buff = global_pool_to_memory(realloc_mem);
 
             return realloc_mem_buff;
         }
 
         size_t pool_size = s[pi];
 
-        if( pool_size > _size )
+        if( pool_size >= _size )
         {
             return _mem;
         }
@@ -203,22 +266,24 @@ namespace stdex
     //////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_info(i) \
     { \
-        pool_type_p##i & p = p##i; \
-        _info[i].block_size = p.getBlockSize(); \
-        _info[i].chunk_count = p.getChunkCount(); \
-        _info[i].block_count = p.getBlockCount(); \
-        _info[i].block_total = p.getBlockTotal(); \
+        _info[i].block_size = allocator_pool(i).getBlockSize(); \
+        _info[i].chunk_count = allocator_pool(i).getChunkCount(); \
+        _info[i].block_count = allocator_pool(i).getBlockCount(); \
+        _info[i].block_total = allocator_pool(i).getBlockTotal(); \
 		++count; \
     }
     //////////////////////////////////////////////////////////////////////////
     static size_t s_memoryinfo( stdex_memory_info_t * _info, size_t _count )
     {
-		(void)_count;
+		if( si_count > _count )
+		{
+			return 0;
+		}
 
 		size_t count = 0;
         allocator_pool_loop( allocator_pool_info );
 
-		return count;			 
+		return count;
     }
 	//////////////////////////////////////////////////////////////////////////
 	static size_t s_memorytotal()
@@ -232,6 +297,8 @@ namespace stdex
 		{
 			total_now += mi[i].block_size * mi[i].block_count;
 		}
+
+		total_now += s_global_memory_use;
 
 		return total_now;
 	}
@@ -337,6 +404,11 @@ extern "C" {
     }
     //////////////////////////////////////////////////////////////////////////
 #   endif
+	//////////////////////////////////////////////////////////////////////////
+	size_t stdex_globalmemoryuse()
+	{
+		return stdex::s_global_memory_use;
+	}
     //////////////////////////////////////////////////////////////////////////
     size_t stdex_memoryinfo( stdex_memory_info_t * _info, size_t _count )
     {

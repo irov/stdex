@@ -2,12 +2,10 @@
 
 #	include "stdex/const_string.h"
 #	include "stdex/memorycopy.h"
+#	include "stdex/stl_string.h"
 
-#	include <string>
 #	include <memory.h>
 #	include <string.h>
-
-#	include <algorithm>
 
 namespace stdex
 {
@@ -65,7 +63,7 @@ namespace stdex
 			this->append( value_str, value_size );
 		}
 
-		void append( const std::string & _value )
+		void append( const stdex::string & _value )
 		{
 			const char * value_str = _value.c_str();
 			size_t value_size = _value.size();
@@ -121,7 +119,7 @@ namespace stdex
 			this->append( _value );
 		}
 
-		void operator += ( const std::string & _value )
+		void operator += ( const stdex::string & _value )
 		{
 			this->append( _value );
 		}
