@@ -4,6 +4,7 @@
 
 #	include <new>
 #	include <limits>
+#	include <memory>
 
 namespace stdex
 {
@@ -31,12 +32,12 @@ namespace stdex
 		{
 		}
 
-		inline stl_allocator( stl_allocator const & ) 
+		inline stl_allocator( const stl_allocator & ) 
 		{
 		}
 
 		template<typename U>
-		inline explicit stl_allocator( stl_allocator<U> const & )
+		inline stl_allocator( const stl_allocator<U> & )
 		{
 		}
 
@@ -55,7 +56,7 @@ namespace stdex
 			return &_ref; 
 		}
 
-		inline pointer allocate( size_type _count, const void * = nullptr )
+		inline pointer allocate( size_type _count, typename std::allocator<void>::const_pointer = nullptr )
 		{ 
 			void * memory = stdex_malloc( _count * sizeof(T) );
 
