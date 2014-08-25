@@ -7,17 +7,29 @@
 #   include <memory.h>
 
 
-#   ifndef stdex_allocator_malloc
-#   define stdex_allocator_malloc (::malloc)
+#   ifndef STDEX_ALLOCATOR_MALLOC
+#   define STDEX_ALLOCATOR_MALLOC (::malloc)
 #   endif
 
-#   ifndef stdex_allocator_realloc
-#   define stdex_allocator_realloc (::realloc)
+#   ifndef STDEX_ALLOCATOR_REALLOC
+#   define STDEX_ALLOCATOR_REALLOC (::realloc)
 #   endif
 
-#   ifndef stdex_allocator_free
-#   define stdex_allocator_free (::free)
+#   ifndef STDEX_ALLOCATOR_FREE
+#   define STDEX_ALLOCATOR_FREE (::free)
 #   endif
+
+#	ifndef STDEX_ALLOCATOR_NOTHREADSAFE
+#	define STDEX_ALLOCATOR_THREADSAFE
+#	endif
+
+#	ifdef STDEX_ALLOCATOR_THREADSAFE
+#	define STDEX_ALLOCATOR_LOCK() stdex::s_thread_lock()
+#	define STDEX_ALLOCATOR_UNLOCK() stdex::s_thread_unlock()
+#	else
+#	define STDEX_ALLOCATOR_LOCK()
+#	define STDEX_ALLOCATOR_UNLOCK()
+#	endif
 
 namespace stdex
 {
@@ -102,11 +114,9 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	static unsigned int s_global_memory_use = 0U;
 
-#	ifdef stdex_allocator_threadsafe
 	void * g_thread_ptr = nullptr;
-	stdex_thread_lock_t g_thread_lock = nullptr;
-	stdex_thread_unlock_t g_thread_unlock = nullptr;
-#	endif
+	stdex_allocator_thread_lock_t g_thread_lock = nullptr;
+	stdex_allocator_thread_unlock_t g_thread_unlock = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
 	const static size_t s[] = 
@@ -175,7 +185,7 @@ namespace stdex
         allocator_pool_loop( allocator_pool_alloc )
         {
 			unsigned int allign_size = global_memory_buf_allign(_size);
-			mem = stdex_allocator_malloc(allign_size);
+			mem = STDEX_ALLOCATOR_MALLOC(allign_size);
 		
 			global_pool_setup_size(mem, allign_size);
 			global_pool_setup_index(mem, si_global);
@@ -216,7 +226,7 @@ namespace stdex
 			s_global_memory_use -= global_mem_size;
 
 			void * global_mem_pool = global_memory_to_pool(_mem);			
-            stdex_allocator_free(global_mem_pool);		
+            STDEX_ALLOCATOR_FREE(global_mem_pool);		
         }
     }
     //////////////////////////////////////////////////////////////////////////
@@ -238,7 +248,7 @@ namespace stdex
 
             void * mem_pool = global_memory_to_pool(_mem);
 			size_t allign_size = global_memory_buf_allign(_size);
-            void * realloc_mem = stdex_allocator_realloc( mem_pool, allign_size );
+            void * realloc_mem = STDEX_ALLOCATOR_REALLOC( mem_pool, allign_size );
 			
 			s_global_memory_use += allign_size;
 			global_pool_setup_size(realloc_mem, allign_size);
@@ -305,58 +315,52 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	inline static void s_thread_lock()
 	{
-#	ifdef stdex_allocator_threadsafe
 		if( stdex::g_thread_lock == nullptr )
 		{
 			return;
 		}
 		
 		(*stdex::g_thread_lock)( g_thread_ptr );
-#	endif
 	}
 	//////////////////////////////////////////////////////////////////////////
 	inline static void s_thread_unlock()
 	{
-#	ifdef stdex_allocator_threadsafe
 		if( stdex::g_thread_unlock == nullptr )
 		{
 			return;
 		}
 
 		(*stdex::g_thread_unlock)( g_thread_ptr );
-#	endif
 	}
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-#	ifdef stdex_allocator_threadsafe
 	//////////////////////////////////////////////////////////////////////////
-	void stdex_threadsafe( void * _ptr, stdex_thread_lock_t _lock, stdex_thread_unlock_t _unlock )
+	void stdex_allocator_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock )
 	{
 		stdex::g_thread_ptr = _ptr;
 		stdex::g_thread_lock = _lock;
 		stdex::g_thread_unlock = _unlock;
 	}
-#	endif
 
 #   ifdef stdex_allocator_disable
     //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
     {
-        return stdex_allocator_malloc( _size );
+        return STDEX_ALLOCATOR_MALLOC( _size );
     }
     //////////////////////////////////////////////////////////////////////////
     void stdex_free( void * _mem )
     {
-        stdex_allocator_free( _mem );
+        STDEX_ALLOCATOR_FREE( _mem );
     }
     //////////////////////////////////////////////////////////////////////////
     void * stdex_calloc( size_t _num, size_t _size )
     {
         size_t full_size = _num * _size;
-        void * mem = stdex_allocator_malloc( full_size );
+        void * mem = STDEX_ALLOCATOR_MALLOC( full_size );
         ::memset( mem, 0, full_size );
 
         return mem;
@@ -364,25 +368,25 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_realloc( void * _mem, size_t _size )
     {
-        return stdex_allocator_realloc( _mem, _size );
+        return STDEX_ALLOCATOR_REALLOC( _mem, _size );
     }
     //////////////////////////////////////////////////////////////////////////
 #   else
     //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
     {
-		stdex::s_thread_lock();
+		STDEX_ALLOCATOR_LOCK();
         void * memory = stdex::s_malloc( _size );
-		stdex::s_thread_unlock();
+		STDEX_ALLOCATOR_UNLOCK();
 
 		return memory;
     }
     //////////////////////////////////////////////////////////////////////////
     void stdex_free( void * _mem )
     {
-		stdex::s_thread_lock();
+		STDEX_ALLOCATOR_LOCK();
         stdex::s_free( _mem );
-		stdex::s_thread_unlock();
+		STDEX_ALLOCATOR_UNLOCK();
     }
     //////////////////////////////////////////////////////////////////////////
     void * stdex_calloc( size_t _num, size_t _size )
@@ -396,26 +400,26 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_realloc( void * _mem, size_t _size )
     {
-		stdex::s_thread_lock();
+		STDEX_ALLOCATOR_LOCK();
         void * memory = stdex::s_realloc( _mem, _size );
-		stdex::s_thread_unlock();
+		STDEX_ALLOCATOR_UNLOCK();
 
 		return memory;
     }
     //////////////////////////////////////////////////////////////////////////
 #   endif
 	//////////////////////////////////////////////////////////////////////////
-	size_t stdex_globalmemoryuse()
+	size_t stdex_allocator_globalmemoryuse()
 	{
 		return stdex::s_global_memory_use;
 	}
     //////////////////////////////////////////////////////////////////////////
-    size_t stdex_memoryinfo( stdex_memory_info_t * _info, size_t _count )
+    size_t stdex_allocator_memoryinfo( stdex_memory_info_t * _info, size_t _count )
     {
         return stdex::s_memoryinfo( _info, _count );
     }
 	//////////////////////////////////////////////////////////////////////////
-	size_t stdex_memorytotal()
+	size_t stdex_allocator_memorytotal()
 	{
 		return stdex::s_memorytotal();
 	}

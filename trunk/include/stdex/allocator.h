@@ -5,17 +5,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#	ifdef stdex_allocator_threadsafe
-	typedef void (*stdex_thread_lock_t)( void * _ptr );
-	typedef void (*stdex_thread_unlock_t)( void * _ptr );
-
-	void stdex_threadsafe( void * _ptr, stdex_thread_lock_t _lock, stdex_thread_unlock_t _unlock );
-#	endif
-
     void * stdex_malloc( size_t _size );
     void stdex_free( void * _mem );
     void * stdex_calloc( size_t _num, size_t _size );
     void * stdex_realloc( void * _mem, size_t _size );
+
+	typedef void (*stdex_allocator_thread_lock_t)( void * _ptr );
+	typedef void (*stdex_allocator_thread_unlock_t)( void * _ptr );
+
+	void stdex_allocator_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock );
 
 	struct stdex_memory_info_t
 	{
@@ -25,9 +23,9 @@ extern "C" {
 		size_t block_total;
 	};
 
-    size_t stdex_globalmemoryuse();
-	size_t stdex_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
-	size_t stdex_memorytotal();
+    size_t stdex_allocator_globalmemoryuse();
+	size_t stdex_allocator_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
+	size_t stdex_allocator_memorytotal();
 #ifdef __cplusplus
 };
 #endif
