@@ -33,18 +33,19 @@ namespace stdex
 	} 
 	//////////////////////////////////////////////////////////////////////////
 	ini::ini()
-		: m_currentSection(nullptr)
-		, m_settingsCount(0)
+		: m_settingsCount(0)
 	{
+		m_error[0] = '\0';
 	}
 	//////////////////////////////////////////////////////////////////////////
 	bool ini::load( char * _buffer )
 	{
 		m_settingsCount = 0;
 
+		const char * currentSection = nullptr;
 		for( char * line = strtok( _buffer, "\r\n" ); line; line = strtok( nullptr, "\r\n" ) )
 		{
-			if( this->loadLine_( line ) == false )
+			if( this->loadLine_( line, &currentSection ) == false )
 			{
 				return false;
 			}
@@ -53,7 +54,7 @@ namespace stdex
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	bool ini::loadLine_( char * _line )
+	bool ini::loadLine_( char * _line, const char ** _currentSection )
 	{
 		char * trim_line = s_trim( _line );
 
@@ -79,6 +80,10 @@ namespace stdex
 			char name[64];
 			if( sscanf( trim_line, "[%[^]]", name ) != 1 )
 			{
+				sprintf(m_error, "invalidate parse section: %s"
+					, trim_line
+					);
+
 				return false;
 			}
 
@@ -87,13 +92,16 @@ namespace stdex
 
 			section_str[section_len] = '\0';
 
-			m_currentSection = section_str;
+			*_currentSection = section_str;
 
 			return true;
 		}
 
-		if( m_currentSection == nullptr )
+		if( *_currentSection == nullptr )
 		{
+			sprintf(m_error, "first element is not section"
+				);
+
 			return false;
 		}
 
@@ -113,7 +121,7 @@ namespace stdex
 			value_str[value_len] = '\0';
 			s_rtrim( value_str );
 
-			bool successful = this->addSetting( m_currentSection, key_str, value_str );
+			bool successful = this->addSetting( *_currentSection, key_str, value_str );
 
 			return successful;
 		}
@@ -125,7 +133,7 @@ namespace stdex
 			key_str[key_len] = '\0';
 			s_rtrim( key_str );
 
-			bool successful = this->addSetting( m_currentSection, key_str, key_str + key_len );
+			bool successful = this->addSetting( *_currentSection, key_str, key_str + key_len );
 						
 			return successful;
 		}
@@ -262,6 +270,10 @@ namespace stdex
 
 		if( m_settingsCount == STDEX_INI_MAX_SETTINGS )
 		{
+			sprintf(m_error, "elements is MAX %d"
+				, STDEX_INI_MAX_SETTINGS
+				);
+
 			return false;
 		}
 
@@ -332,5 +344,10 @@ namespace stdex
 		}
 
 		return false;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	const char * ini::getError() const
+	{
+		return m_error;
 	}
 }

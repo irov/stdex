@@ -326,12 +326,15 @@ namespace stdex
 			return ret;
 		}
 
-		void erase( iterator _it )
+		iterator erase( iterator _it )
 		{
 			size_t index = _it->index;
 			m_free.push_back( index );
 			m_store[index] = T();
-			m_buffer.erase( _it );
+
+			iterator new_it = m_buffer.erase( _it );
+
+			return new_it;
 		}
 
 		bool erase( const Key & _key )
@@ -658,9 +661,11 @@ namespace stdex
 			return ret;
 		}
 
-		void erase( iterator _erase )
+		iterator erase( iterator _erase )
 		{
-			m_buffer.erase( _erase );
+			iterator new_it = m_buffer.erase( _erase );
+
+			return new_it;
 		}
 
 		bool erase( const Key & _key )
