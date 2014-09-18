@@ -1,6 +1,16 @@
 #	pragma once
 
+#	include "stdex/exception.h"
+
 #	include <stddef.h>
+
+#	ifndef STDEX_INTRUSIVE_PTR_DEBUG_ENABLE
+#	ifdef _DEBUG
+#	define STDEX_INTRUSIVE_PTR_DEBUG
+#	endif
+#	else
+#	define STDEX_INTRUSIVE_PTR_DEBUG
+#	endif
 
 namespace stdex
 {
@@ -90,6 +100,18 @@ namespace stdex
 
 		inline element_type * operator -> () const
 		{
+#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+			if( m_ptr == nullptr )
+			{
+				STDEX_THROW_EXCEPTION("m_ptr == nullptr");
+			}
+
+			if( T::intrusive_ptr_check_ref( m_ptr ) == false )
+			{
+				STDEX_THROW_EXCEPTION("ptr check == false");
+			}
+#	endif
+
 			return m_ptr;
 		}
 

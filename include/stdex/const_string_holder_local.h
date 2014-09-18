@@ -12,6 +12,11 @@ namespace stdex
 		const_string_holder_local();
 		const_string_holder_local( const char * _data, size_t _size );
 
+	private:
+		void operator = ( const const_string_holder_local & )
+		{
+		}
+
 	public:
 		void setup( const char * _data, size_t _size );
 

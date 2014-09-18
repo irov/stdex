@@ -11,6 +11,11 @@ namespace stdex
     public:
         const_string_holder_none();
 
+	private:
+		void operator = ( const const_string_holder_none & )
+		{
+		}
+
     protected:
         void _releaseString() override;
         void _destroyString() override;

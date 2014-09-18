@@ -392,7 +392,11 @@ extern "C" {
     void * stdex_calloc( size_t _num, size_t _size )
     {
         size_t full_size = _num * _size;
+		
+		STDEX_ALLOCATOR_LOCK();
         void * mem = stdex::s_malloc( full_size );
+		STDEX_ALLOCATOR_UNLOCK();
+
         ::memset( mem, 0, full_size );
 
         return mem;
