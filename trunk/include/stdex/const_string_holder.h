@@ -101,6 +101,10 @@ namespace stdex
         inline static void intrusive_ptr_add_ref( const_string_holder * _ptr );
         inline static void intrusive_ptr_dec_ref( const_string_holder * _ptr );
 
+#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+		inline static bool intrusive_ptr_check_ref( const_string_holder * _ptr );
+#	endif
+
     protected:
         void setup( const char * _data, size_t _size, bool _combine );
 
@@ -151,4 +155,21 @@ namespace stdex
             _ptr->destroyString();
         }
     }
+#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+	//////////////////////////////////////////////////////////////////////////
+	inline bool const_string_holder::intrusive_ptr_check_ref( const_string_holder * _ptr )
+	{
+		if( _ptr->m_owner->m_reference == 0 )
+		{
+			return false;
+		}
+
+		if( _ptr->m_reference == 0 )
+		{
+			return false;
+		}
+
+		return true; 
+	}
+#	endif
 }
