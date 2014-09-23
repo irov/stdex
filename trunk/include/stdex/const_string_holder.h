@@ -109,7 +109,7 @@ namespace stdex
         void setup( const char * _data, size_t _size, bool _combine );
 
     protected:
-        size_t m_reference;
+        uint32_t m_reference;
 
         const char * m_data;
 		size_type m_size;

@@ -143,7 +143,7 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	bool ini::hasSection( const char * _section ) const
 	{
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			const Setting & setting = m_settings[index];
 
@@ -160,7 +160,7 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	const char * ini::getSettingValue( const char * _section, const char * _key ) const
 	{
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			const Setting & setting = m_settings[index];
 
@@ -182,11 +182,11 @@ namespace stdex
 		return nullptr;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	size_t ini::countSettingValues( const char * _section, const char * _key ) const
+	uint32_t ini::countSettingValues( const char * _section, const char * _key ) const
 	{
-		size_t count = 0;
+		uint32_t count = 0;
 
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			const Setting & setting = m_settings[index];
 
@@ -206,11 +206,11 @@ namespace stdex
 		return count;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	const char * ini::getSettingValues( const char * _section, const char * _key, size_t _index ) const
+	const char * ini::getSettingValues( const char * _section, const char * _key, uint32_t _index ) const
 	{
-		size_t count = 0;
+		uint32_t count = 0;
 
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			const Setting & setting = m_settings[index];
 
@@ -239,11 +239,11 @@ namespace stdex
 		return nullptr;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	size_t ini::countSettings( const char * _section ) const
+	uint32_t ini::countSettings( const char * _section ) const
 	{
-		size_t count = 0;
+		uint32_t count = 0;
 
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			const Setting & setting = m_settings[index];
 
@@ -282,7 +282,7 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	bool ini::mergeSetting( const char * _section, const char * _key, const char * _value )
 	{
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			Setting & setting = m_settings[index];
 
@@ -317,11 +317,11 @@ namespace stdex
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	bool ini::getSettings( const char * _section, size_t _index, const char ** _key, const char ** _value ) const
+	bool ini::getSettings( const char * _section, uint32_t _index, const char ** _key, const char ** _value ) const
 	{
-		size_t count = 0;
+		uint32_t count = 0;
 
-		for( size_t index = 0; index != m_settingsCount; ++index )
+		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			const Setting & setting = m_settings[index];
 

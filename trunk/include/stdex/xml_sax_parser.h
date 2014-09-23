@@ -10,7 +10,7 @@ namespace stdex
 		//////////////////////////////////////////////////////////////////////////
 		struct xml_sax_parse_attribute
 		{
-			size_t count;
+			uint32_t count;
 
 			const char * key[64];
 			const char * value[64];			
@@ -164,7 +164,8 @@ namespace stdex
 			}
 
 			begin_node = detail::s_xml_parse_node<t_xml_sax_callback>( _callback, begin_node + 1 );
-		}while(true, true);
+		}
+		while(true, true);
 
 		return true;
 	}
