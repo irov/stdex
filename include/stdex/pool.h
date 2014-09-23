@@ -1,5 +1,7 @@
 #	pragma once
 
+#	include <stdint.h>
+
 #	include <new>
 
 namespace stdex
@@ -49,7 +51,7 @@ namespace stdex
         pool_block buffer_block[TBlockCount];        
     };
 
-    template<size_t TBlockSize, size_t TBlockCount>
+    template<size_t TBlockSize, uint32_t TBlockCount>
     class pool
     {
         typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_t;
@@ -98,7 +100,7 @@ namespace stdex
         }
 
 	public:
-        size_t getBlockCount() const
+        uint32_t getBlockCount() const
         {
             return m_blockCount;
         }
@@ -108,12 +110,12 @@ namespace stdex
             return TBlockSize;
         }
 
-        size_t getChunkCount() const
+        uint32_t getChunkCount() const
         {
             return m_chunkCount;
         }
 
-        size_t getBlockTotal() const
+        uint32_t getBlockTotal() const
         {
             return TBlockCount;
         }
@@ -160,11 +162,11 @@ namespace stdex
         chunk_t * m_chunk;
         block_t * m_free;
 
-        size_t m_blockCount;
-        size_t m_chunkCount;
+        uint32_t m_blockCount;
+        uint32_t m_chunkCount;
     };
 
-    template<class T, size_t TBlockCount>
+    template<class T, uint32_t TBlockCount>
     class template_pool
     {
     public:

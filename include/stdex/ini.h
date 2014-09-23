@@ -1,6 +1,7 @@
 #   pragma once
 
 #   include <stddef.h>
+#	include <stdint.h>
 
 #	ifndef STDEX_INI_MAX_SETTINGS
 #	define STDEX_INI_MAX_SETTINGS 1024
@@ -24,14 +25,14 @@ namespace stdex
 		const char * getSettingValue( const char * _section, const char * _key ) const;
 
 	public:
-		size_t countSettingValues( const char * _section, const char * _key ) const;
-		const char * getSettingValues( const char * _section, const char * _key, size_t _index ) const;
+		uint32_t countSettingValues( const char * _section, const char * _key ) const;
+		const char * getSettingValues( const char * _section, const char * _key, uint32_t _index ) const;
 
 	public:		
 		bool addSetting( const char * _section, const char * _key, const char * _value );
 		bool mergeSetting( const char * _section, const char * _key, const char * _value );
-		bool getSettings( const char * _section, size_t _index, const char ** _key, const char ** _value ) const;
-		size_t countSettings( const char * _section ) const;
+		bool getSettings( const char * _section, uint32_t _index, const char ** _key, const char ** _value ) const;
+		uint32_t countSettings( const char * _section ) const;
 
 	public:
 		const char * getError() const;
@@ -48,7 +49,7 @@ namespace stdex
 		};
 
 		Setting m_settings[STDEX_INI_MAX_SETTINGS];
-		size_t m_settingsCount;
+		uint32_t m_settingsCount;
 
 		char m_error[256];
 	};

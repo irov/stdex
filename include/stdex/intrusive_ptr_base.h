@@ -26,6 +26,35 @@ namespace stdex
     protected:
         size_t m_reference;
     };
+	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	inline void intrusive_ptr_setup( T *& _ptr, T * _other )
+	{
+		_ptr = _other;
+
+		if( _other != nullptr )
+		{
+			T::intrusive_ptr_add_ref( _other );
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	inline void intrusive_ptr_setup( T *& _ptr, const stdex::intrusive_ptr<T> & _other )
+	{
+		T * other_ptr = _other.get();
+		
+		stdex::intrusive_ptr_setup( _ptr, other_ptr );
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	inline void intrusive_ptr_release( T *& _ptr )
+	{
+		if( _ptr != nullptr )
+		{
+			T::intrusive_ptr_dec_ref( _ptr );
+			_ptr = nullptr;
+		}
+	}
     //////////////////////////////////////////////////////////////////////////
 	template<class T>
 	inline void intrusive_ptr_base<T>::intrusive_ptr_add_ref( intrusive_ptr_base<T> * _ptr )
