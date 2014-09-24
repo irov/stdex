@@ -174,6 +174,11 @@ namespace stdex
 			size_t allign_size = memory_buf_allign(_size);
 			mem = STDEX_ALLOCATOR_MALLOC(allign_size);
 
+			if( mem == nullptr )
+			{
+				return nullptr;
+			}
+
 			pool_setup_index(mem, (uint32_t)allign_size);
 
 			s_global_memory_use += allign_size;
@@ -235,6 +240,11 @@ namespace stdex
             void * mem_pool = memory_to_pool(_mem);
 			size_t allign_size = memory_buf_allign(_size);
             void * realloc_mem = STDEX_ALLOCATOR_REALLOC( mem_pool, allign_size );
+
+			if( realloc_mem == nullptr )
+			{
+				return nullptr;
+			}
 			
 			s_global_memory_use += allign_size;
 			pool_setup_index(realloc_mem, (uint32_t)allign_size);
