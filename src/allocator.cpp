@@ -408,6 +408,22 @@ extern "C" {
     }
     //////////////////////////////////////////////////////////////////////////
 #   endif
+#   define allocator_pool_bound( i )\
+	if( _size < stdex::allocator_pool_size(i) )\
+	{\
+	bound = stdex::allocator_pool_size(i);\
+	} else
+	//////////////////////////////////////////////////////////////////////////
+	size_t stdex_allocator_bound( size_t _size )
+	{
+		uint32_t bound = 0;
+		allocator_pool_loop( allocator_pool_bound )
+		{
+			return _size + 4;
+		}
+
+		return bound;
+	}
 	//////////////////////////////////////////////////////////////////////////
 	size_t stdex_allocator_globalmemoryuse()
 	{
