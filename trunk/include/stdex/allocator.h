@@ -5,7 +5,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif	
     void * stdex_malloc( size_t _size );
     void stdex_free( void * _mem );
     void * stdex_calloc( size_t _num, size_t _size );
@@ -24,6 +24,7 @@ extern "C" {
 		size_t block_total;
 	};
 
+	size_t stdex_allocator_bound( size_t _size );
     size_t stdex_allocator_globalmemoryuse();
 	size_t stdex_allocator_memoryuse();
 
