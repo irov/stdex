@@ -16,6 +16,16 @@ namespace stdex
 		intrusive_splay_node * left;
 		intrusive_splay_node * right;
 
+
+		template<class K>
+		struct less_type_pod
+		{
+			bool operator() ( K _l, K _r ) const
+			{
+				return _l < _r;
+			}
+		};
+
 		template<class K>
 		struct less_type
 		{
