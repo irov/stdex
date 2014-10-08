@@ -106,7 +106,7 @@ namespace stdex
 #	endif
 
     protected:
-        void setup( const char * _data, size_t _size, bool _combine );
+        void setup( const char * _data, size_t _size, hash_type _hash, bool _combine );
 
     protected:
         uint32_t m_reference;
@@ -120,22 +120,6 @@ namespace stdex
 
 		bool m_combine;
     };
-	//////////////////////////////////////////////////////////////////////////
-	inline uint32_t const_string_make_hash( const char * _data )
-	{
-		const char * str = _data;
-
-		uint32_t hash = 5381;
-
-		for( const char * c = str; *c != 0; ++c )
-		{
-			int d = *c;
-
-			hash = ((hash << 5) + hash) + d;
-		}
-
-		return hash;			 
-	}
     //////////////////////////////////////////////////////////////////////////
 	inline void const_string_holder::intrusive_ptr_add_ref( const_string_holder * _ptr )
     {

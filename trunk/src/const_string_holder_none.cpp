@@ -7,7 +7,7 @@ namespace stdex
     {
         const char * empty_str = "";
 
-        this->setup( empty_str, 0, true );
+        this->setup( empty_str, 0, 0, true );
     }
     //////////////////////////////////////////////////////////////////////////
     void const_string_holder_none::_releaseString()

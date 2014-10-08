@@ -62,11 +62,12 @@ namespace stdex
         return true;
     }
     //////////////////////////////////////////////////////////////////////////
-    void const_string_holder::setup( const char * _data, size_t _size, bool _combine )
+    void const_string_holder::setup( const char * _data, size_t _size, hash_type _hash, bool _combine )
     {
         m_data = _data;
-        m_hash = const_string_make_hash( m_data );
-        m_size = _size;
+		m_size = _size;
+
+        m_hash = _hash;
 		m_combine = _combine;
     }
     //////////////////////////////////////////////////////////////////////////

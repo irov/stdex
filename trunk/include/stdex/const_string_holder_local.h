@@ -10,7 +10,7 @@ namespace stdex
     {
 	public:
 		const_string_holder_local();
-		const_string_holder_local( const char * _data, size_t _size );
+		const_string_holder_local( const char * _data, size_t _size, hash_type _hash );
 
 	private:
 		void operator = ( const const_string_holder_local & )
@@ -18,7 +18,7 @@ namespace stdex
 		}
 
 	public:
-		void setup( const char * _data, size_t _size );
+		void setup( const char * _data, size_t _size, hash_type _hash );
 
     protected:
         void _releaseString() override;

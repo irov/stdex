@@ -7,14 +7,14 @@ namespace stdex
 	{
 	}
 	//////////////////////////////////////////////////////////////////////////
-	const_string_holder_local::const_string_holder_local( const char * _data, size_t _size )
+	const_string_holder_local::const_string_holder_local( const char * _data, size_t _size, hash_type _hash )
 	{
-		const_string_holder::setup( _data, _size, false );
+		const_string_holder::setup( _data, _size, _hash, false );
 	}
 	//////////////////////////////////////////////////////////////////////////
-	void const_string_holder_local::setup( const char * _data, size_t _size )
+	void const_string_holder_local::setup( const char * _data, size_t _size, hash_type _hash )
 	{
-		const_string_holder::setup( _data, _size, false );
+		const_string_holder::setup( _data, _size, _hash, false );
 	}
     //////////////////////////////////////////////////////////////////////////
     void const_string_holder_local::_releaseString()
