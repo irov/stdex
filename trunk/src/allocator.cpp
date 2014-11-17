@@ -341,7 +341,7 @@ extern "C" {
 		stdex::g_thread_unlock = _unlock;
 	}
 
-#   ifdef stdex_allocator_disable
+#   ifdef STDEX_ALLOCATOR_DISABLE
     //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
     {
