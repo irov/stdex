@@ -491,14 +491,31 @@ namespace stdex
 
 			this->lockSplay_();
 
-			this->foreach_node_( root, f );
+			this->foreach_function_node_( root, f );
+
+			this->unlockSplay_();				
+		}
+
+		template<class C, class M>
+		void foreach( C * _c, M m ) const
+		{
+			node_type * root = this->getRoot_();
+
+			if( root == nullptr )
+			{
+				return;
+			}
+
+			this->lockSplay_();
+
+			this->foreach_method_node_( root, _c, m );
 
 			this->unlockSplay_();				
 		}
 
 	protected:
 		template<class F>
-		void foreach_node_( node_type * _node, F f ) const
+		void foreach_function_node_( node_type * _node, F f ) const
 		{
 			node_type * left = _node->left;
 			node_type * right = _node->right;
@@ -509,12 +526,33 @@ namespace stdex
 
 			if( left != nullptr )
 			{
-				this->foreach_node_( left, f );
+				this->foreach_function_node_( left, f );
 			}
 
 			if( right != nullptr )
 			{
-				this->foreach_node_( right, f );
+				this->foreach_function_node_( right, f );
+			}
+		}
+
+		template<class C, class M>
+		void foreach_method_node_( node_type * _node, C * c, M m ) const
+		{
+			node_type * left = _node->left;
+			node_type * right = _node->right;
+
+			T * t = static_cast<T *>(_node);
+
+			(c->*m)( t );
+
+			if( left != nullptr )
+			{
+				this->foreach_method_node_( left, c, m );
+			}
+
+			if( right != nullptr )
+			{
+				this->foreach_method_node_( right, c, m );
 			}
 		}
 

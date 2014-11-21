@@ -2,10 +2,12 @@
 #   include "stdex/pool.h"
 #	include "stdex/memorycopy.h"
 
-#   include <malloc.h>
 #   include <stdint.h>
 #   include <memory.h>
 
+#   ifndef STDEX_ALLOCATOR_INCLUDE
+#	define STDEX_ALLOCATOR_INCLUDE <malloc.h>
+#	endif
 
 #   ifndef STDEX_ALLOCATOR_MALLOC
 #   define STDEX_ALLOCATOR_MALLOC (::malloc)
@@ -30,6 +32,8 @@
 #	define STDEX_ALLOCATOR_LOCK()
 #	define STDEX_ALLOCATOR_UNLOCK()
 #	endif
+
+#	include STDEX_ALLOCATOR_INCLUDE
 
 namespace stdex
 {
