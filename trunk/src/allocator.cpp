@@ -400,21 +400,9 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void stdex_free( void * _mem )
     {
-		//int status1 = _heapchk();
-		//if( status1 != _HEAPOK )
-		//{
-		//	malloc(1);
-		//}
-
 		STDEX_ALLOCATOR_LOCK();
         stdex::s_free( _mem );
 		STDEX_ALLOCATOR_UNLOCK();
-
-		//int status2 = _heapchk();
-		//if( status2 != _HEAPOK )
-		//{
-		//	malloc(1);
-		//}
     }
     //////////////////////////////////////////////////////////////////////////
     void * stdex_calloc( size_t _num, size_t _size )
