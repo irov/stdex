@@ -1,25 +1,31 @@
 #	pragma once
 
-#	include <stddef.h>
+#	include <stdint.h>
 
 namespace stdex
 {
-	class exception
+	//////////////////////////////////////////////////////////////////////////
+	namespace helper
 	{
-	public:
-		exception( const char * _file, size_t _line, const char * _doc )
-			: file(_file)
-			, line(_line)
-			, doc(_doc)
+		//////////////////////////////////////////////////////////////////////////
+		class throw_exception
 		{
-		}
+		public:
+			throw_exception( const char * _file, uint32_t _line )
+				: file(_file)
+				, line(_line)
+			{
+			}
 
-	public:
-		const char * file;
-		size_t line;
-		const char * doc;
-	};
+		public:
+			void operator () ( const char * _format, ... );
 
-#	define STDEX_THROW_EXCEPTION(Doc)\
-	throw stdex::exception(__FILE__, __LINE__, Doc)
+		public:	
+			const char * file;
+			uint32_t line;
+		};
+	}
+
+#	define STDEX_THROW_EXCEPTION\
+	stdex::helper::throw_exception(__FILE__, __LINE__)
 }
