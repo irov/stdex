@@ -18,9 +18,9 @@ namespace stdex
 			}
 
 		public:
-			void operator () ( const char * _format, ... );
+			void operator () ( const char * _format, ... ) const;
 
-		public:	
+		protected:
 			const char * file;
 			uint32_t line;
 		};

@@ -302,7 +302,7 @@ namespace stdex
 		STDEX_ALLOCATOR_LOCK();
         void * new_mem = s_malloc( _size );
 
-		stdex::memorycopy( new_mem, _mem, pool_size );
+		stdex::memorycopy( new_mem, 0, _mem, pool_size );
         
         s_free( _mem );
 		STDEX_ALLOCATOR_UNLOCK();
