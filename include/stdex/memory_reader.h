@@ -55,7 +55,7 @@ namespace stdex
 			}
 
 			const unsigned char * read_buff = m_buff + m_read;
-			memorycopy( _begin, read_buff, _size );
+			memorycopy( _begin, 0, read_buff, _size );
 
 			m_read += _size;
 		}

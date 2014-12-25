@@ -42,7 +42,7 @@ namespace stdex
 				return;
 			}
 
-			memorycopy( m_buffer + m_pos, _value, _size );
+			memorycopy( m_buffer, m_pos, _value, _size );
 
 			m_pos += _size;
 			m_buffer[m_pos] = 0;
@@ -93,7 +93,7 @@ namespace stdex
 				return;
 			}
 
-			memorycopy( m_buffer + m_pos - size, _value, size );			
+			memorycopy( m_buffer, m_pos - size, _value, size );
 		}
 
 		void cut_before_last_of( char _ch )
