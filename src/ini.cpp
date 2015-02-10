@@ -260,11 +260,25 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 	bool ini::addSetting( const char * _section, const char * _key, const char * _value )
 	{
+		if( strlen( _value ) + 1 >= STDEX_INI_MAX_VALUE_SIZE )
+		{
+			sprintf(m_error, "elements %s key %s value %s len %d > max len %d"
+				, _section
+				, _key
+				, _value
+				, strlen( _value )
+				, STDEX_INI_MAX_VALUE_SIZE
+				);
+
+			return false;
+		}
+
 		Setting & setting = m_settings[m_settingsCount];
 
 		setting.section = _section;
 		setting.key = _key;
-		setting.value = _value;
+		
+		strcpy( setting.value, _value );
 
 		++m_settingsCount;
 
@@ -280,8 +294,21 @@ namespace stdex
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	bool ini::mergeSetting( const char * _section, const char * _key, const char * _value )
+	bool ini::setSetting( const char * _section, const char * _key, const char * _value )
 	{
+		if( strlen( _value ) + 1 >= STDEX_INI_MAX_VALUE_SIZE )
+		{
+			sprintf(m_error, "elements %s key %s value %s len %d > max len %d"
+				, _section
+				, _key
+				, _value
+				, strlen( _value )
+				, STDEX_INI_MAX_VALUE_SIZE
+				);
+
+			return false;
+		}
+
 		for( uint32_t index = 0; index != m_settingsCount; ++index )
 		{
 			Setting & setting = m_settings[index];
@@ -296,7 +323,7 @@ namespace stdex
 				continue;
 			}
 
-			setting.value = _value;
+			strcpy( setting.value, _value );
 
 			return true;
 		}
@@ -305,7 +332,8 @@ namespace stdex
 
 		setting.section = _section;
 		setting.key = _key;
-		setting.value = _value;
+		
+		strcpy( setting.value, _value );
 
 		++m_settingsCount;
 
