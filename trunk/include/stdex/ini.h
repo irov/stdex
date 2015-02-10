@@ -7,6 +7,10 @@
 #	define STDEX_INI_MAX_SETTINGS 1024
 #	endif
 
+#	ifndef STDEX_INI_MAX_VALUE_SIZE
+#	define STDEX_INI_MAX_VALUE_SIZE 64
+#	endif
+
 namespace stdex
 {   
 	//////////////////////////////////////////////////////////////////////////
@@ -30,7 +34,7 @@ namespace stdex
 
 	public:		
 		bool addSetting( const char * _section, const char * _key, const char * _value );
-		bool mergeSetting( const char * _section, const char * _key, const char * _value );
+		bool setSetting( const char * _section, const char * _key, const char * _value );
 		bool getSettings( const char * _section, uint32_t _index, const char ** _key, const char ** _value ) const;
 		uint32_t countSettings( const char * _section ) const;
 
@@ -45,10 +49,10 @@ namespace stdex
 		{
 			const char * section;
 			const char * key;
-			const char * value;
+			char value[STDEX_INI_MAX_VALUE_SIZE];
 		};
 
-		Setting m_settings[STDEX_INI_MAX_SETTINGS];
+		Setting m_settings[STDEX_INI_MAX_VALUE_SIZE];
 		uint32_t m_settingsCount;
 
 		char m_error[256];
