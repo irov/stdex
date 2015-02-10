@@ -56,8 +56,10 @@ namespace stdex
 			return &_ref; 
 		}
 
-		inline pointer allocate( size_type _count, typename std::allocator<void>::const_pointer = nullptr )
+		inline pointer allocate( size_type _count, typename std::allocator<void>::const_pointer p = nullptr )
 		{ 
+			(void)p;
+
 			void * memory = stdex_malloc( _count * sizeof(T) );
 
 			return reinterpret_cast<pointer>(memory);
