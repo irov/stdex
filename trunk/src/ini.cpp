@@ -298,7 +298,7 @@ namespace stdex
 	{
 		if( strlen( _value ) + 1 >= STDEX_INI_MAX_VALUE_SIZE )
 		{
-			sprintf(m_error, "elements %s key %s value %s len %d > max len %d"
+			sprintf(m_error, "elements %s key %s value %s len %u > max len %u"
 				, _section
 				, _key
 				, _value
