@@ -273,6 +273,15 @@ namespace stdex
 			return false;
 		}
 
+		if( m_settingsCount + 1 == STDEX_INI_MAX_SETTINGS )
+		{
+			sprintf(m_error, "elements is MAX %d"
+				, STDEX_INI_MAX_SETTINGS
+				);
+
+			return false;
+		}
+
 		Setting & setting = m_settings[m_settingsCount];
 
 		setting.section = _section;
@@ -281,15 +290,6 @@ namespace stdex
 		strcpy( setting.value, _value );
 
 		++m_settingsCount;
-
-		if( m_settingsCount == STDEX_INI_MAX_SETTINGS )
-		{
-			sprintf(m_error, "elements is MAX %d"
-				, STDEX_INI_MAX_SETTINGS
-				);
-
-			return false;
-		}
 
 		return true;
 	}
@@ -328,6 +328,15 @@ namespace stdex
 			return true;
 		}
 
+		if( m_settingsCount + 1 == STDEX_INI_MAX_SETTINGS )
+		{
+			sprintf(m_error, "elements is MAX %d"
+				, STDEX_INI_MAX_SETTINGS
+				);
+
+			return false;
+		}
+
 		Setting & setting = m_settings[m_settingsCount];
 
 		setting.section = _section;
@@ -336,12 +345,7 @@ namespace stdex
 		strcpy( setting.value, _value );
 
 		++m_settingsCount;
-
-		if( m_settingsCount == STDEX_INI_MAX_SETTINGS )
-		{
-			return false;
-		}
-
+		
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
