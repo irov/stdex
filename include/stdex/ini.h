@@ -4,11 +4,11 @@
 #	include <stdint.h>
 
 #	ifndef STDEX_INI_MAX_SETTINGS
-#	define STDEX_INI_MAX_SETTINGS 1024
+#	define STDEX_INI_MAX_SETTINGS 1024U
 #	endif
 
 #	ifndef STDEX_INI_MAX_VALUE_SIZE
-#	define STDEX_INI_MAX_VALUE_SIZE 64
+#	define STDEX_INI_MAX_VALUE_SIZE 64U
 #	endif
 
 namespace stdex

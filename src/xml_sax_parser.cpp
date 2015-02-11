@@ -30,7 +30,7 @@ namespace stdex
 		{
 			char * src = _value;
 
-			do
+			for(;;)
 			{
 				src = strchr( src, '&' );
 
@@ -106,7 +106,7 @@ namespace stdex
 						if( src[2] == 'x' )
 						{						
 							src_code += 3;
-							do
+							for(;;)
 							{
 								unsigned char table_code = static_cast<unsigned char>(*src_code);
 								unsigned char digit = xml_lookup_digits_tables[table_code];
@@ -117,12 +117,12 @@ namespace stdex
 
 								code = code * 16 + digit;
 								++src_code;
-							}while(true, true);					
+							}				
 						}
 						else
 						{
 							src_code += 2;
-							do
+							for(;;)
 							{
 								unsigned char table_code = static_cast<unsigned char>(*src_code);
 								unsigned char digit = xml_lookup_digits_tables[table_code];
@@ -133,7 +133,7 @@ namespace stdex
 
 								code = code * 10 + digit;
 								++src_code;
-							}while(true, true);					
+							}				
 						}
 
 						if( code < 0x80 )    // 1 byte sequence
@@ -170,7 +170,7 @@ namespace stdex
 						strcpy( src, src_code + 1 );
 					}break;
 				}
-			}while(true, true);
+			}
 		}
 		//////////////////////////////////////////////////////////////////////////
 		char * s_xml_parse_node_attribute( xml_sax_parse_attribute & _attr, char * _attribute, const char * _node )

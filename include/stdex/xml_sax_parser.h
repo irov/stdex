@@ -154,7 +154,7 @@ namespace stdex
 			begin_node += 3;
 		}
 
-		do
+		for(;;)
 		{
 			begin_node = strchr( begin_node, '<' );
 
@@ -165,7 +165,6 @@ namespace stdex
 
 			begin_node = detail::s_xml_parse_node<t_xml_sax_callback>( _callback, begin_node + 1 );
 		}
-		while(true, true);
 
 		return true;
 	}
