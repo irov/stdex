@@ -4,7 +4,7 @@
 #	include <stdint.h>
 
 #	ifndef STDEX_INI_MAX_SETTINGS
-#	define STDEX_INI_MAX_SETTINGS 1024U
+#	define STDEX_INI_MAX_SETTINGS 256U
 #	endif
 
 #	ifndef STDEX_INI_MAX_VALUE_SIZE
@@ -52,7 +52,7 @@ namespace stdex
 			char value[STDEX_INI_MAX_VALUE_SIZE];
 		};
 
-		Setting m_settings[STDEX_INI_MAX_VALUE_SIZE];
+		Setting m_settings[STDEX_INI_MAX_SETTINGS];
 		uint32_t m_settingsCount;
 
 		char m_error[256];
