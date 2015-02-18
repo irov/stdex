@@ -110,24 +110,24 @@ namespace stdex
 
 	allocator_pool_def(0, 4, 128);
 	allocator_pool_def(1, 8, 2048);
-	allocator_pool_def(2, 13, 1024);
-	allocator_pool_def(3, 17, 1024);
-	allocator_pool_def(4, 21, 512);
-	allocator_pool_def(5, 27, 512);
-	allocator_pool_def(6, 34, 256);
-	allocator_pool_def(7, 44, 256);
-	allocator_pool_def(8, 55, 256);
-	allocator_pool_def(9, 72, 256);
-	allocator_pool_def(10, 89, 256);
-	allocator_pool_def(11, 116, 256);
-	allocator_pool_def(12, 144, 128);
-	allocator_pool_def(13, 188, 128);
-	allocator_pool_def(14, 233, 128);
-	allocator_pool_def(15, 305, 128);
-	allocator_pool_def(16, 377, 128);
-	allocator_pool_def(17, 493, 128);
-	allocator_pool_def(18, 610, 64);
-	allocator_pool_def(19, 798, 64);
+	allocator_pool_def(2, 16, 1024);	
+	allocator_pool_def(3, 24, 512);
+	allocator_pool_def(4, 32, 512);
+	allocator_pool_def(5, 48, 256);
+	allocator_pool_def(6, 64, 256);
+	allocator_pool_def(7, 92, 256);
+	allocator_pool_def(8, 128, 256);
+	allocator_pool_def(9, 192, 256);
+	allocator_pool_def(10, 256, 256);
+	allocator_pool_def(11, 384, 256);
+	allocator_pool_def(12, 512, 32);
+	allocator_pool_def(13, 768, 32);
+	allocator_pool_def(14, 1024, 16);
+	allocator_pool_def(15, 2048, 16);
+	allocator_pool_def(16, 4096, 4);
+	allocator_pool_def(17, 8192, 2);
+	allocator_pool_def(18, 16384, 2);
+	allocator_pool_def(19, 32768, 2);
 	//////////////////////////////////////////////////////////////////////////
 	const static uint32_t si_count = 20;
 	//////////////////////////////////////////////////////////////////////////
