@@ -12,6 +12,11 @@
 #	define STDEX_INTRUSIVE_PTR_DEBUG
 #	endif
 
+#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+#	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() m_mask = 0xABCDEF01
+#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( m_mask != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("m_mask != 0xABCDEF01")
+#	endif
+
 namespace stdex
 {
 	template<class T> 
@@ -24,18 +29,22 @@ namespace stdex
 		inline intrusive_ptr()
 			: m_ptr(nullptr)
 		{
+			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 		}
 
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
 		inline intrusive_ptr( nullptr_t )
 			: m_ptr(nullptr)
 		{
+			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 		}
 #	endif
 
 		inline intrusive_ptr( const element_type * _ptr )
 			: m_ptr(const_cast<element_type * >(_ptr))
 		{
+			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+
 			this->incref();
 		}
 
@@ -43,12 +52,16 @@ namespace stdex
 		inline intrusive_ptr( const U * _ptr )
 			: m_ptr(static_cast<element_type *>(const_cast<U *>(_ptr)))
 		{
+			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+
 			this->incref();
 		}
 
 		inline intrusive_ptr( const intrusive_ptr & _rhs )
 			: m_ptr(_rhs.get())
 		{
+			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+
 			this->incref();
 		}
 
@@ -56,16 +69,22 @@ namespace stdex
 		inline intrusive_ptr( const intrusive_ptr<U> & _rhs )
 			: m_ptr(static_cast<T *>(_rhs.get()))
 		{
+			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+
 			this->incref();
 		}
 
 		inline ~intrusive_ptr()
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			this->decref();
 		}
 
 		inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			intrusive_ptr swap_ptr(_rhs);
 			swap_ptr.swap( *this );
 
@@ -74,17 +93,19 @@ namespace stdex
 
 		inline intrusive_ptr & operator = ( element_type * _rhs )
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			intrusive_ptr swap_ptr(_rhs);
 			swap_ptr.swap( *this );
 
 			return *this;
 		}
-
-
-
+		
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
 		inline intrusive_ptr & operator = ( nullptr_t )
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			intrusive_ptr swap_ptr;
 			swap_ptr.swap( *this );
 
@@ -95,11 +116,15 @@ namespace stdex
 	public:
 		inline element_type * get() const
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			return m_ptr;
 		}
 
 		inline element_type * operator -> () const
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
 			if( m_ptr == nullptr )
 			{
@@ -117,6 +142,8 @@ namespace stdex
 
 		inline void swap( intrusive_ptr & _rhs )
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			T * tmp = m_ptr;
 			m_ptr = _rhs.m_ptr;
 			_rhs.m_ptr = tmp;
@@ -125,6 +152,8 @@ namespace stdex
 	protected:
 		inline void incref()
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			if( m_ptr != nullptr ) 
 			{
 				T::intrusive_ptr_add_ref( m_ptr );
@@ -133,6 +162,8 @@ namespace stdex
 
 		inline void decref()
 		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
 			if( m_ptr != nullptr )
 			{
 				T::intrusive_ptr_dec_ref( m_ptr );
@@ -141,6 +172,10 @@ namespace stdex
 
 	protected:
 		element_type * m_ptr;
+
+#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+		uint32_t m_mask;
+#	endif
 	};
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
