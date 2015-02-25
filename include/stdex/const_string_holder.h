@@ -29,7 +29,7 @@ namespace stdex
 
 	public:
 		typedef size_t size_type;
-		typedef uint32_t hash_type;
+		typedef long hash_type;
 
     public:
         inline const char * c_str() const
