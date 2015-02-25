@@ -35,4 +35,28 @@ namespace stdex
 
         return true;
     }
+	//////////////////////////////////////////////////////////////////////////
+	bool operator != ( const const_string & _left, const char * _right )
+	{
+		const char * left_str = _left.c_str();
+
+		if( strcmp( left_str, _right ) == 0 )
+		{
+			return false;
+		}
+
+		return true;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	bool operator != ( const char * _left, const const_string & _right )
+	{
+		const char * right_str = _right.c_str();
+
+		if( strcmp( _left, right_str ) == 0 )
+		{
+			return false;
+		}
+
+		return true;
+	}
 }
