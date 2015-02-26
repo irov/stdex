@@ -15,7 +15,7 @@ namespace stdex
     public:
         struct pool_block
         {
-            unsigned char buff[TBlockSize];
+            uint8_t buff[TBlockSize];
             pool_block * next;
         };
 
@@ -51,7 +51,7 @@ namespace stdex
         pool_block buffer_block[TBlockCount];        
     };
 
-    template<size_t TBlockSize, uint32_t TBlockCount>
+    template<size_t TBlockSize, size_t TBlockCount>
     class pool
     {
         typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_t;
@@ -100,7 +100,7 @@ namespace stdex
         }
 
 	public:
-        uint32_t getBlockCount() const
+        size_t getBlockCount() const
         {
             return m_blockCount;
         }
@@ -110,12 +110,12 @@ namespace stdex
             return TBlockSize;
         }
 
-        uint32_t getChunkCount() const
+        size_t getChunkCount() const
         {
             return m_chunkCount;
         }
 
-        uint32_t getBlockTotal() const
+        size_t getBlockTotal() const
         {
             return TBlockCount;
         }
@@ -162,11 +162,11 @@ namespace stdex
         chunk_t * m_chunk;
         block_t * m_free;
 
-        uint32_t m_blockCount;
-        uint32_t m_chunkCount;
+        size_t m_blockCount;
+        size_t m_chunkCount;
     };
 
-    template<class T, uint32_t TBlockCount>
+    template<class T, size_t TBlockCount>
     class template_pool
     {
     public:
