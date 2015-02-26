@@ -106,15 +106,17 @@ namespace stdex
 	template<size_t I>
 	inline static void mem_set_value( void * _mem, size_t _value );
 	//////////////////////////////////////////////////////////////////////////
+#	define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
+	//////////////////////////////////////////////////////////////////////////
 	template<>
 	inline void mem_set_value<4>( void * _mem, size_t _value )
 	{
 		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 				
-		bytes[0] = (_value >> (8 * 0)) & 0xFF;
-		bytes[1] = (_value >> (8 * 1)) & 0xFF;
-		bytes[2] = (_value >> (8 * 2)) & 0xFF;
-		bytes[3] = (_value >> (8 * 3)) & 0xFF;
+		__STDEX_SET_BYTE(0);
+		__STDEX_SET_BYTE(1);
+		__STDEX_SET_BYTE(2);
+		__STDEX_SET_BYTE(3);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<>
@@ -122,15 +124,17 @@ namespace stdex
 	{
 		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 
-		bytes[0] = (_value >> (8 * 0)) & 0xFF;
-		bytes[1] = (_value >> (8 * 1)) & 0xFF;
-		bytes[2] = (_value >> (8 * 2)) & 0xFF;
-		bytes[3] = (_value >> (8 * 3)) & 0xFF;
-		bytes[4] = (_value >> (8 * 4)) & 0xFF;
-		bytes[5] = (_value >> (8 * 5)) & 0xFF;
-		bytes[6] = (_value >> (8 * 6)) & 0xFF;
-		bytes[7] = (_value >> (8 * 7)) & 0xFF;
+		__STDEX_SET_BYTE(0);
+		__STDEX_SET_BYTE(1);
+		__STDEX_SET_BYTE(2);
+		__STDEX_SET_BYTE(3);
+		__STDEX_SET_BYTE(4);
+		__STDEX_SET_BYTE(5);
+		__STDEX_SET_BYTE(6);
+		__STDEX_SET_BYTE(7);
 	}
+	//////////////////////////////////////////////////////////////////////////
+#	undef __STDEX_SET_BYTE
 	//////////////////////////////////////////////////////////////////////////
 #   define memory_buf_allign(f) (((f + (sizeof(size_t) - 1)) / sizeof(size_t)) * sizeof(size_t))
 #   define memory_buf_total(f) (memory_buf_allign(f) + sizeof(size_t))
