@@ -64,13 +64,9 @@ namespace stdex
 		(*stdex::g_thread_unlock)( g_thread_ptr );
 	}
 	//////////////////////////////////////////////////////////////////////////
-	template<size_t I> 
-	inline static size_t mem_get_value( const void * _mem );
-	//////////////////////////////////////////////////////////////////////////
 #	define __STDEX_GET_BYTE(I) value |= ((size_t)bytes[I]) << (8 * I)
 	//////////////////////////////////////////////////////////////////////////
-	template<>
-	inline size_t mem_get_value<4>( const void * _mem )
+	inline static size_t mem_get_value( const void * _mem )
 	{
 		const uint8_t * bytes = static_cast<const uint8_t *>(_mem);
 
@@ -80,36 +76,21 @@ namespace stdex
 		__STDEX_GET_BYTE(2);
 		__STDEX_GET_BYTE(3);
 
-		return value;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<>
-	inline size_t mem_get_value<8>( const void * _mem )
-	{
-		const uint8_t * bytes = static_cast<const uint8_t *>(_mem);
-
-		size_t value = 0U;
-		__STDEX_GET_BYTE(0);
-		__STDEX_GET_BYTE(1);
-		__STDEX_GET_BYTE(2);
-		__STDEX_GET_BYTE(3);
+#	ifdef STDEX_X64
 		__STDEX_GET_BYTE(4);
 		__STDEX_GET_BYTE(5);
 		__STDEX_GET_BYTE(6);
 		__STDEX_GET_BYTE(7);
+#	endif
 
 		return value;
 	}
 	//////////////////////////////////////////////////////////////////////////
 #	undef __STDEX_GET_BYTE
 	//////////////////////////////////////////////////////////////////////////
-	template<size_t I>
-	inline static void mem_set_value( void * _mem, size_t _value );
-	//////////////////////////////////////////////////////////////////////////
 #	define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
 	//////////////////////////////////////////////////////////////////////////
-	template<>
-	inline void mem_set_value<4>( void * _mem, size_t _value )
+	inline void mem_set_value( void * _mem, size_t _value )
 	{
 		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 				
@@ -117,21 +98,13 @@ namespace stdex
 		__STDEX_SET_BYTE(1);
 		__STDEX_SET_BYTE(2);
 		__STDEX_SET_BYTE(3);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<>
-	inline void mem_set_value<8>( void * _mem, size_t _value )
-	{
-		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 
-		__STDEX_SET_BYTE(0);
-		__STDEX_SET_BYTE(1);
-		__STDEX_SET_BYTE(2);
-		__STDEX_SET_BYTE(3);
+#	ifdef STDEX_X64
 		__STDEX_SET_BYTE(4);
 		__STDEX_SET_BYTE(5);
 		__STDEX_SET_BYTE(6);
 		__STDEX_SET_BYTE(7);
+#	endif
 	}
 	//////////////////////////////////////////////////////////////////////////
 #	undef __STDEX_SET_BYTE
@@ -141,11 +114,11 @@ namespace stdex
 
 #   define pool_to_memory(m) static_cast<void *>(static_cast<uint8_t *>(m) + sizeof(size_t))
 
-#   define pool_setup_index(m, i) mem_set_value<sizeof(size_t)>(m, i)
+#   define pool_setup_index(m, i) mem_set_value(m, i)
 
 #   define memory_ptr(m) (static_cast<uint8_t *>(m) - sizeof(size_t))
 #   define memory_to_pool(m) static_cast<void *>(memory_ptr(m))
-#   define memory_to_index(m) mem_get_value<sizeof(size_t)>( memory_ptr(m) )
+#   define memory_to_index(m) mem_get_value( memory_ptr(m) )
 
 
 #	define allocator_pool(i) s_p##i
