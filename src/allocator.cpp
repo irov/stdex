@@ -67,43 +67,47 @@ namespace stdex
 	template<size_t I> 
 	inline static size_t mem_get_value( const void * _mem );
 	//////////////////////////////////////////////////////////////////////////
+#	define __STDEX_GET_BYTE(I) value |= ((size_t)bytes[I]) << (8 * I)
+	//////////////////////////////////////////////////////////////////////////
 	template<>
-	inline static size_t mem_get_value<4>( const void * _mem )
+	inline size_t mem_get_value<4>( const void * _mem )
 	{
 		const uint8_t * bytes = static_cast<const uint8_t *>(_mem);
 
 		size_t value = 0U;
-		value |= bytes[0] << (8 * 0);
-		value |= bytes[1] << (8 * 1);
-		value |= bytes[2] << (8 * 2);
-		value |= bytes[3] << (8 * 3);
+		__STDEX_GET_BYTE(0);
+		__STDEX_GET_BYTE(1);
+		__STDEX_GET_BYTE(2);
+		__STDEX_GET_BYTE(3);
 
 		return value;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<>
-	inline static size_t mem_get_value<8>( const void * _mem )
+	inline size_t mem_get_value<8>( const void * _mem )
 	{
 		const uint8_t * bytes = static_cast<const uint8_t *>(_mem);
 
 		size_t value = 0U;
-		value |= bytes[0] << (8 * 0);
-		value |= bytes[1] << (8 * 1);
-		value |= bytes[2] << (8 * 2);
-		value |= bytes[3] << (8 * 3);
-		value |= bytes[4] << (8 * 4);
-		value |= bytes[5] << (8 * 5);
-		value |= bytes[6] << (8 * 6);
-		value |= bytes[7] << (8 * 7);
+		__STDEX_GET_BYTE(0);
+		__STDEX_GET_BYTE(1);
+		__STDEX_GET_BYTE(2);
+		__STDEX_GET_BYTE(3);
+		__STDEX_GET_BYTE(4);
+		__STDEX_GET_BYTE(5);
+		__STDEX_GET_BYTE(6);
+		__STDEX_GET_BYTE(7);
 
 		return value;
 	}
+	//////////////////////////////////////////////////////////////////////////
+#	undef __STDEX_GET_BYTE
 	//////////////////////////////////////////////////////////////////////////
 	template<size_t I>
 	inline static void mem_set_value( void * _mem, size_t _value );
 	//////////////////////////////////////////////////////////////////////////
 	template<>
-	inline static void mem_set_value<4>( void * _mem, size_t _value )
+	inline void mem_set_value<4>( void * _mem, size_t _value )
 	{
 		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 				
@@ -114,7 +118,7 @@ namespace stdex
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<>
-	inline static void mem_set_value<8>( void * _mem, size_t _value )
+	inline void mem_set_value<8>( void * _mem, size_t _value )
 	{
 		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 
