@@ -28,7 +28,7 @@ extern "C" {
     size_t stdex_allocator_globalmemoryuse();
 	size_t stdex_allocator_memoryuse();
 
-	uint32_t stdex_allocator_memoryinfo( struct stdex_memory_info_t * _info, uint32_t _count );
+	size_t stdex_allocator_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
 	
 #ifdef __cplusplus
 };
