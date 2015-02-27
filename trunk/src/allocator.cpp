@@ -64,33 +64,25 @@ namespace stdex
 		(*stdex::g_thread_unlock)( g_thread_ptr );
 	}
 	//////////////////////////////////////////////////////////////////////////
-#	define __STDEX_GET_BYTE(I) value |= ((size_t)bytes[I]) << (8 * I)
+	typedef uint32_t allocator_size_t;
 	//////////////////////////////////////////////////////////////////////////
-	inline static size_t mem_get_value( const void * _mem )
+#	define __STDEX_GET_BYTE(I) value |= ((allocator_size_t)bytes[I]) << (8 * I)
+#	define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
+	//////////////////////////////////////////////////////////////////////////
+	inline static allocator_size_t mem_get_value( const void * _mem )
 	{
 		const uint8_t * bytes = static_cast<const uint8_t *>(_mem);
 
-		size_t value = 0U;
+		allocator_size_t value = 0U;
 		__STDEX_GET_BYTE(0);
 		__STDEX_GET_BYTE(1);
 		__STDEX_GET_BYTE(2);
 		__STDEX_GET_BYTE(3);
 
-#	ifdef STDEX_X64
-		__STDEX_GET_BYTE(4);
-		__STDEX_GET_BYTE(5);
-		__STDEX_GET_BYTE(6);
-		__STDEX_GET_BYTE(7);
-#	endif
-
 		return value;
 	}
 	//////////////////////////////////////////////////////////////////////////
-#	undef __STDEX_GET_BYTE
-	//////////////////////////////////////////////////////////////////////////
-#	define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
-	//////////////////////////////////////////////////////////////////////////
-	inline void mem_set_value( void * _mem, size_t _value )
+	inline void mem_set_value( void * _mem, allocator_size_t _value )
 	{
 		uint8_t * bytes = static_cast<uint8_t *>(_mem);
 				
@@ -98,25 +90,19 @@ namespace stdex
 		__STDEX_SET_BYTE(1);
 		__STDEX_SET_BYTE(2);
 		__STDEX_SET_BYTE(3);
-
-#	ifdef STDEX_X64
-		__STDEX_SET_BYTE(4);
-		__STDEX_SET_BYTE(5);
-		__STDEX_SET_BYTE(6);
-		__STDEX_SET_BYTE(7);
-#	endif
 	}
 	//////////////////////////////////////////////////////////////////////////
+#	undef __STDEX_GET_BYTE
 #	undef __STDEX_SET_BYTE
 	//////////////////////////////////////////////////////////////////////////
-#   define memory_buf_allign(f) (((f + (sizeof(size_t) - 1)) / sizeof(size_t)) * sizeof(size_t))
-#   define memory_buf_total(f) (memory_buf_allign(f) + sizeof(size_t))
+#   define memory_buf_allign(f) (((f + 3) / 4) * 4)
+#   define memory_buf_total(f) (memory_buf_allign(f) + sizeof(allocator_size_t))
 
-#   define pool_to_memory(m) static_cast<void *>(static_cast<uint8_t *>(m) + sizeof(size_t))
+#   define pool_to_memory(m) static_cast<void *>(static_cast<uint8_t *>(m) + sizeof(allocator_size_t))
 
 #   define pool_setup_index(m, i) mem_set_value(m, i)
 
-#   define memory_ptr(m) (static_cast<uint8_t *>(m) - sizeof(size_t))
+#   define memory_ptr(m) (static_cast<uint8_t *>(m) - sizeof(allocator_size_t))
 #   define memory_to_pool(m) static_cast<void *>(memory_ptr(m))
 #   define memory_to_index(m) mem_get_value( memory_ptr(m) )
 
@@ -150,7 +136,7 @@ namespace stdex
 	allocator_pool_def(18, 16384, 2);
 	allocator_pool_def(19, 32768, 2);
 	//////////////////////////////////////////////////////////////////////////
-	const static size_t si_count = 20;
+	const static allocator_size_t si_count = 20;
 	//////////////////////////////////////////////////////////////////////////
 	static size_t s_global_memory_use = 0U;
     //////////////////////////////////////////////////////////////////////////
@@ -215,13 +201,13 @@ namespace stdex
         }
 
         void * mem = nullptr;
-        size_t pi = 0;
+        allocator_size_t pi = 0;
 
-		size_t align_size = memory_buf_allign(_size);
+		allocator_size_t align_size = memory_buf_allign(_size);
 
         allocator_pool_loop( allocator_pool_alloc )
         {
-			size_t total_size = memory_buf_total(_size);
+			allocator_size_t total_size = memory_buf_total(_size);
 			mem = STDEX_ALLOCATOR_MALLOC(total_size);
 
 			if( mem == nullptr )
@@ -229,7 +215,7 @@ namespace stdex
 				return nullptr;
 			}
 
-			s_global_memory_use += total_size;
+			s_global_memory_use += (size_t)total_size;
 
 			pi = total_size;
         }
@@ -254,13 +240,14 @@ namespace stdex
             return;
         }
 
-        size_t pi = memory_to_index(_mem);
+        allocator_size_t pi = memory_to_index(_mem);
         void * mem_pool = memory_to_pool(_mem);
 
         allocator_pool_loop( allocator_pool_free )
         {			
-			size_t global_mem_size = (size_t)pi;
-			s_global_memory_use -= global_mem_size;
+			allocator_size_t global_mem_size = pi;
+
+			s_global_memory_use -= (size_t)global_mem_size;
 
 			void * global_mem_pool = memory_to_pool(_mem);			
             STDEX_ALLOCATOR_FREE(global_mem_pool);
@@ -287,14 +274,14 @@ namespace stdex
 			return nullptr;
 		}
 
-        size_t pi = memory_to_index(_mem);
+        allocator_size_t pi = memory_to_index(_mem);
 
         if( pi >= si_count )
         {
-			size_t mem_size = (size_t)pi;
+			allocator_size_t mem_size = pi;
 
             void * mem_pool = memory_to_pool(_mem);
-			size_t total_size = memory_buf_total(_size);
+			allocator_size_t total_size = memory_buf_total(_size);
             void * realloc_mem = STDEX_ALLOCATOR_REALLOC( mem_pool, total_size );
 
 			if( realloc_mem == nullptr )
@@ -307,7 +294,8 @@ namespace stdex
             void * realloc_mem_buff = pool_to_memory(realloc_mem);
 
 			STDEX_ALLOCATOR_LOCK();
-			s_global_memory_use += total_size - mem_size;
+			s_global_memory_use += (size_t)total_size;
+			s_global_memory_use -= (size_t)mem_size;
 			STDEX_ALLOCATOR_UNLOCK();
 
             return realloc_mem_buff;
