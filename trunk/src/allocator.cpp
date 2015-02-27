@@ -40,9 +40,9 @@
 namespace stdex
 {
 	//////////////////////////////////////////////////////////////////////////
-	void * g_thread_ptr = nullptr;
-	stdex_allocator_thread_lock_t g_thread_lock = nullptr;
-	stdex_allocator_thread_unlock_t g_thread_unlock = nullptr;
+	static void * g_thread_ptr = nullptr;
+	static stdex_allocator_thread_lock_t g_thread_lock = nullptr;
+	static stdex_allocator_thread_unlock_t g_thread_unlock = nullptr;
 	//////////////////////////////////////////////////////////////////////////
 	inline static void s_thread_lock()
 	{
@@ -258,18 +258,14 @@ namespace stdex
     {
         if( _mem == nullptr )
         {
-			STDEX_ALLOCATOR_LOCK();
             void * mem = s_malloc( _size );
-			STDEX_ALLOCATOR_UNLOCK();
 
             return mem;
         }
 
 		if( _size == 0 )
 		{
-			STDEX_ALLOCATOR_LOCK();
 			s_free( _mem );
-			STDEX_ALLOCATOR_UNLOCK();
 
 			return nullptr;
 		}
@@ -293,10 +289,8 @@ namespace stdex
 
             void * realloc_mem_buff = pool_to_memory(realloc_mem);
 
-			STDEX_ALLOCATOR_LOCK();
 			s_global_memory_use += (size_t)total_size;
 			s_global_memory_use -= (size_t)mem_size;
-			STDEX_ALLOCATOR_UNLOCK();
 
             return realloc_mem_buff;
         }
@@ -308,13 +302,11 @@ namespace stdex
             return _mem;
         }
 
-		STDEX_ALLOCATOR_LOCK();
         void * new_mem = s_malloc( _size );
 
 		stdex::memorycopy( new_mem, 0, _mem, pool_size );
         
         s_free( _mem );
-		STDEX_ALLOCATOR_UNLOCK();
         
         return new_mem;
     }
@@ -429,7 +421,9 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_realloc( void * _mem, size_t _size )
     {		
+		STDEX_ALLOCATOR_LOCK();
         void * memory = stdex::s_realloc( _mem, _size );
+		STDEX_ALLOCATOR_UNLOCK();
 		
 		return memory;
     }
