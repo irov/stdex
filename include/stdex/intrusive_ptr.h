@@ -13,13 +13,14 @@
 #	endif
 
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
-#	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() m_mask = 0xABCDEF01
-#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( m_mask != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("m_mask != 0xABCDEF01")
+#	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK() uint32_t m_debug_ptr_mask__;
+#	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() m_debug_ptr_mask__ = 0xABCDEF01
+#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( m_debug_ptr_mask__ != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("mask != 0xABCDEF01")
 #	else
+#	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
 #	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK()
 #	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK()
 #	endif
-
 
 namespace stdex
 {
@@ -125,6 +126,16 @@ namespace stdex
 			return m_ptr;
 		}
 
+		template<class T>
+		inline T * getT() const
+		{
+			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+			T * ptr_t = static_cast<T *>(m_ptr);
+
+			return ptr_t;
+		}
+
 		inline element_type * operator -> () const
 		{
 			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
@@ -177,9 +188,7 @@ namespace stdex
 	protected:
 		element_type * m_ptr;
 
-#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
-		uint32_t m_mask;
-#	endif
+		STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
 	};
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
@@ -345,4 +354,8 @@ namespace stdex
 		return ptr == nullptr;
 	}
 #	endif
+
+#	undef STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK
+#	undef STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK
+#	undef STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK
 }
