@@ -126,12 +126,12 @@ namespace stdex
 			return m_ptr;
 		}
 
-		template<class T>
-		inline T * getT() const
+		template<class K>
+		inline K * getT() const
 		{
 			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			T * ptr_t = static_cast<T *>(m_ptr);
+			K * ptr_t = static_cast<K *>(m_ptr);
 
 			return ptr_t;
 		}
