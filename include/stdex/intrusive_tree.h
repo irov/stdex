@@ -143,6 +143,110 @@ namespace stdex
 			}
 
 		protected:
+			template<class T>
+			class iterator_base
+			{
+			public:
+				iterator( node_type * _node )
+					: m_node(_node)
+				{
+				}
+
+			public:
+				iterator & operator ++ ()
+				{
+					node_type * parent = m_node->parent;
+
+					if( parent != nullptr && parent->right != nullptr && parent->right != m_node )
+					{
+						this->max_left_( parent->right );
+					}
+					else
+					{
+						m_node = parent;
+					}
+
+					return *this;
+				}
+
+			protected:
+				void max_left_( node_type * _node )
+				{
+					node_type * tmp = _node;
+
+					for( ;; )
+					{
+						if( tmp->left != nullptr )
+						{
+							tmp = tmp->left;
+						}
+						else if( tmp->right != nullptr )
+						{
+							tmp = tmp->right;
+						}
+						else
+						{
+							break;
+						}
+					}
+
+					m_node = tmp;
+				}
+
+			public:
+				bool operator == ( const iterator & _it )
+				{
+					return m_node == _it.m_node;
+				}
+
+				bool operator != ( const iterator & _it )
+				{
+					return m_node != _it.m_node;
+				}
+
+				T * operator -> () const 
+				{ 
+					return static_cast<T *>(m_node);
+				}
+
+				T * operator * () const 
+				{ 
+					return static_cast<T *>(m_node); 
+				}
+
+			protected:
+				node_type * m_node;
+			};
+
+			iterator begin()
+			{
+				node_type * tmp = m_root;
+
+				for( ;; )
+				{
+					if( tmp->left != nullptr )
+					{
+						tmp = tmp->left;
+					}
+					else if( tmp->right != nullptr )
+					{
+						tmp = tmp->right;
+					}
+					else
+					{
+						break;
+					}
+				}
+
+				return iterator(tmp);
+			}
+
+			iterator end()
+			{
+				return nullptr;
+			}
+
+		protected:
 			mutable node_type * m_root;
 		};
 	}
