@@ -143,8 +143,7 @@ namespace stdex
 			}
 
 		protected:
-			template<class T>
-			class iterator_base
+			class iterator
 			{
 			public:
 				iterator( node_type * _node )
