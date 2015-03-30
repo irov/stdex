@@ -1,5 +1,7 @@
 #	pragma once
 
+#	include "stdex/intrusive_tree_base.h"
+
 namespace stdex
 {
 	template<class T>
@@ -12,9 +14,9 @@ namespace stdex
 		{
 		}
 
-		intrusive_duplex_tree_node * parent;
-		intrusive_duplex_tree_node * left;
-		intrusive_duplex_tree_node * right;
+		T * parent;
+		T * left;
+		T * right;
 
 		template<class K>
 		struct less_first_type_pod
@@ -71,114 +73,15 @@ namespace stdex
 		};
 	};
 
-	namespace detail
-	{
-		template<class T>
-		class intrusive_duplex_tree_base
-		{
-		public:
-			typedef intrusive_duplex_tree_node<T> node_type;
-
-		public:
-			intrusive_duplex_tree_base()
-				: m_root(nullptr)
-			{
-			}
-
-		public:
-			bool empty() const 
-			{ 
-				return m_root == nullptr;
-			}
-
-			void clear()
-			{
-				m_root = nullptr;
-			}
-
-		protected:
-			inline node_type * getRoot_() const
-			{
-				return m_root;
-			}
-
-			inline void setRoot_( node_type * _node ) const
-			{
-				m_root = _node;
-			}
-
-		public:
-			void erase_node( node_type * z )
-			{
-				if( z->left == nullptr )
-				{
-					this->replace_( z, z->right );
-				}
-				else if( z->right == nullptr )
-				{
-					this->replace_( z, z->left );
-				}
-				else 
-				{
-					node_type * y = this->subtree_minimum_( z->right );
-
-					if( y->parent != z ) 
-					{
-						this->replace_( y, y->right );
-
-						y->right = z->right;
-						y->right->parent = y;
-					}
-
-					this->replace_( z, y );
-
-					y->left = z->left;
-					y->left->parent = y;
-				}
-			}
-
-			void replace_( node_type * u, node_type * v ) const
-			{
-				if( u->parent == nullptr )
-				{
-					m_root = v;
-				}
-				else if( u == u->parent->left )
-				{
-					u->parent->left = v;
-				}
-				else 
-				{
-					u->parent->right = v;
-				}
-
-				if( v != nullptr )
-				{
-					v->parent = u->parent;
-				}
-			}
-
-			node_type * subtree_minimum_( node_type * u ) const
-			{
-				while( u->left != nullptr )
-				{
-					u = u->left;
-				}
-
-				return u;
-			}
-
-		protected:
-			mutable node_type * m_root;
-		};
-	}
-
 	template<class T>
 	class intrusive_duplex_tree
-		: public detail::intrusive_duplex_tree_base<T>
+		: public detail::intrusive_tree_base<T>
 	{
 	public:
-		typedef typename detail::intrusive_duplex_tree_base<T>::node_type node_type;
+		typedef typename detail::intrusive_tree_base<T>::node_type node_type;
+
+		typedef typename detail::intrusive_tree_base<T>::iterator iterator;
+		typedef typename detail::intrusive_tree_base<T>::const_iterator const_iterator;
 
 		typedef typename T::key_first_type key_first_type;
 		typedef typename T::key_second_type key_second_type;
@@ -193,9 +96,7 @@ namespace stdex
 		{
 			const K & operator () ( const node_type * _node ) const
 			{
-				const T * t = static_cast<const T *>(_node);
-
-				return key_first_getter_type()(t);
+				return key_first_getter_type()(_node);
 			}
 		};
 
@@ -204,9 +105,7 @@ namespace stdex
 		{
 			const K & operator () ( const node_type * _node ) const
 			{
-				const T * t = static_cast<const T *>(_node);
-
-				return key_second_getter_type()(t);
+				return key_second_getter_type()(_node);
 			}
 		};
 
@@ -215,9 +114,7 @@ namespace stdex
 		{
 			K * operator () ( const node_type * _node ) const
 			{
-				const T * t = static_cast<const T *>(_node);
-
-				return key_first_getter_type()(t);
+				return key_first_getter_type()(_node);
 			}
 		};
 
@@ -226,9 +123,7 @@ namespace stdex
 		{
 			K * operator () ( const node_type * _node ) const
 			{
-				const T * t = static_cast<const T *>(_node);
-
-				return key_second_getter_type()(t);
+				return key_second_getter_type()(_node);
 			}
 		};
 		
