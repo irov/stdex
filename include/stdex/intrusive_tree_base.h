@@ -254,6 +254,11 @@ namespace stdex
 			{
 				node_type * tmp = m_root;
 
+				if( tmp == nullptr )
+				{
+					return iterator(nullptr);
+				}
+
 				for( ;; )
 				{
 					if( tmp->left != nullptr )
@@ -281,6 +286,11 @@ namespace stdex
 			const_iterator begin() const
 			{
 				const node_type * tmp = m_root;
+
+				if( tmp == nullptr )
+				{
+					return const_iterator(nullptr);
+				}
 
 				for( ;; )
 				{
