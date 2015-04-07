@@ -191,9 +191,9 @@ namespace stdex
 				p = z;
 
 				less_z_node = less_duplex_type()( 
-					key_first_getter_type_cast()(z), 
-					key_first_getter_type_cast()(_node), 
-					key_second_getter_type_cast()(z), 
+					key_first_getter_type_cast()(z),				
+					key_second_getter_type_cast()(z),
+					key_first_getter_type_cast()(_node),
 					key_second_getter_type_cast()(_node)
 					);
 
@@ -223,8 +223,8 @@ namespace stdex
 			{ 
 				if( less_duplex_type()( 
 					key_first_getter_type_cast()(_node), 
-					key_first_getter_type_cast()(p),
-					key_second_getter_type_cast()(_node), 
+					key_second_getter_type_cast()(_node),
+					key_first_getter_type_cast()(p),					 
 					key_second_getter_type_cast()(p)
 					) == false )
 				{
@@ -244,8 +244,8 @@ namespace stdex
 
 			if( less_duplex_type()( 
 				key_first_getter_type_cast()(p), 
-				key_first_getter_type_cast()(z),
-				key_second_getter_type_cast()(p), 
+				key_second_getter_type_cast()(p),
+				key_first_getter_type_cast()(z),				 
 				key_second_getter_type_cast()(z) 				
 				) == true )
 			{
@@ -272,8 +272,8 @@ namespace stdex
 			{
 				int32_t cmp_z_node = cmp_duplex_type()( 
 					key_first_getter_type_cast()(z), 
-					_first, 
-					key_second_getter_type_cast()(z), 
+					key_second_getter_type_cast()(z),
+					_first, 					 
 					_second
 					);
 
@@ -531,8 +531,8 @@ namespace stdex
 			{
 				int32_t cmp_z_node = cmp_duplex_type()( 
 					key_first_getter_type_cast()(z), 
-					_first, 
-					key_second_getter_type_cast()(z), 
+					key_second_getter_type_cast()(z),
+					_first, 					 
 					_second
 					);
 
@@ -561,8 +561,8 @@ namespace stdex
 			{
 				int32_t cmp_z_node = cmp_duplex_type()( 
 					key_first_getter_type_cast()(z), 
-					_first, 
-					key_second_getter_type_cast()(z), 
+					key_second_getter_type_cast()(z),
+					_first, 					 
 					_second
 					);
 
