@@ -211,7 +211,7 @@ namespace stdex
 			{
 				this->setRoot_( _node );
 
-				if( _out != nullptr )				
+				if( _out != nullptr )
 				{
 					*_out = _node;
 				}
