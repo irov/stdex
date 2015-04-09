@@ -65,8 +65,10 @@ namespace stdex
 			return reinterpret_cast<pointer>(memory);
 		}
 
-		inline void deallocate( pointer _ptr, size_type ) 
+		inline void deallocate( pointer _ptr, size_type _count ) 
 		{ 
+			(void) _count;
+
 			stdex_free( _ptr );
 		}
 
