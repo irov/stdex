@@ -6,6 +6,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif	
+	void stdex_big_pool( size_t _size );
+
+
     void * stdex_malloc( size_t _size );
     void stdex_free( void * _mem );
     void * stdex_calloc( size_t _num, size_t _size );

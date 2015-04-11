@@ -1,7 +1,8 @@
 #	pragma once
 
-#	include <stdint.h>
+#	include "allocator.h"
 
+#	include <stdint.h>
 #	include <new>
 
 namespace stdex
@@ -51,7 +52,21 @@ namespace stdex
         pool_block buffer_block[TBlockCount];        
     };
 
-    template<size_t TBlockSize, size_t TBlockCount>
+	class stdex_pool_allocator_default
+	{		
+	public:
+		static void * malloc( size_t _size )
+		{
+			return stdex_malloc( _size );
+		}
+		
+		static void free( void * _ptr )
+		{
+			return stdex_free( _ptr );
+		}
+	};
+
+	template<size_t TBlockSize, size_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
     class pool
     {
         typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_t;
@@ -135,7 +150,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-                delete chunk;
+				TAllocator::free( chunk );
 
                 chunk = prev;
             }
@@ -150,7 +165,10 @@ namespace stdex
     protected:
         void addChunk_()
         {
-            chunk_t * chunk = new chunk_t(m_chunk);
+			void * mem_chunk = TAllocator::malloc( sizeof( chunk_t ) );
+			new (mem_chunk)chunk_t( m_chunk );
+
+			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
 			m_free = chunk->initialize( m_free );
             m_chunk = chunk;
