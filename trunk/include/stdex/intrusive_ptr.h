@@ -2,7 +2,7 @@
 
 #	include "stdex/exception.h"
 
-#	include <stddef.h>
+#	include <cstddef>
 
 #	ifndef STDEX_INTRUSIVE_PTR_DEBUG_ENABLE
 #	ifdef _DEBUG
@@ -38,8 +38,8 @@ namespace stdex
 		}
 
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
-		inline intrusive_ptr( nullptr_t )
-			: m_ptr(nullptr)
+		inline intrusive_ptr( std::nullptr_t _ptr )
+			: m_ptr( _ptr )
 		{
 			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 		}
@@ -107,7 +107,7 @@ namespace stdex
 		}
 		
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
-		inline intrusive_ptr & operator = ( nullptr_t )
+		inline intrusive_ptr & operator = (std::nullptr_t)
 		{
 			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -291,7 +291,7 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T
 	template<class T> 
-	inline bool operator != ( const intrusive_ptr<T> & _left, nullptr_t )
+	inline bool operator != (const intrusive_ptr<T> & _left, std::nullptr_t)
 	{
 		const T * ptr = _left.get();
 
@@ -299,7 +299,7 @@ namespace stdex
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
-	inline bool operator != ( nullptr_t , const intrusive_ptr<T> & _right )
+	inline bool operator != ( std::nullptr_t , const intrusive_ptr<T> & _right )
 	{
 		const T * ptr = intrusive_get<T *>(_right);
 
@@ -307,7 +307,7 @@ namespace stdex
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
-	inline bool operator == ( nullptr_t , const intrusive_ptr<T> & _right )
+	inline bool operator == (std::nullptr_t, const intrusive_ptr<T> & _right)
 	{
 		const T * ptr = intrusive_get<T *>(_right);
 
@@ -315,7 +315,7 @@ namespace stdex
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class T>
-	inline bool operator == ( const intrusive_ptr<T> & _left, nullptr_t )
+	inline bool operator == (const intrusive_ptr<T> & _left, std::nullptr_t)
 	{
 		const T * ptr = _left.get();
 
