@@ -8,19 +8,19 @@
 //#	define STDEX_ALLOCATOR_DISABLE
 
 #   ifndef STDEX_ALLOCATOR_INCLUDE
-#	define STDEX_ALLOCATOR_INCLUDE <malloc.h>
+#	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
 #	endif
 
 #   ifndef STDEX_ALLOCATOR_MALLOC
-#   define STDEX_ALLOCATOR_MALLOC (::malloc)
+#   define STDEX_ALLOCATOR_MALLOC malloc
 #   endif
 
 #   ifndef STDEX_ALLOCATOR_REALLOC
-#   define STDEX_ALLOCATOR_REALLOC (::realloc)
+#   define STDEX_ALLOCATOR_REALLOC realloc
 #   endif
 
 #   ifndef STDEX_ALLOCATOR_FREE
-#   define STDEX_ALLOCATOR_FREE (::free)
+#   define STDEX_ALLOCATOR_FREE free
 #   endif
 
 #	ifndef STDEX_ALLOCATOR_NOTHREADSAFE
@@ -73,17 +73,17 @@ namespace stdex
 		class stdex_pool_allocator
 		{
 		public:
-			inline static void * malloc( size_t _size )
+			inline static void * s_malloc( size_t _size )
 			{
 				return STDEX_ALLOCATOR_MALLOC( _size );
 			}
 
-			inline static void * realloc( void * _ptr, size_t _size )
+			inline static void * s_realloc( void * _ptr, size_t _size )
 			{
 				return STDEX_ALLOCATOR_REALLOC( _ptr, _size );
 			}
 
-			inline static void free( void * _ptr )
+			inline static void s_free( void * _ptr )
 			{
 				STDEX_ALLOCATOR_FREE( _ptr );
 			}
@@ -241,7 +241,7 @@ namespace stdex
         allocator_pool_loop( allocator_pool_alloc )
         {
 			allocator_size_t total_size = memory_buf_total(_size);
-			mem = stdex_pool_allocator::malloc( total_size );
+			mem = stdex_pool_allocator::s_malloc( total_size );
 
 			if( mem == nullptr )
 			{
@@ -283,7 +283,7 @@ namespace stdex
 			s_global_memory_use -= (size_t)global_mem_size;
 
 			void * global_mem_pool = memory_to_pool(_mem);			
-			stdex_pool_allocator::free( global_mem_pool );
+			stdex_pool_allocator::s_free( global_mem_pool );
         }
     }
     //////////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ namespace stdex
 
             void * mem_pool = memory_to_pool(_mem);
 			allocator_size_t total_size = memory_buf_total(_size);
-			void * realloc_mem = stdex_pool_allocator::realloc( mem_pool, total_size );
+			void * realloc_mem = stdex_pool_allocator::s_realloc( mem_pool, total_size );
 
 			if( realloc_mem == nullptr )
 			{
@@ -397,7 +397,7 @@ extern "C" {
 
 	void stdex_big_pool( size_t _size )
 	{
-		stdex::g_big_pool = stdex::stdex_pool_allocator::malloc( _size );
+		stdex::g_big_pool = stdex::stdex_pool_allocator::s_malloc( _size );
 		stdex::g_big_pool_size = 0;
 		stdex::g_big_pool_capacity = _size;
 	}
@@ -406,18 +406,18 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_malloc( size_t _size )
     {
-		return stdex::stdex_pool_allocator::malloc( _size );
+		return stdex::stdex_pool_allocator::s_malloc( _size );
     }
     //////////////////////////////////////////////////////////////////////////
     void stdex_free( void * _mem )
     {
-		stdex::stdex_pool_allocator::free( _mem );
+		stdex::stdex_pool_allocator::s_free( _mem );
     }
     //////////////////////////////////////////////////////////////////////////
     void * stdex_calloc( size_t _num, size_t _size )
     {
         size_t full_size = _num * _size;
-		void * mem = stdex::stdex_pool_allocator::malloc( full_size );
+		void * mem = stdex::stdex_pool_allocator::s_malloc( full_size );
         ::memset( mem, 0, full_size );
 
         return mem;
@@ -425,7 +425,7 @@ extern "C" {
     //////////////////////////////////////////////////////////////////////////
     void * stdex_realloc( void * _mem, size_t _size )
     {
-		return stdex::stdex_pool_allocator::realloc( _mem, _size );
+		return stdex::stdex_pool_allocator::s_realloc( _mem, _size );
     }
     //////////////////////////////////////////////////////////////////////////
 #   else

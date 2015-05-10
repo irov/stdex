@@ -1,6 +1,6 @@
 #	include "stdex/memory_cache.h"
 
-#	include <malloc.h>
+#	include "stdex/allocator.h"
 
 namespace stdex
 {
@@ -61,7 +61,7 @@ namespace stdex
 			currentBuffer = minBuffer;
 
 			void * memory = minBuffer->getMemory();
-			void * realloc_memory = realloc( memory, _size );
+			void * realloc_memory = stdex_realloc( memory, _size );
 
 			minBuffer->setMemory( realloc_memory, _size );
 		}
@@ -69,7 +69,7 @@ namespace stdex
 		{
 			currentBuffer = m_factoryBuffer.createT();
 
-			void * memory = malloc( _size );
+			void * memory = stdex_malloc( _size );
 			currentBuffer->setMemory( memory, _size );
 
 			m_buffers.push_back( currentBuffer );
@@ -115,7 +115,7 @@ namespace stdex
 			memory_buffer * buffer = *it;
 
 			void * memory = buffer->getMemory();
-			free( memory );			
+			stdex_free( memory );
 		}
 
 		m_buffers.clear();

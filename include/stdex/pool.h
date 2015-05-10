@@ -55,12 +55,17 @@ namespace stdex
 	class stdex_pool_allocator_default
 	{		
 	public:
-		static void * malloc( size_t _size )
+		static void * s_malloc( size_t _size )
 		{
 			return stdex_malloc( _size );
 		}
+
+		static void * s_realloc( void * _mem, size_t _size )
+		{
+			return stdex_realloc( _mem, _size );
+		}
 		
-		static void free( void * _ptr )
+		static void s_free( void * _ptr )
 		{
 			return stdex_free( _ptr );
 		}
@@ -150,7 +155,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-				TAllocator::free( chunk );
+				TAllocator::s_free( chunk );
 
                 chunk = prev;
             }
@@ -165,7 +170,7 @@ namespace stdex
     protected:
         void addChunk_()
         {
-			void * mem_chunk = TAllocator::malloc( sizeof( chunk_t ) );
+			void * mem_chunk = TAllocator::s_malloc( sizeof( chunk_t ) );
 			new (mem_chunk)chunk_t( m_chunk );
 
 			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
