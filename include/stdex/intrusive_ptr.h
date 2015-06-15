@@ -31,6 +31,14 @@ namespace stdex
 		typedef T element_type;
 
 	public:
+		inline static const intrusive_ptr & none()
+		{
+			static intrusive_ptr ptr_none;
+
+			return ptr_none;
+		}
+
+	public:
 		inline intrusive_ptr()
 			: m_ptr(nullptr)
 		{
