@@ -1,4 +1,4 @@
-#	include "stdex/allocator.h"
+#	include "stdex/memorycopy.h"
 
 #	include <algorithm>
 
