@@ -106,7 +106,7 @@ namespace stdex
 #	endif
 
     protected:
-        void setup( const char * _data, size_t _size, hash_type _hash, bool _combine );
+		void setup( const char * _data, size_type _size, hash_type _hash, bool _combine );
 
     protected:
         uint32_t m_reference;
