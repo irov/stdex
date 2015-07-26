@@ -27,21 +27,31 @@ namespace stdex
         }
 
 	public:
-		pool_block * initialize( pool_block * _free )
+		pool_block * initialize()
 		{
+			pool_block * free = nullptr;
+
 			for( pool_block * it = buffer_block, 
 				*it_end = buffer_block + TBlockCount; 
 				it != it_end; 
 			++it )
 			{
-				it->next = _free;
-				_free = it;
+				it->next = free;
+				free = it;
 			}
 
-			return _free;
+			return free;
 		}
 
     public:
+		chunk_t * removePrev()
+		{
+			chunk_t * old = prev;
+			prev = nullptr;
+
+			return old;
+		}
+
         chunk_t * getPrev() const
         {
             return prev;
@@ -116,7 +126,12 @@ namespace stdex
             block->next = m_free;
             m_free = block;
 
-            --m_blockCount;
+			--m_blockCount;
+			
+			if( m_blockCount == 0 && m_chunkCount > 1 )
+			{
+				this->collapse();
+			}
         }
 
 	public:
@@ -167,6 +182,25 @@ namespace stdex
             m_chunkCount = 0;
         }
 
+		void collapse()
+		{
+			chunk_t * chunk = m_chunk->removePrev();
+
+			while( chunk != nullptr )
+			{
+				chunk_t * prev = chunk->getPrev();
+
+				TAllocator::s_free( chunk );
+
+				chunk = prev;
+			}
+
+			m_free = m_chunk->initialize();
+
+			m_blockCount = 0;
+			m_chunkCount = 1;
+		}
+
     protected:
         void addChunk_()
         {
@@ -175,7 +209,7 @@ namespace stdex
 
 			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
-			m_free = chunk->initialize( m_free );
+			m_free = chunk->initialize();
             m_chunk = chunk;
 
             ++m_chunkCount;

@@ -73,6 +73,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\allocator.cpp" />
+    <ClCompile Include="..\src\allocator_threadsafe.cpp" />
     <ClCompile Include="..\src\const_string.cpp" />
     <ClCompile Include="..\src\const_string_holder.cpp" />
     <ClCompile Include="..\src\const_string_holder_local.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="..\include\stdex\queue.h" />
     <ClInclude Include="..\include\stdex\static_array.h" />
     <ClInclude Include="..\include\stdex\xml_sax_parser.h" />
+    <ClInclude Include="..\src\allocator_helper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

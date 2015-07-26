@@ -5,19 +5,25 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif	
-	void stdex_big_pool( size_t _size );
+#endif
+	void stdex_allocator_initialize();
+	void stdex_allocator_finalize();
 
-
-    void * stdex_malloc( size_t _size );
+	void * stdex_malloc( size_t _size );
     void stdex_free( void * _mem );
     void * stdex_calloc( size_t _num, size_t _size );
     void * stdex_realloc( void * _mem, size_t _size );
+	
+	typedef void( *stdex_allocator_thread_lock_t )(void * _ptr);
+	typedef void( *stdex_allocator_thread_unlock_t )(void * _ptr);
 
-	typedef void (*stdex_allocator_thread_lock_t)( void * _ptr );
-	typedef void (*stdex_allocator_thread_unlock_t)( void * _ptr );
+	void stdex_allocator_initialize_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock );
+	void stdex_allocator_finalize_threadsafe();
 
-	void stdex_allocator_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock );
+	void * stdex_malloc_threadsafe( size_t _size );
+	void stdex_free_threadsafe( void * _mem );
+	void * stdex_calloc_threadsafe( size_t _num, size_t _size );
+	void * stdex_realloc_threadsafe( void * _mem, size_t _size );
 
 	struct stdex_memory_info_t
 	{
@@ -31,7 +37,13 @@ extern "C" {
     size_t stdex_allocator_globalmemoryuse();
 	size_t stdex_allocator_memoryuse();
 
-	size_t stdex_allocator_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );
+	size_t stdex_allocator_memoryinfo( struct stdex_memory_info_t * _info, size_t _count );	
+
+	size_t stdex_allocator_bound_threadsafe( size_t _size );
+	size_t stdex_allocator_globalmemoryuse_threadsafe();
+	size_t stdex_allocator_memoryuse_threadsafe();
+
+	size_t stdex_allocator_memoryinfo_threadsafe( struct stdex_memory_info_t * _info, size_t _count );
 	
 #ifdef __cplusplus
 };
