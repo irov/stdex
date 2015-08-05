@@ -78,6 +78,7 @@ namespace stdex
 	template<class T>
 	inline void intrusive_ptr_base<T>::intrusive_ptr_destroy( T * _ptr )
 	{
+		(void)_ptr;
 		//Empty
 	}
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
