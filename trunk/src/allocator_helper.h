@@ -42,7 +42,7 @@
 namespace stdex
 {
 	//////////////////////////////////////////////////////////////////////////
-	namespace
+	namespace detail
 	{
 		class stdex_pool_allocator
 		{
@@ -119,7 +119,7 @@ namespace stdex
 
 #   define allocator_pool_def(i, f, c)\
     const static size_t allocator_pool_size(i) = memory_buf_allign(f);\
-    typedef pool<memory_buf_total(f), c, stdex_pool_allocator> t_pool_type_p##i;
+    typedef pool<memory_buf_total(f), c, detail::stdex_pool_allocator> t_pool_type_p##i;
 
 	//////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_loop( function )\
@@ -221,7 +221,7 @@ namespace stdex
 		allocator_pool_loop( allocator_pool_alloc )
 		{
 			allocator_size_t total_size = memory_buf_total( _size );
-			mem = stdex_pool_allocator::s_malloc( total_size );
+			mem = detail::stdex_pool_allocator::s_malloc( total_size );
 
 			if( mem == nullptr )
 			{
@@ -263,7 +263,7 @@ namespace stdex
 			_pools->s_global_memory_use -= (size_t)global_mem_size;
 
 			void * global_mem_pool = memory_to_pool( _mem );
-			stdex_pool_allocator::s_free( global_mem_pool );
+			detail::stdex_pool_allocator::s_free( global_mem_pool );
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ namespace stdex
 
 			void * mem_pool = memory_to_pool( _mem );
 			allocator_size_t total_size = memory_buf_total( _size );
-			void * realloc_mem = stdex_pool_allocator::s_realloc( mem_pool, total_size );
+			void * realloc_mem = detail::stdex_pool_allocator::s_realloc( mem_pool, total_size );
 
 			if( realloc_mem == nullptr )
 			{
