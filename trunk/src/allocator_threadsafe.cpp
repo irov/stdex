@@ -37,7 +37,7 @@ namespace stdex
 		//////////////////////////////////////////////////////////////////////////
 		void stdex_allocator_initialize_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock )
 		{
-			g_pools_threadsafe.s_global_memory_use = 0;
+			g_pools_threadsafe.global_memory_use = 0;
 
 			stdex::g_thread_ptr = _ptr;
 			stdex::g_thread_lock = _lock;
@@ -134,7 +134,7 @@ namespace stdex
 		//////////////////////////////////////////////////////////////////////////
 		size_t stdex_allocator_globalmemoryuse_threadsafe()
 		{
-			size_t memory = g_pools_threadsafe.s_global_memory_use;
+			size_t memory = g_pools_threadsafe.global_memory_use;
 
 			return memory;
 		}

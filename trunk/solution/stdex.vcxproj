@@ -106,6 +106,7 @@
     <ClInclude Include="..\include\stdex\intrusive_splay_tree.h" />
     <ClInclude Include="..\include\stdex\memorycopy.h" />
     <ClInclude Include="..\include\stdex\memory_cache.h" />
+    <ClInclude Include="..\include\stdex\memory_ptr.h" />
     <ClInclude Include="..\include\stdex\pool.h" />
     <ClInclude Include="..\include\stdex\queue.h" />
     <ClInclude Include="..\include\stdex\static_array.h" />
