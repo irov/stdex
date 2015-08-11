@@ -196,7 +196,7 @@ namespace stdex
 	struct stdex_allocator_pools
 	{
 		allocator_pool_loop( allocator_pool_decl );
-		size_t s_global_memory_use;
+		size_t global_memory_use;
 	};
 	//////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_alloc( i )\
@@ -228,7 +228,7 @@ namespace stdex
 				return nullptr;
 			}
 
-			_pools->s_global_memory_use += (size_t)total_size;
+			_pools->global_memory_use += (size_t)total_size;
 
 			pi = total_size;
 		}
@@ -260,7 +260,7 @@ namespace stdex
 		{
 			allocator_size_t global_mem_size = pi;
 
-			_pools->s_global_memory_use -= (size_t)global_mem_size;
+			_pools->global_memory_use -= (size_t)global_mem_size;
 
 			void * global_mem_pool = memory_to_pool( _mem );
 			detail::stdex_pool_allocator::s_free( global_mem_pool );
@@ -302,8 +302,8 @@ namespace stdex
 
 			void * realloc_mem_buff = pool_to_memory( realloc_mem );
 
-			_pools->s_global_memory_use -= (size_t)mem_size;
-			_pools->s_global_memory_use += (size_t)total_size;
+			_pools->global_memory_use -= (size_t)mem_size;
+			_pools->global_memory_use += (size_t)total_size;
 
 			return realloc_mem_buff;
 		}
@@ -368,7 +368,7 @@ namespace stdex
 			total_now += mi[i].block_size * mi[i].block_count;
 		}
 
-		total_now += _pools->s_global_memory_use;
+		total_now += _pools->global_memory_use;
 
 		return total_now;
 	}
