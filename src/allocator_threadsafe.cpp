@@ -46,7 +46,11 @@ namespace stdex
 		//////////////////////////////////////////////////////////////////////////
 		void stdex_allocator_finalize_threadsafe()
 		{
-			stdex::s_finalize( &g_pools_threadsafe );
+			//stdex::s_finalize( &g_pools_threadsafe );
+
+			stdex::g_thread_ptr = nullptr;
+			stdex::g_thread_lock = nullptr;
+			stdex::g_thread_unlock = nullptr;
 		}
 #   ifdef STDEX_ALLOCATOR_DISABLE
 		//////////////////////////////////////////////////////////////////////////
