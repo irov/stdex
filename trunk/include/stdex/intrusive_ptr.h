@@ -362,8 +362,4 @@ namespace stdex
 		return ptr == nullptr;
 	}
 #	endif
-
-#	undef STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK
-#	undef STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK
-#	undef STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK
 }
