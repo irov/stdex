@@ -212,9 +212,13 @@ extern "C" {
 		//////////////////////////////////////////////////////////////////////////
 		void * stdex_malloc_threadsafe( size_t _size )
 		{
+#	ifdef STDEX_ALLOCATOR_THREADSAFE_OFF
+			return stdex_malloc( _size );
+#	else
 			STDEX_ALLOCATOR_LOCK();
 			void * memory = stdex::s_malloc( STATIC_VAR_PTR( pools_threadsafe ), _size );
 			STDEX_ALLOCATOR_UNLOCK();
+#	endif
 
 			return memory;
 		}
