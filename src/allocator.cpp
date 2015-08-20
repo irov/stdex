@@ -218,9 +218,9 @@ extern "C" {
 			STDEX_ALLOCATOR_LOCK();
 			void * memory = stdex::s_malloc( STATIC_VAR_PTR( pools_threadsafe ), _size );
 			STDEX_ALLOCATOR_UNLOCK();
-#	endif
 
 			return memory;
+#	endif			
 		}
 		//////////////////////////////////////////////////////////////////////////
 		void stdex_free_threadsafe( void * _mem )
