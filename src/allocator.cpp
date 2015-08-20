@@ -254,14 +254,14 @@ extern "C" {
 		void * stdex_realloc_threadsafe( void * _mem, size_t _size )
 		{
 #	ifdef STDEX_ALLOCATOR_THREADSAFE_OFF
-			return stdex_realloc( _num, _size );
+			return stdex_realloc( _mem, _size );
 #	else
 			STDEX_ALLOCATOR_LOCK();
 			void * memory = stdex::s_realloc( STATIC_VAR_PTR( pools_threadsafe ), _mem, _size );
 			STDEX_ALLOCATOR_UNLOCK();
-#	endif
 
 			return memory;
+#	endif			
 		}
 #   endif
 		//////////////////////////////////////////////////////////////////////////
