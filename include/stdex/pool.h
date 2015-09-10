@@ -67,17 +67,17 @@ namespace stdex
 	public:
 		static void * s_malloc( size_t _size )
 		{
-			return stdex_malloc_threadsafe( _size );
+			return stdex_malloc( _size );
 		}
 
 		static void * s_realloc( void * _mem, size_t _size )
 		{
-			return stdex_realloc_threadsafe( _mem, _size );
+			return stdex_realloc( _mem, _size );
 		}
 		
 		static void s_free( void * _ptr )
 		{
-			return stdex_free_threadsafe( _ptr );
+			return stdex_free( _ptr );
 		}
 	};
 
