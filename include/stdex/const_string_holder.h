@@ -2,6 +2,7 @@
 
 #	include "stdex/intrusive_ptr.h"
 #	include "stdex/intrusive_linked.h"
+#	include "stdex/thread_guard.h"
 
 #   include <stddef.h>
 #	include <stdint.h>
@@ -119,16 +120,21 @@ namespace stdex
         mutable const_string_holder * m_owner;
 
 		bool m_combine;
+
+		STDEX_THREAD_GUARD_INIT;
     };
     //////////////////////////////////////////////////////////////////////////
 	inline void const_string_holder::intrusive_ptr_add_ref( const_string_holder * _ptr )
     {
+		STDEX_THREAD_GUARD_CHECK( _ptr, "intrusive_ptr_add_ref" );
         ++_ptr->m_reference;
         ++_ptr->m_owner->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
     inline void const_string_holder::intrusive_ptr_dec_ref( const_string_holder * _ptr )
     {
+		STDEX_THREAD_GUARD_CHECK( _ptr, "intrusive_ptr_dec_ref" );
+
         if( --_ptr->m_owner->m_reference == 0 )
         {
             _ptr->m_owner->destroyString();

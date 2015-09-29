@@ -130,6 +130,8 @@ namespace stdex
     //////////////////////////////////////////////////////////////////////////
     void const_string_holder::combine_owner_( const_string_holder * _out )
     {
+		STDEX_THREAD_GUARD_CHECK( this, "combine_owner_" );
+
         this->m_owner = _out->m_owner;
         this->m_reference >>= 1;
 
@@ -138,6 +140,8 @@ namespace stdex
     //////////////////////////////////////////////////////////////////////////
     void const_string_holder::combine_other_( const_string_holder * _out )
     {
+		STDEX_THREAD_GUARD_CHECK( this, "combine_other_" );
+
         this->m_owner->m_reference -= this->m_reference;
         this->m_owner = _out->m_owner;
 
