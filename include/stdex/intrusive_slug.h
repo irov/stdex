@@ -17,13 +17,8 @@ namespace stdex
 		{
 			m_list.increfSlug();
 
-			m_eof = m_list.empty();
-
-			if( m_eof == false )
-			{
-				linked_type * linked = m_list.head();
-				linked->link_after( this );
-			}
+			linked_type * linked = m_list.head();
+			linked->link_after( this );
 		}
 
 		~intrusive_slug()
@@ -46,7 +41,6 @@ namespace stdex
 			{
 				if( pos_right == head )
 				{
-					m_eof = true;
 					return;
 				}
 
@@ -58,7 +52,6 @@ namespace stdex
 
 				if( pos_right_adapt == head )
 				{
-					m_eof = true;
 					return;
 				}
 
@@ -67,19 +60,25 @@ namespace stdex
 				pos_right_adapt_right_adapt = this->adapt_( pos_right_adapt_right );
 			}
 
-			if( pos_right_adapt_right_adapt == head )
-			{
-				m_eof = true;
-				return;
-			}
-
 			this->unlink();
+
 			pos_right_adapt_right_adapt->link_before( this );
 		}
 
 		inline bool eof() const
 		{
-			return m_eof;
+			linked_type * head = m_list.head();
+
+			linked_type * pos = this->right();
+
+			size_t countSlugs = m_list.countSlugs();
+
+			if( countSlugs != 1 )
+			{
+				pos = this->adapt_( pos );
+			}
+
+			return pos == head;
 		}
 
 		inline value_type operator -> () const
@@ -102,6 +101,7 @@ namespace stdex
 			linked_type * pos = this->right();
 
 			size_t countSlugs = m_list.countSlugs();
+
 			if( countSlugs != 1 )
 			{				
 				pos = this->adapt_( pos );
@@ -122,8 +122,7 @@ namespace stdex
 			return pos;
 		}
 		
-	protected:		
+	protected:
 		T & m_list;
-		bool m_eof;
 	};
 }
