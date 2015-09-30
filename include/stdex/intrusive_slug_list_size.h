@@ -549,13 +549,18 @@ namespace stdex
 				return this->end();
 			}
 
-			return this->erase( it_found );			
+			iterator it_erase = this->erase( it_found );
+
+			return it_erase;
 		}
 
 	public:
-		void increfSlug()
+		void increfSlug( linked_type * _slug )
 		{
 			++m_slugs;
+
+			linked_type * linked = this->head();
+			linked->link_after( _slug );
 		}
 
 		void decrefSlug()

@@ -15,10 +15,7 @@ namespace stdex
 			: T::linked_type(EILT_SLUG)
 			, m_list(_list)
 		{
-			m_list.increfSlug();
-
-			linked_type * linked = m_list.head();
-			linked->link_after( this );
+			m_list.increfSlug( this );
 		}
 
 		~intrusive_slug()
@@ -67,16 +64,9 @@ namespace stdex
 
 		inline bool eof() const
 		{
+			linked_type * pos = this->adapt_right();
+
 			linked_type * head = m_list.head();
-
-			linked_type * pos = this->right();
-
-			size_t countSlugs = m_list.countSlugs();
-
-			if( countSlugs != 1 )
-			{
-				pos = this->adapt_( pos );
-			}
 
 			return pos == head;
 		}
@@ -98,14 +88,7 @@ namespace stdex
 	protected:
 		inline linked_type * current() const
 		{
-			linked_type * pos = this->right();
-
-			size_t countSlugs = m_list.countSlugs();
-
-			if( countSlugs != 1 )
-			{				
-				pos = this->adapt_( pos );
-			}
+			linked_type * pos = this->adapt_right();
 
 			return pos;
 		}
@@ -113,6 +96,18 @@ namespace stdex
 		inline linked_type * adapt_( linked_type * _pos ) const
 		{
 			linked_type * pos = _pos;
+
+			while( pos->getIntrusiveTag() == EILT_SLUG )
+			{
+				pos = pos->right();
+			}
+
+			return pos;
+		}
+
+		inline linked_type * adapt_right() const
+		{
+			linked_type * pos = this->right();
 
 			while( pos->getIntrusiveTag() == EILT_SLUG )
 			{

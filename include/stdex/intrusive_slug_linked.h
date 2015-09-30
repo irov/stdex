@@ -90,7 +90,6 @@ namespace stdex
 			m_left = _other;
 		}
 
-
 		inline void unlink()
 		{
 			if( m_right != nullptr )
@@ -168,8 +167,8 @@ namespace stdex
 		template<class F>
 		void foreach( F _f ) const
 		{
-			foreach_self<F>( _f );
-			foreach_other<F>( _f );
+			this->foreach_self<F>( _f );
+			this->foreach_other<F>( _f );
 		}
 
 		template<class F>
@@ -207,7 +206,7 @@ namespace stdex
 				return node_found;
 			}
 
-			linked_type * other_node = find_other( _pred );
+			linked_type * other_node = this->find_other( _pred );
 
 			return other_node;
 		}
