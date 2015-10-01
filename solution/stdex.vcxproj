@@ -77,6 +77,7 @@
     <ClCompile Include="..\src\const_string_holder.cpp" />
     <ClCompile Include="..\src\const_string_holder_local.cpp" />
     <ClCompile Include="..\src\const_string_holder_none.cpp" />
+    <ClCompile Include="..\src\exception.cpp" />
     <ClCompile Include="..\src\ini.cpp" />
     <ClCompile Include="..\src\memory_cache.cpp" />
     <ClCompile Include="..\src\thread_guard.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="..\include\stdex\const_string_holder_local.h" />
     <ClInclude Include="..\include\stdex\const_string_holder_none.h" />
     <ClInclude Include="..\include\stdex\const_string_local.h" />
+    <ClInclude Include="..\include\stdex\exception.h" />
     <ClInclude Include="..\include\stdex\ini.h" />
     <ClInclude Include="..\include\stdex\intrusive_algorithm.h" />
     <ClInclude Include="..\include\stdex\intrusive_linked.h" />
