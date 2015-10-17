@@ -2,18 +2,43 @@
 
 #	include <stdint.h>
 
+#	include <exception>
+
 namespace stdex
 {
 	//////////////////////////////////////////////////////////////////////////
 	namespace helper
 	{
 		//////////////////////////////////////////////////////////////////////////
+		class stdex_exception
+			: public std::exception
+		{
+		public:
+			stdex_exception( const char * _message )
+				: m_message( _message )
+			{
+			}
+
+			~stdex_exception() throw()
+			{
+			}
+
+		protected:
+			const char * what() const throw() override
+			{
+				return m_message;
+			}
+
+		protected:
+			const char * m_message;
+		};
+		//////////////////////////////////////////////////////////////////////////
 		class throw_exception
 		{
 		public:
 			throw_exception( const char * _file, uint32_t _line )
-				: file(_file)
-				, line(_line)
+				: m_file(_file)
+				, m_line( _line )
 			{
 			}
 
@@ -21,8 +46,8 @@ namespace stdex
 			void operator () ( const char * _format, ... ) const;
 
 		protected:
-			const char * file;
-			uint32_t line;
+			const char * m_file;
+			uint32_t m_line;
 		};
 	}
 

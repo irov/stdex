@@ -55,7 +55,7 @@ namespace stdex
 			}
 
 			unsigned char * write_buff = m_buff + m_write;
-			memorycopy( write_buff, _begin, _size );
+			memorycopy( write_buff, 0, _begin, _size );
 
 			m_write += _size;
 		}

@@ -1,33 +1,13 @@
 #	include "stdex/exception.h"
+#	include "stdex/stack.h"
 
 #	include <cstdio>
 #	include <stdarg.h>
-
-#	include <exception>
 
 namespace stdex
 {
 	namespace helper
 	{
-		//////////////////////////////////////////////////////////////////////////
-		class stdex_exception
-			: public std::exception
-		{
-		public:
-			stdex_exception( const char * _message )
-				: m_message(_message)
-			{
-			}
-
-		protected:
-			const char * what() const throw() override
-			{
-				return m_message;
-			}
-
-		protected:
-			const char * m_message;
-		};
 		//////////////////////////////////////////////////////////////////////////
 		void throw_exception::operator () ( const char * _format, ... ) const
 		{
@@ -35,26 +15,36 @@ namespace stdex
 
 			va_start(argList, _format);
 
-			char msg[2048];
-
-			int msg_err = vsnprintf( msg, 2048 - 1, _format, argList );
-
-			if( msg_err < 0 )
-			{
-				throw stdex_exception("exception invalid msg formating");
-			}
+			char format_msg[2048] = {0};
+			vsnprintf( format_msg, 2048, _format, argList );
 
 			va_end(argList);
+			
+			stdex::string stack;
+			stdex::get_callstack( stack );
 
-			char msg_fl[2048];
-			int msg_fl_err = sprintf(msg_fl, "%s [%s:%d]", msg, file, line);
+			stdex::string message;
+			message += "message: ";
+			message += format_msg;
+			message += "\n";
 
-			if( msg_fl_err < 0 )
-			{
-				throw stdex_exception("exception invalid msg_fl_err formating");
-			}
+			message += "file: ";
+			message += m_file;
+			message += "\n";
 
-			throw stdex_exception(msg_fl);
+			char format_line[16] = {0};
+			sprintf( format_line, "%d", m_line );
+
+			message += "line: ";
+			message += format_line;
+			message += "\n";
+
+			message += "stack:\n";
+			message += stack;
+
+			const char * c_msg = message.c_str();
+									
+			throw stdex_exception( c_msg );
 		}
 	}
 }

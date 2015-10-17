@@ -18,7 +18,7 @@ namespace stdex
 	class memory_reader
 	{
 	public:
-		memory_reader( const unsigned char * _buff, size_t _capacity, size_t & _read )
+		memory_reader( const void * _buff, size_t _capacity, size_t & _read )
 			: m_buff(_buff)
 			, m_capacity(_capacity)
 			, m_read(_read)
@@ -54,7 +54,7 @@ namespace stdex
 				throw_memory_reader_exception();
 			}
 
-			const unsigned char * read_buff = m_buff + m_read;
+			const unsigned char * read_buff = (const unsigned char *)m_buff + m_read;
 			memorycopy( _begin, 0, read_buff, _size );
 
 			m_read += _size;
@@ -82,7 +82,7 @@ namespace stdex
 		template<class T>
 		inline const T * current_buff() const
 		{
-			const unsigned char * current = m_buff + m_read;
+			const unsigned char * current = (const unsigned char *)m_buff + m_read;
 			const T * buff = reinterpret_cast<const T *>(current);
 
 			return buff;
@@ -101,7 +101,7 @@ namespace stdex
 		}
 
 	protected:
-		const unsigned char * m_buff;
+		const void * m_buff;
 		size_t m_capacity;
 		size_t & m_read;
 	};
