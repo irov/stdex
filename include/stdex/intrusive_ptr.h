@@ -228,10 +228,10 @@ namespace stdex
 	}
 	//////////////////////////////////////////////////////////////////////////
 	template<class U, class T>
-	inline U * intrusive_get( const intrusive_ptr<T> & _iptr )
+	inline U intrusive_get( const intrusive_ptr<T> & _iptr )
 	{
 		T * t_ptr = _iptr.get();
-		U * u_ptr = static_cast<U *>(t_ptr);
+		U u_ptr = static_cast<U>(t_ptr);
 
 		return u_ptr;
 	}
