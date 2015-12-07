@@ -7,105 +7,117 @@ namespace stdex
 	namespace mpl
 	{
 		template<class T>
+		struct ref_attribute_pod
+		{
+			typedef T type;
+		};
+
+		template<>
+		struct ref_attribute_pod<bool>
+		{
+			typedef bool type;
+		};
+
+		template<>
+		struct ref_attribute_pod<char>
+		{
+			typedef char type;
+		};
+
+		template<>
+		struct ref_attribute_pod<wchar_t>
+		{
+			typedef wchar_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<int8_t>
+		{
+			typedef int8_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<int16_t>
+		{
+			typedef int16_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<int32_t>
+		{
+			typedef int32_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<int64_t>
+		{
+			typedef int64_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<uint8_t>
+		{
+			typedef uint8_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<uint16_t>
+		{
+			typedef uint16_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<uint32_t>
+		{
+			typedef uint32_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<uint64_t>
+		{
+			typedef uint64_t type;
+		};
+
+		template<>
+		struct ref_attribute_pod<long>
+		{
+			typedef long type;
+		};
+
+		template<>
+		struct ref_attribute_pod<unsigned long>
+		{
+			typedef unsigned long type;
+		};
+
+		template<>
+		struct ref_attribute_pod<float>
+		{
+			typedef float type;
+		};
+
+		template<>
+		struct ref_attribute_pod<double>
+		{
+			typedef double type;
+		};
+
+		template<class T>
 		struct ref_attribute
 		{
-			typedef const T & type;
+			typedef T type;
+		};
+
+		template<class T>
+		struct ref_attribute<const T &>
+		{
+			typedef typename ref_attribute_pod<T>::type type;
 		};
 
 		template<class T>
 		struct ref_attribute<T *>
 		{
 			typedef T * type;
-		};
-
-		template<>
-		struct ref_attribute<bool>
-		{
-			typedef bool type;
-		};
-
-		template<>
-		struct ref_attribute<char>
-		{
-			typedef char type;
-		};
-
-		template<>
-		struct ref_attribute<wchar_t>
-		{
-			typedef wchar_t type;
-		};
-
-		template<>
-		struct ref_attribute<int8_t>
-		{
-			typedef int8_t type;
-		};
-
-		template<>
-		struct ref_attribute<int16_t>
-		{
-			typedef int16_t type;
-		};
-
-		template<>
-		struct ref_attribute<int32_t>
-		{
-			typedef int32_t type;
-		};
-
-		template<>
-		struct ref_attribute<int64_t>
-		{
-			typedef int64_t type;
-		};
-
-		template<>
-		struct ref_attribute<uint8_t>
-		{
-			typedef uint8_t type;
-		};
-
-		template<>
-		struct ref_attribute<uint16_t>
-		{
-			typedef uint16_t type;
-		};
-
-		template<>
-		struct ref_attribute<uint32_t>
-		{
-			typedef uint32_t type;
-		};
-
-		template<>
-		struct ref_attribute<uint64_t>
-		{
-			typedef uint64_t type;
-		};
-
-		template<>
-		struct ref_attribute<long>
-		{
-			typedef long type;
-		};
-
-		template<>
-		struct ref_attribute<unsigned long>
-		{
-			typedef unsigned long type;
-		};
-
-		template<>
-		struct ref_attribute<float>
-		{
-			typedef float type;
-		};
-
-		template<>
-		struct ref_attribute<double>
-		{
-			typedef double type;
 		};
 
 		template<class T>
@@ -208,6 +220,24 @@ namespace stdex
 
 		template<class T>
 		struct remove_cref<const T &>
+		{
+			typedef T type;
+		};
+
+		template<class T>
+		struct remove_modify
+		{
+			typedef T type;
+		};
+
+		template<class T>
+		struct remove_modify < T * >
+		{
+			typedef T type;
+		};
+
+		template<class T>
+		struct remove_modify<const T &>
 		{
 			typedef T type;
 		};

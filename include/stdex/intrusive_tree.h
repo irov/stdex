@@ -246,7 +246,7 @@ namespace stdex
 				return false;
 			}
 
-			this->erase_( z );
+			this->erase_node( z );
 
 			return true;
 		}
@@ -260,7 +260,7 @@ namespace stdex
 				return nullptr;
 			}
 
-			this->erase_( z );
+			this->erase_node( z );
 
 			T * t = static_cast<T *>(z);
 
