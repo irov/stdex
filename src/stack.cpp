@@ -163,7 +163,7 @@ typedef struct _CallstackEntry
 	CHAR moduleName[STACKWALK_MAX_NAMELEN];
 } CallstackEntry;
 //////////////////////////////////////////////////////////////////////////
-typedef enum CallstackEntryType
+enum CallstackEntryType
 {
 	firstEntry, nextEntry, lastEntry
 };
@@ -175,33 +175,33 @@ static void OnCallstackEntry( stdex::string & _message, CallstackEntry & entry )
 	{
 		if( entry.name[0] == 0 )
 		{
-			strcpy_s( entry.name, "(function-name not available)" );
+			strcpy( entry.name, "(function-name not available)" );
 		}
 		
 		if( entry.undName[0] != 0 )
 		{
-			strcpy_s( entry.name, entry.undName );
+			strcpy( entry.name, entry.undName );
 		}
 
 		if( entry.undFullName[0] != 0 )
 		{
-			strcpy_s( entry.name, entry.undFullName );
+			strcpy( entry.name, entry.undFullName );
 		}
 
 		if( entry.lineFileName[0] == 0 )
 		{
-			strcpy_s( entry.lineFileName, "(filename not available)" );
+			strcpy( entry.lineFileName, "(filename not available)" );
 			
 			if( entry.moduleName[0] == 0 )
 			{
-				strcpy_s( entry.moduleName, "(module-name not available)" );
+				strcpy( entry.moduleName, "(module-name not available)" );
 			}
 
-			_snprintf_s( buffer, STACKWALK_MAX_NAMELEN, "%p (%s): %s: %s\n", (LPVOID)entry.offset, entry.moduleName, entry.lineFileName, entry.name );
+			sprintf( buffer, "%p (%s): %s: %s\n", (LPVOID)entry.offset, entry.moduleName, entry.lineFileName, entry.name );
 		}
 		else
 		{
-			_snprintf_s( buffer, STACKWALK_MAX_NAMELEN, "%s (%d): %s\n", entry.lineFileName, entry.lineNumber, entry.name );
+			sprintf( buffer, "%s (%d): %s\n", entry.lineFileName, entry.lineNumber, entry.name );
 		}
 
 		_message.append( buffer );
@@ -338,7 +338,7 @@ static bool GetCallstack( stdex::string & _message, PCONTEXT _context, HMODULE h
 			if( pSymGetSymFromAddr64( hProcess, frame.AddrPC.Offset, &offsetFromSmybol, pSym ) == TRUE )
 			{
 				// TODO: Mache dies sicher...!
-				strcpy_s( csEntry.name, pSym->Name );
+				strcpy( csEntry.name, pSym->Name );
 				// UnDecorateSymbolName()
 				pUnDecorateSymbolName( pSym->Name, csEntry.undName, STACKWALK_MAX_NAMELEN, UNDNAME_NAME_ONLY );
 				pUnDecorateSymbolName( pSym->Name, csEntry.undFullName, STACKWALK_MAX_NAMELEN, UNDNAME_COMPLETE );
@@ -352,7 +352,7 @@ static bool GetCallstack( stdex::string & _message, PCONTEXT _context, HMODULE h
 				{
 					csEntry.lineNumber = Line.LineNumber;
 					// TODO: Mache dies sicher...!
-					strcpy_s( csEntry.lineFileName, Line.FileName );
+					strcpy( csEntry.lineFileName, Line.FileName );
 				}
 			} // yes, we have SymGetLineFromAddr64()
 
@@ -360,7 +360,7 @@ static bool GetCallstack( stdex::string & _message, PCONTEXT _context, HMODULE h
 			if( GetModuleInfo( pSymGetModuleInfo64, hProcess, frame.AddrPC.Offset, &Module ) == TRUE )
 			{ // got module info OK
 				// TODO: Mache dies sicher...!
-				strcpy_s( csEntry.moduleName, Module.ModuleName );
+				strcpy( csEntry.moduleName, Module.ModuleName );
 			} // got module info OK
 		} // we seem to have a valid PC
 

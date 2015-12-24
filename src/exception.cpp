@@ -15,8 +15,8 @@ namespace stdex
 
 			va_start(argList, _format);
 
-			char format_msg[2048] = {0};
-			vsnprintf( format_msg, 2048, _format, argList );
+			char format_msg[4096] = {0};
+			vsprintf( format_msg, _format, argList );
 
 			va_end(argList);
 			
