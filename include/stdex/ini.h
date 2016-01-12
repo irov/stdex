@@ -4,7 +4,7 @@
 #	include <stdint.h>
 
 #	ifndef STDEX_INI_MAX_SETTINGS
-#	define STDEX_INI_MAX_SETTINGS 256U
+#	define STDEX_INI_MAX_SETTINGS 512U
 #	endif
 
 #	ifndef STDEX_INI_MAX_VALUE_SIZE

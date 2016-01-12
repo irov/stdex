@@ -1,5 +1,6 @@
 #	include "stdex/stack.h"
 
+#	ifdef _DEBUG
 #	if (defined _M_IX86 || defined _M_X64 || defined _M_IA64) && WIN32
 
 #	include <windows.h>
@@ -425,6 +426,16 @@ namespace stdex
 	{
 		_message.append( "this platform not support callstack" );
 
+		return true;
+	}
+}
+#	endif
+#	else
+//////////////////////////////////////////////////////////////////////////
+namespace stdex
+{
+	bool get_callstack( stdex::string & _message, void * _context )
+	{		
 		return true;
 	}
 }
