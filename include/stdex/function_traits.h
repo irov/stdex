@@ -22,7 +22,7 @@ namespace stdex
 			typedef void class_type;
 
 			static const bool method = false;
-			static const uint32_t arity = 0;
+			static const size_t arity = 0;
 		};
 
 		template<class R, class P0>
@@ -34,7 +34,7 @@ namespace stdex
 			typedef typename external_type_cast<P0>::Type param0;
 
 			static const bool method = false;
-			static const uint32_t arity = 1;
+			static const size_t arity = 1;
 		};
 
 		template<class R, class P0, class P1>
@@ -47,7 +47,7 @@ namespace stdex
 			typedef typename external_type_cast<P1>::Type param1;
 
 			static const bool method = false;
-			static const uint32_t arity = 2;
+			static const size_t arity = 2;
 		};
 
 		template<class R, class P0, class P1, class P2>
@@ -61,7 +61,7 @@ namespace stdex
 			typedef typename external_type_cast<P2>::Type param2;
 
 			static const bool method = false;
-			static const uint32_t arity = 3;
+			static const size_t arity = 3;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3>
@@ -76,7 +76,7 @@ namespace stdex
 			typedef typename external_type_cast<P3>::Type param3;
 
 			static const bool method = false;
-			static const uint32_t arity = 4;
+			static const size_t arity = 4;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3, class P4>
@@ -92,7 +92,7 @@ namespace stdex
 			typedef typename external_type_cast<P4>::Type param4;
 
 			static const bool method = false;
-			static const uint32_t arity = 5;
+			static const size_t arity = 5;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3, class P4, class P5>
@@ -109,7 +109,7 @@ namespace stdex
 			typedef typename external_type_cast<P5>::Type param5;
 
 			static const bool method = false;
-			static const uint32_t arity = 6;
+			static const size_t arity = 6;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6>
@@ -127,7 +127,7 @@ namespace stdex
 			typedef typename external_type_cast<P6>::Type param6;
 
 			static const bool method = false;
-			static const uint32_t arity = 7;
+			static const size_t arity = 7;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7>
@@ -146,7 +146,7 @@ namespace stdex
 			typedef typename external_type_cast<P7>::Type param7;
 
 			static const bool method = false;
-			static const uint32_t arity = 8;
+			static const size_t arity = 8;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
@@ -167,7 +167,7 @@ namespace stdex
 
 
 			static const bool method = false;
-			static const uint32_t arity = 9;
+			static const size_t arity = 9;
 		};
 
 		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
@@ -188,7 +188,7 @@ namespace stdex
 			typedef typename external_type_cast<P9>::Type param9;
 
 			static const bool method = false;
-			static const uint32_t arity = 10;
+			static const size_t arity = 10;
 		};
 
 		template<class R, class C>
@@ -198,7 +198,7 @@ namespace stdex
 			typedef C class_type;
 
 			static const bool method = true;
-			static const uint32_t arity = 0;
+			static const size_t arity = 0;
 		};
 
 		template<class R, class C>
@@ -208,7 +208,7 @@ namespace stdex
 			typedef C class_type;
 
 			static const bool method = true;
-			static const uint32_t arity = 0;
+			static const size_t arity = 0;
 		};
 
 		template<class R, class C, class P0>
@@ -220,7 +220,7 @@ namespace stdex
 			typedef typename external_type_cast<P0>::Type param0;
 
 			static const bool method = true;
-			static const uint32_t arity = 1;
+			static const size_t arity = 1;
 		};
 
 		template<class R, class C, class P0>
@@ -232,7 +232,7 @@ namespace stdex
 			typedef typename external_type_cast<P0>::Type param0;
 
 			static const bool method = true;
-			static const uint32_t arity = 1;
+			static const size_t arity = 1;
 		};
 
 		template<class R, class C, class P0, class P1>
@@ -245,7 +245,7 @@ namespace stdex
 			typedef typename external_type_cast<P1>::Type param1;
 
 			static const bool method = true;
-			static const uint32_t arity = 2;
+			static const size_t arity = 2;
 		};
 
 		template<class R, class C, class P0, class P1>
@@ -258,7 +258,7 @@ namespace stdex
 			typedef typename external_type_cast<P1>::Type param1;
 
 			static const bool method = true;
-			static const uint32_t arity = 2;
+			static const size_t arity = 2;
 		};
 
 		template<class R, class C, class P0, class P1, class P2>
@@ -272,7 +272,7 @@ namespace stdex
 			typedef typename external_type_cast<P2>::Type param2;
 
 			static const bool method = true;
-			static const uint32_t arity = 3;
+			static const size_t arity = 3;
 		};
 
 		template<class R, class C, class P0, class P1, class P2>
@@ -286,7 +286,7 @@ namespace stdex
 			typedef typename external_type_cast<P2>::Type param2;
 
 			static const bool method = true;
-			static const uint32_t arity = 3;
+			static const size_t arity = 3;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3>
@@ -301,7 +301,7 @@ namespace stdex
 			typedef typename external_type_cast<P3>::Type param3;
 
 			static const bool method = true;
-			static const uint32_t arity = 4;
+			static const size_t arity = 4;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3>
@@ -316,7 +316,7 @@ namespace stdex
 			typedef typename external_type_cast<P3>::Type param3;
 
 			static const bool method = true;
-			static const uint32_t arity = 4;
+			static const size_t arity = 4;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4>
@@ -332,7 +332,7 @@ namespace stdex
 			typedef typename external_type_cast<P4>::Type param4;
 
 			static const bool method = true;
-			static const uint32_t arity = 5;
+			static const size_t arity = 5;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4>
@@ -348,7 +348,7 @@ namespace stdex
 			typedef typename external_type_cast<P4>::Type param4;
 
 			static const bool method = true;
-			static const uint32_t arity = 5;
+			static const size_t arity = 5;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5>
@@ -365,7 +365,7 @@ namespace stdex
 			typedef typename external_type_cast<P5>::Type param5;
 
 			static const bool method = true;
-			static const uint32_t arity = 6;
+			static const size_t arity = 6;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5>
@@ -382,7 +382,7 @@ namespace stdex
 			typedef typename external_type_cast<P5>::Type param5;
 
 			static const bool method = true;
-			static const uint32_t arity = 6;
+			static const size_t arity = 6;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6>
@@ -400,7 +400,7 @@ namespace stdex
 			typedef typename external_type_cast<P6>::Type param6;
 
 			static const bool method = true;
-			static const uint32_t arity = 7;
+			static const size_t arity = 7;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6>
@@ -418,7 +418,7 @@ namespace stdex
 			typedef typename external_type_cast<P6>::Type param6;
 
 			static const bool method = true;
-			static const uint32_t arity = 7;
+			static const size_t arity = 7;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7>
@@ -437,7 +437,7 @@ namespace stdex
 			typedef typename external_type_cast<P7>::Type param7;
 
 			static const bool method = true;
-			static const uint32_t arity = 8;
+			static const size_t arity = 8;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7>
@@ -456,7 +456,7 @@ namespace stdex
 			typedef typename external_type_cast<P7>::Type param7;
 
 			static const bool method = true;
-			static const uint32_t arity = 8;
+			static const size_t arity = 8;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
@@ -476,7 +476,7 @@ namespace stdex
 			typedef typename external_type_cast<P8>::Type param8;
 
 			static const bool method = true;
-			static const uint32_t arity = 9;
+			static const size_t arity = 9;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
@@ -496,7 +496,7 @@ namespace stdex
 			typedef typename external_type_cast<P8>::Type param8;
 
 			static const bool method = true;
-			static const uint32_t arity = 9;
+			static const size_t arity = 9;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
@@ -517,7 +517,7 @@ namespace stdex
 			typedef typename external_type_cast<P9>::Type param9;
 
 			static const bool method = true;
-			static const uint32_t arity = 10;
+			static const size_t arity = 10;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
@@ -538,7 +538,7 @@ namespace stdex
 			typedef typename external_type_cast<P9>::Type param9;
 
 			static const bool method = true;
-			static const uint32_t arity = 10;
+			static const size_t arity = 10;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
@@ -560,7 +560,7 @@ namespace stdex
 			typedef typename external_type_cast<P10>::Type param10;
 
 			static const bool method = true;
-			static const uint32_t arity = 11;
+			static const size_t arity = 11;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
@@ -582,7 +582,7 @@ namespace stdex
 			typedef typename external_type_cast<P10>::Type param10;
 
 			static const bool method = true;
-			static const uint32_t arity = 11;
+			static const size_t arity = 11;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11>
@@ -605,7 +605,7 @@ namespace stdex
 			typedef typename external_type_cast<P11>::Type param11;
 
 			static const bool method = true;
-			static const uint32_t arity = 12;
+			static const size_t arity = 12;
 		};
 
 		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11>
@@ -628,7 +628,7 @@ namespace stdex
 			typedef typename external_type_cast<P11>::Type param11;
 
 			static const bool method = true;
-			static const uint32_t arity = 12;
+			static const size_t arity = 12;
 		};
 	}
 
