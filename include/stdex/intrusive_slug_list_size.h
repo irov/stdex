@@ -499,7 +499,9 @@ namespace stdex
 
 			linked_type * first = m_head.right();
 
-			return static_cast<value_type>(first);
+			value_type value = static_cast<value_type>(first);
+
+			return value;
 		}
 
 		inline size_t size() const
