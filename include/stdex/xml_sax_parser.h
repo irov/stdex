@@ -73,6 +73,13 @@ namespace stdex
 
 			char * end_name_node = strpbrk( begin_name_node, " />" );
 
+			if( end_name_node == 0 )
+			{
+				_callback.callback_error_node( "error xml sax parser 1" );
+
+				return 0;
+			}
+
 			if( *end_name_node == ' ' )
 			{
 				*end_name_node = '\0';
@@ -98,6 +105,13 @@ namespace stdex
 				attr.count = 0;
 
 				char * end_node_attribute = s_xml_parse_node_attribute( attr, find_node_attribute, begin_name_node );
+
+				if( end_node_attribute == 0 )
+				{
+					_callback.callback_error_node( "error xml sax parser 2" );
+
+					return 0;
+				}
 
 				_callback.callback_node_attributes( begin_name_node, attr.count, attr.key, attr.value );
 
@@ -164,6 +178,11 @@ namespace stdex
 			}
 
 			begin_node = detail::s_xml_parse_node<t_xml_sax_callback>( _callback, begin_node + 1 );
+
+			if( begin_node == nullptr )
+			{
+				return false;
+			}
 		}
 
 		return true;

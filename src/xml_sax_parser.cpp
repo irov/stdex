@@ -26,7 +26,7 @@ namespace stdex
 			255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
 		};
 		//////////////////////////////////////////////////////////////////////////
-		static void s_xml_adapt_value_attribute( char * _value )
+		static bool s_xml_adapt_value_attribute( char * _value )
 		{
 			char * src = _value;
 
@@ -36,7 +36,7 @@ namespace stdex
 
 				if( src == nullptr )
 				{
-					return;
+					return true;
 				}
 
 				switch( src[1] )
@@ -55,8 +55,11 @@ namespace stdex
 							strcpy( src + 1, src + 6 );
 							src += 1;
 						}
+						else
+						{
+							return false;
+						}
 					}break;
-
 				case 'q': // &quot;
 					{
 						if( src[2] == 'u' && src[3] == 'o' && src[4] == 't' && src[5] == ';' )
@@ -65,8 +68,11 @@ namespace stdex
 							strcpy( src + 1, src + 6 );
 							src += 1;
 						}
+						else
+						{
+							return false;
+						}
 					}break;
-
 				case 'g': // &gt;
 					{
 						if( src[2] == 't' && src[3] == ';' )
@@ -75,8 +81,11 @@ namespace stdex
 							strcpy( src + 1, src + 4 );
 							src += 1;
 						}
+						else
+						{
+							return false;
+						}
 					}break;
-
 				case 'l': // &lt;
 					{
 						if( src[2] == 't' && src[3] == ';' )
@@ -85,8 +94,11 @@ namespace stdex
 							strcpy( src + 1, src + 4 );
 							src += 1;
 						}
+						else
+						{
+							return false;
+						}
 					}break;
-
 				case 'n': // &nbsp;
 					{
 						if( src[2] == 'b' && src[3] == 's' && src[4] == 'p' && src[5] == ';' )
@@ -96,8 +108,11 @@ namespace stdex
 							strcpy( src + 2, src + 6 );
 							src += 2;
 						}
+						else
+						{
+							return false;
+						}
 					}break;
-
 				case '#':
 					{
 						unsigned long code = 0;
@@ -133,7 +148,12 @@ namespace stdex
 
 								code = code * 10 + digit;
 								++src_code;
-							}				
+							}
+
+							if( *src_code != ';' )
+							{
+								return false;
+							}
 						}
 
 						if( code < 0x80 )    // 1 byte sequence
@@ -166,11 +186,17 @@ namespace stdex
 
 							src += 4;
 						}
+						else
+						{
+							return false;
+						}
 
 						strcpy( src, src_code + 1 );
 					}break;
 				}
 			}
+
+			return true;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		char * s_xml_parse_node_attribute( xml_sax_parse_attribute & _attr, char * _attribute, const char * _node )
@@ -191,7 +217,10 @@ namespace stdex
 
 			*end_value_node_attribute = '\0';
 
-			s_xml_adapt_value_attribute( begin_value_node_attribute + 1 );
+			if( s_xml_adapt_value_attribute( begin_value_node_attribute + 1 ) == false )
+			{
+				return 0;
+			}
 
 			_attr.key[_attr.count] = _attribute;
 			_attr.value[_attr.count] = begin_value_node_attribute + 1;
