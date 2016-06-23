@@ -80,6 +80,7 @@
     <ClCompile Include="..\src\exception.cpp" />
     <ClCompile Include="..\src\ini.cpp" />
     <ClCompile Include="..\src\memory_cache.cpp" />
+    <ClCompile Include="..\src\sha1.cpp" />
     <ClCompile Include="..\src\stack.cpp" />
     <ClCompile Include="..\src\thread_guard.cpp" />
     <ClCompile Include="..\src\xml_sax_parser.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="..\include\stdex\memory_ptr.h" />
     <ClInclude Include="..\include\stdex\pool.h" />
     <ClInclude Include="..\include\stdex\queue.h" />
+    <ClInclude Include="..\include\stdex\sha1.h" />
     <ClInclude Include="..\include\stdex\stack.h" />
     <ClInclude Include="..\include\stdex\static_array.h" />
     <ClInclude Include="..\include\stdex\thread_guard.h" />

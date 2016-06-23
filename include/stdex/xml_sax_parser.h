@@ -75,8 +75,6 @@ namespace stdex
 
 			if( end_name_node == 0 )
 			{
-				_callback.callback_error_node( "error xml sax parser 1" );
-
 				return 0;
 			}
 
@@ -108,8 +106,6 @@ namespace stdex
 
 				if( end_node_attribute == 0 )
 				{
-					_callback.callback_error_node( "error xml sax parser 2" );
-
 					return 0;
 				}
 
