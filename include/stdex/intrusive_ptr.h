@@ -253,6 +253,24 @@ namespace stdex
 
 		return l > r;
 	}
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator <= ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l <= r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator >= ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l >= r;
+    }
 	//////////////////////////////////////////////////////////////////////////
 	template<class T> 
 	inline bool operator == ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )

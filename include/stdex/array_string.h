@@ -1,6 +1,7 @@
 #	pragma once
 
 #	include "stdex/const_string.h"
+#	include "stdex/const_string2.h"
 #	include "stdex/memorycopy.h"
 #	include "stdex/stl_string.h"
 
@@ -63,6 +64,14 @@ namespace stdex
 			this->append( value_str, value_size );
 		}
 
+        void append( const stdex::const_string2 & _value )
+        {
+            const char * value_str = _value.c_str();
+            size_t value_size = _value.size();
+
+            this->append( value_str, value_size );
+        }
+
 		void append( const stdex::string & _value )
 		{
 			const char * value_str = _value.c_str();
@@ -118,6 +127,11 @@ namespace stdex
 		{
 			this->append( _value );
 		}
+
+        void operator += ( const stdex::const_string2 & _value )
+        {
+            this->append( _value );
+        }
 
 		void operator += ( const stdex::string & _value )
 		{
