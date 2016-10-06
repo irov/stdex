@@ -61,6 +61,12 @@ namespace stdex
 	}
     //////////////////////////////////////////////////////////////////////////
     template<class T>
+    inline void intrusive_this_acquire( T * _ptr )
+    {
+        T::intrusive_ptr_add_ref( _ptr );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
     inline void intrusive_this_release( T * _ptr )
     {
         T::intrusive_ptr_dec_ref( _ptr );

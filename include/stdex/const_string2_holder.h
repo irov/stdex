@@ -12,12 +12,7 @@ namespace stdex
         : public intrusive_ptr_base<const_string2_holder>
     {
     protected:
-        const_string2_holder()
-            : m_data(nullptr)
-            , m_hash(0)
-            , m_size(0)
-        {
-        }
+        const_string2_holder();
 
     private:
         void operator = ( const const_string2_holder & )
@@ -26,7 +21,7 @@ namespace stdex
 
 	public:
 		typedef size_t size_type;
-		typedef long hash_type;
+		typedef int32_t hash_type;
         typedef char value_type;
 
     public:
