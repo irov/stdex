@@ -1,4 +1,5 @@
 #	include "stdex/const_string2.h"
+#   include "stdex/const_string2_holder_none.h"
 
 #   include <string.h>
 

@@ -236,7 +236,7 @@ namespace stdex
         {
             void * impl = m_pool.alloc_block();
 
-            T * t = new (impl) T;
+            T * t = new (impl) T();
 
             return t;
         }

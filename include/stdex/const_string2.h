@@ -1,7 +1,6 @@
 #	pragma once
 
 #   include "stdex/const_string2_holder.h"
-#   include "stdex/const_string2_holder_none.h"
 
 #	include "stdex/intrusive_ptr.h"
 
