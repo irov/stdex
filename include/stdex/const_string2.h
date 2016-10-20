@@ -4,6 +4,8 @@
 
 #	include "stdex/intrusive_ptr.h"
 
+#	include <algorithm>
+
 namespace stdex
 {
 	class const_string2
