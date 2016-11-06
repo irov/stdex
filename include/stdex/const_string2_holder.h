@@ -21,7 +21,7 @@ namespace stdex
 
 	public:
 		typedef size_t size_type;
-		typedef int32_t hash_type;
+		typedef int64_t hash_type;
         typedef char value_type;
 
     public:
