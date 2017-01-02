@@ -141,11 +141,3 @@ namespace stdex
 	bool operator != ( const const_string2::value_type * _left, const const_string2 & _right );
 	//////////////////////////////////////////////////////////////////////////
 }
-
-namespace std
-{
-	template<> inline void swap( stdex::const_string2 & _left, stdex::const_string2 & _right )
-	{
-		_left.swap( _right );
-	}
-}
