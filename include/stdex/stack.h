@@ -1,8 +1,8 @@
 #	pragma once
 
-#	include "stdex/stl_string.h"
+#	include <string>
 
 namespace stdex
 {
-	bool get_callstack( stdex::string & _message, void * _context = NULL );
+	bool get_callstack( std::string & _message, void * _context = NULL );
 }

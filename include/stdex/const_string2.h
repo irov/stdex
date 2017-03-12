@@ -21,13 +21,20 @@ namespace stdex
 
 	public:
 		typedef const_string2_holder holder;
+		typedef intrusive_ptr<holder> holder_ptr;
 
 		typedef holder::size_type size_type;
 		typedef holder::hash_type hash_type;
         typedef holder::value_type value_type;
 
 	public:
-		explicit const_string2( holder * _holder )
+		explicit const_string2( const holder * _holder )
+			: m_holder(_holder)
+		{
+
+		}
+
+		explicit const_string2(const holder_ptr & _holder)
 			: m_holder(_holder)
 		{
 
@@ -125,8 +132,7 @@ namespace stdex
 			}
 		};
 
-	protected:
-		typedef intrusive_ptr<holder> holder_ptr;
+	protected:		
 		holder_ptr m_holder;
 	};
 	//////////////////////////////////////////////////////////////////////////

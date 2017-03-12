@@ -169,7 +169,7 @@ enum CallstackEntryType
 	firstEntry, nextEntry, lastEntry
 };
 //////////////////////////////////////////////////////////////////////////
-static void OnCallstackEntry( stdex::string & _message, CallstackEntry & entry )
+static void OnCallstackEntry( std::string & _message, CallstackEntry & entry )
 {
 	CHAR buffer[STACKWALK_MAX_NAMELEN];
 	if( entry.offset != 0 )
@@ -209,7 +209,7 @@ static void OnCallstackEntry( stdex::string & _message, CallstackEntry & entry )
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-static bool GetCallstack( stdex::string & _message, PCONTEXT _context, HMODULE hDbhHelp, HANDLE hThread, HANDLE hProcess )
+static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDbhHelp, HANDLE hThread, HANDLE hProcess )
 {
 	TStackWalk64 pStackWalk64 = (TStackWalk64)GetProcAddress( hDbhHelp, "StackWalk64" );
 	TSymGetOptions pSymGetOptions = (TSymGetOptions)GetProcAddress( hDbhHelp, "SymGetOptions" );
@@ -378,7 +378,7 @@ static bool GetCallstack( stdex::string & _message, PCONTEXT _context, HMODULE h
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {
-	bool get_callstack( stdex::string & _message, void * _context )
+	bool get_callstack( std::string & _message, void * _context )
 	{
 		HANDLE hThread = GetCurrentThread();
 		HANDLE hProcess = GetCurrentProcess();
@@ -422,7 +422,7 @@ namespace stdex
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {
-	bool get_callstack( stdex::string & _message, void * _context )
+	bool get_callstack( std::string & _message, void * _context )
 	{
 		_message.append( "this platform not support callstack" );
 
@@ -434,7 +434,7 @@ namespace stdex
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {
-	bool get_callstack( stdex::string & _message, void * _context )
+	bool get_callstack( std::string & _message, void * _context )
 	{		
 		return true;
 	}

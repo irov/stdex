@@ -2,6 +2,7 @@
 #	include "stdex/stack.h"
 
 #	include <cstdio>
+#	include <string>
 #	include <stdarg.h>
 
 namespace stdex
@@ -20,10 +21,10 @@ namespace stdex
 
 			va_end(argList);
 			
-			stdex::string stack;
+			std::string stack;
 			stdex::get_callstack( stack );
 
-			stdex::string message;
+			std::string message;
 			message += "message: ";
 			message += format_msg;
 			message += "\n";
