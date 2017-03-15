@@ -5,6 +5,8 @@
 #   include <stdint.h>
 #   include <memory.h>
 
+#	define STDEX_ALLOCATOR_DISABLE
+
 #   ifndef STDEX_ALLOCATOR_INCLUDE
 #	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
 #	endif
@@ -413,14 +415,14 @@ extern "C" {
 		{
 			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			return stdex::stdex_pool_allocator::s_malloc( _size );
+			return detail::stdex_pool_allocator::s_malloc( _size );
 		}
 		//////////////////////////////////////////////////////////////////////////
 		void stdex_free( void * _mem )
 		{
 			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			stdex::stdex_pool_allocator::s_free( _mem );
+			detail::stdex_pool_allocator::s_free( _mem );
 		}
 		//////////////////////////////////////////////////////////////////////////
 		void * stdex_calloc( size_t _num, size_t _size )
@@ -428,7 +430,7 @@ extern "C" {
 			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
 			size_t full_size = _num * _size;
-			void * mem = stdex::stdex_pool_allocator::s_malloc( full_size );
+			void * mem = detail::stdex_pool_allocator::s_malloc( full_size );
 			::memset( mem, 0, full_size );
 
 			return mem;
@@ -438,7 +440,7 @@ extern "C" {
 		{
 			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			return stdex::stdex_pool_allocator::s_realloc( _mem, _size );
+			return detail::stdex_pool_allocator::s_realloc( _mem, _size );
 		}
 		//////////////////////////////////////////////////////////////////////////
 #   else
