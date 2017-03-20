@@ -5,7 +5,7 @@
 #   include <stdint.h>
 #   include <memory.h>
 
-#	define STDEX_ALLOCATOR_DISABLE
+//#	define STDEX_ALLOCATOR_DISABLE
 
 #   ifndef STDEX_ALLOCATOR_INCLUDE
 #	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
