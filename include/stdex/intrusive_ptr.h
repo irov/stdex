@@ -53,8 +53,8 @@ namespace stdex
 		}
 #	endif
 
-		inline intrusive_ptr( const element_type * _ptr )
-			: m_ptr(const_cast<element_type * >(_ptr))
+		inline intrusive_ptr( element_type * _ptr )
+			: m_ptr(_ptr)
 		{
 			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
@@ -62,8 +62,8 @@ namespace stdex
 		}
 
 		template<class U>
-		inline intrusive_ptr( const U * _ptr )
-			: m_ptr(static_cast<element_type *>(const_cast<U *>(_ptr)))
+		inline intrusive_ptr( U * _ptr )
+			: m_ptr(static_cast<element_type *>(_ptr))
 		{
 			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
@@ -112,6 +112,14 @@ namespace stdex
 			swap_ptr.swap( *this );
 
 			return *this;
+		}
+
+		template<class U>
+		inline intrusive_ptr & operator = (U * _rhs)
+		{
+			element_type * t = static_cast<element_type *>(_rhs);
+
+			return this->operator = (t);
 		}
 		
 #	ifndef STDEX_UNSUPPOT_NULLPTR_T

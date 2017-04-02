@@ -28,7 +28,7 @@ namespace stdex
         typedef holder::value_type value_type;
 
 	public:
-		explicit const_string2( const holder * _holder )
+		explicit const_string2( holder * _holder )
 			: m_holder(_holder)
 		{
 
