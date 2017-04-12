@@ -14,23 +14,8 @@ namespace stdex
 			: public std::exception
 		{
 		public:
-			stdex_exception( const char * _message )
-				: m_message( _message )
-			{
-			}
-
-			~stdex_exception() throw()
-			{
-			}
-
-		protected:
-			const char * what() const throw() override
-			{
-				return m_message;
-			}
-
-		protected:
-			const char * m_message;
+			stdex_exception( const char * _message ) throw();
+			~stdex_exception() throw();
 		};
 		//////////////////////////////////////////////////////////////////////////
 		class throw_exception

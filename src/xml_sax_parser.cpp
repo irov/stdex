@@ -132,7 +132,7 @@ namespace stdex
 
 								code = code * 16 + digit;
 								++src_code;
-							}				
+							}
 						}
 						else
 						{
@@ -149,12 +149,14 @@ namespace stdex
 								code = code * 10 + digit;
 								++src_code;
 							}
-
-							if( *src_code != ';' )
-							{
-								return false;
-							}
 						}
+
+						if( *src_code != ';' )
+						{
+							return false;
+						}
+
+						++src_code;
 
 						if( code < 0x80 )    // 1 byte sequence
 						{
@@ -191,7 +193,8 @@ namespace stdex
 							return false;
 						}
 
-						strcpy( src, src_code + 1 );
+						size_t src_code_len = strlen( src_code );
+						memmove( src, src_code, src_code_len );
 					}break;
 				}
 			}

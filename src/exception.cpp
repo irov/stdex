@@ -47,5 +47,14 @@ namespace stdex
 									
 			throw stdex_exception( c_msg );
 		}
+		//////////////////////////////////////////////////////////////////////////
+		stdex_exception::stdex_exception( const char * _message ) throw()
+			: std::exception( _message )
+		{
+		}
+		//////////////////////////////////////////////////////////////////////////
+		stdex_exception::~stdex_exception() throw()
+		{
+		}
 	}
 }
