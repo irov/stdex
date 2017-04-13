@@ -26,6 +26,12 @@ namespace stdex
 			255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
 		};
 		//////////////////////////////////////////////////////////////////////////
+		static void strmove( char * _src, const char * _dst )
+		{
+			size_t memmove_len = strlen( _dst );
+			memmove( _src, _dst, memmove_len );
+		}
+		//////////////////////////////////////////////////////////////////////////
 		static bool s_xml_adapt_value_attribute( char * _value )
 		{
 			char * src = _value;
@@ -46,14 +52,16 @@ namespace stdex
 						if( src[2] == 'm' && src[3] == 'p' && src[4] == ';' )
 						{
 							*src = '&';
-							strcpy( src + 1, src + 5 );
 							src += 1;
+
+							strmove( src, src + 4 );
 						}
 						else if( src[2] == 'p' && src[3] == 'o' && src[4] == 's' && src[5] == ';' )
 						{
 							*src = '\'';
-							strcpy( src + 1, src + 6 );
 							src += 1;
+
+							strmove( src, src + 5 );
 						}
 						else
 						{
@@ -65,8 +73,9 @@ namespace stdex
 						if( src[2] == 'u' && src[3] == 'o' && src[4] == 't' && src[5] == ';' )
 						{
 							*src = '"';
-							strcpy( src + 1, src + 6 );
 							src += 1;
+
+							strmove( src, src + 5 );
 						}
 						else
 						{
@@ -78,8 +87,9 @@ namespace stdex
 						if( src[2] == 't' && src[3] == ';' )
 						{
 							*src = '>';
-							strcpy( src + 1, src + 4 );
 							src += 1;
+
+							strmove( src, src + 3 );							
 						}
 						else
 						{
@@ -91,8 +101,9 @@ namespace stdex
 						if( src[2] == 't' && src[3] == ';' )
 						{
 							*src = '<';
-							strcpy( src + 1, src + 4 );
 							src += 1;
+
+							strmove( src, src + 3 );
 						}
 						else
 						{
@@ -105,8 +116,9 @@ namespace stdex
 						{
 							*(src + 0) = 0xC2;
 							*(src + 1) = 0xA0;
-							strcpy( src + 2, src + 6 );
 							src += 2;
+
+							strmove( src, src + 4 );							
 						}
 						else
 						{
