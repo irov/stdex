@@ -205,8 +205,7 @@ namespace stdex
 							return false;
 						}
 
-						size_t src_code_len = strlen( src_code );
-						memmove( src, src_code, src_code_len );
+						strmove( src, src_code );
 					}break;
 				}
 			}
