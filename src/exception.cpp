@@ -10,6 +10,20 @@ namespace stdex
 	namespace helper
 	{
 		//////////////////////////////////////////////////////////////////////////
+		stdex_exception::stdex_exception( const std::string & _message ) noexcept
+			: m_msg( _message )
+		{
+		}
+		//////////////////////////////////////////////////////////////////////////
+		stdex_exception::~stdex_exception() noexcept
+		{
+		}
+		//////////////////////////////////////////////////////////////////////////
+		const char* stdex_exception::what() const noexcept
+		{
+			return m_msg.c_str();
+		}
+		//////////////////////////////////////////////////////////////////////////
 		void throw_exception::operator () ( const char * _format, ... ) const
 		{
 			va_list argList;
@@ -46,15 +60,6 @@ namespace stdex
 			const char * c_msg = message.c_str();
 									
 			throw stdex_exception( c_msg );
-		}
-		//////////////////////////////////////////////////////////////////////////
-		stdex_exception::stdex_exception( const char * _message ) throw()
-			: std::exception( _message )
-		{
-		}
-		//////////////////////////////////////////////////////////////////////////
-		stdex_exception::~stdex_exception() throw()
-		{
-		}
+		}		
 	}
 }

@@ -3,6 +3,7 @@
 #	include <stdint.h>
 
 #	include <exception>
+#	include <string>
 
 namespace stdex
 {
@@ -14,8 +15,14 @@ namespace stdex
 			: public std::exception
 		{
 		public:
-			stdex_exception( const char * _message ) throw();
-			~stdex_exception() throw();
+			stdex_exception( const std::string & _message ) noexcept;
+			~stdex_exception() noexcept;
+
+		public:
+			const char* what() const noexcept override;
+
+		protected:
+			std::string m_msg;
 		};
 		//////////////////////////////////////////////////////////////////////////
 		class throw_exception
