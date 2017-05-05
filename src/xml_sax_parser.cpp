@@ -30,6 +30,7 @@ namespace stdex
 		{
 			size_t memmove_len = strlen( _dst );
 			memmove( _src, _dst, memmove_len );
+			_src[memmove_len] = '\0';
 		}
 		//////////////////////////////////////////////////////////////////////////
 		static bool s_xml_adapt_value_attribute( char * _value )
