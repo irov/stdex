@@ -43,7 +43,7 @@ namespace stdex
 
 				if( src == nullptr )
 				{
-					return true;
+					break;
 				}
 
 				switch( src[1] )
@@ -115,8 +115,8 @@ namespace stdex
 					{
 						if( src[2] == 'b' && src[3] == 's' && src[4] == 'p' && src[5] == ';' )
 						{
-							*(src + 0) = 0xC2;
-							*(src + 1) = 0xA0;
+							*(src + 0) = -64; //0xC2
+							*(src + 1) = -96; //0xA0
 							src += 2;
 
 							strmove( src, src + 4 );							
