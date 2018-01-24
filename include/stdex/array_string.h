@@ -30,6 +30,11 @@ namespace stdex
 			return m_pos;
 		}
 
+        bool empty() const
+        {
+            return m_pos == 0;
+        }
+
 	public:
 		void clear()
 		{
