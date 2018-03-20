@@ -18,6 +18,7 @@ namespace stdex
 	public:
         inline static void intrusive_ptr_add_ref( T * _ptr );
         inline static void intrusive_ptr_dec_ref( T * _ptr );
+        inline static uint32_t intrusive_ptr_get_ref( const T * _ptr );
 
 	public:
 		inline static void intrusive_ptr_destroy( T * _ptr );
@@ -93,6 +94,13 @@ namespace stdex
 		(void)_ptr;
 		//Empty
 	}
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline uint32_t intrusive_ptr_base<T>::intrusive_ptr_get_ref( const T * _ptr )
+    {
+        return _ptr->m_reference;
+    }
+    //////////////////////////////////////////////////////////////////////////
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
 	//////////////////////////////////////////////////////////////////////////
 	template<class T>

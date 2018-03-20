@@ -5,7 +5,7 @@
 #   include <stdint.h>
 #   include <memory.h>
 
-//#	define STDEX_ALLOCATOR_DISABLE
+#	define STDEX_ALLOCATOR_DISABLE
 
 #   ifndef STDEX_ALLOCATOR_INCLUDE
 #	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
@@ -120,7 +120,7 @@ extern "C" {
 
 #   define allocator_pool_def(i, f, c)\
     const static size_t allocator_pool_size(i) = memory_buf_allign(f);\
-    typedef pool<memory_buf_total(f), c, detail::stdex_pool_allocator> t_pool_type_p##i;
+    typedef pool<uint8_t, c * memory_buf_total(f), detail::stdex_pool_allocator> t_pool_type_p##i;
 
 		//////////////////////////////////////////////////////////////////////////
 #   define allocator_pool_loop( function )\

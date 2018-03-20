@@ -7,26 +7,17 @@
 
 namespace stdex
 {
-    template<size_t TBlockSize, size_t TBlockCount>
-    class pool_template_chunk
+    template<class TBlockType, size_t TBlockCount>
+    struct pool_template_chunk
     {
-    public:
-        typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_t;
+        typedef pool_template_chunk<TBlockType, TBlockCount> chunk_t;
 
-    public:
         struct pool_block
         {
-            uint8_t buff[TBlockSize];
+            TBlockType buff;
             pool_block * next;
         };
 
-    public:
-        pool_template_chunk( chunk_t * _prev )
-            : prev(_prev)
-        {
-        }
-
-	public:
 		pool_block * initialize()
 		{
 			pool_block * free = nullptr;
@@ -43,7 +34,6 @@ namespace stdex
 			return free;
 		}
 
-    public:
 		chunk_t * removePrev()
 		{
 			chunk_t * old = prev;
@@ -57,7 +47,6 @@ namespace stdex
             return prev;
         }
 
-    protected:
 		chunk_t * prev;
         pool_block buffer_block[TBlockCount];        
     };
@@ -81,10 +70,10 @@ namespace stdex
 		}
 	};
 
-	template<size_t TBlockSize, size_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
+	template<class TBlockType, size_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
     class pool
     {
-        typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_t;
+        typedef pool_template_chunk<TBlockType, TBlockCount> chunk_t;
         typedef typename chunk_t::pool_block block_t;
 
     public:
@@ -142,7 +131,7 @@ namespace stdex
 
         size_t getBlockSize() const
         {
-            return TBlockSize;
+            return sizeof( TBlockType );
         }
 
         size_t getChunkCount() const
@@ -205,9 +194,10 @@ namespace stdex
         void addChunk_()
         {
 			void * mem_chunk = TAllocator::s_malloc( sizeof( chunk_t ) );
-			new (mem_chunk)chunk_t( m_chunk );
 
 			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
+
+            chunk->prev = nullptr;
 
 			m_free = chunk->initialize();
             m_chunk = chunk;
@@ -223,7 +213,7 @@ namespace stdex
         size_t m_chunkCount;
     };
 
-    template<class T, size_t TBlockCount>
+    template<class TBlockType, size_t TBlockCount>
     class template_pool
     {
     public:
@@ -231,19 +221,23 @@ namespace stdex
         {
         }
 
+        ~template_pool()
+        {
+        }
+
     public:
-        T * createT()
+        TBlockType * createT()
         {
             void * impl = m_pool.alloc_block();
 
-            T * t = new (impl) T();
+            TBlockType * t = new (impl) TBlockType();
 
             return t;
         }
 
-        void destroyT( T * _t )
+        void destroyT( TBlockType * _t )
         {
-            _t->~T();
+            _t->~TBlockType();
 
             m_pool.free_block( _t );
         }
@@ -257,7 +251,7 @@ namespace stdex
         }
 
     protected:
-        typedef pool<sizeof(T), TBlockCount> pool_t;
+        typedef pool<TBlockType, TBlockCount> pool_t;
         pool_t m_pool;
     };
 }
