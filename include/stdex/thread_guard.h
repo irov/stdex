@@ -4,13 +4,13 @@
 
 #	include "stdex/exception.h"
 
-#	ifndef STDEX_THREAD_GUARD_ENABLE
-#	ifdef _DEBUG
+#ifndef STDEX_THREAD_GUARD_ENABLE
+#	ifndef NDEBUG
+#	    define STDEX_THREAD_GUARD
+#   endif
+#else
 #	define STDEX_THREAD_GUARD
-#	endif
-#	else
-#	define STDEX_THREAD_GUARD
-#	endif
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 namespace stdex

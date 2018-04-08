@@ -15,7 +15,7 @@ namespace stdex
 			: public std::exception
 		{
 		public:
-			stdex_exception( const std::string & _message ) noexcept;
+			explicit stdex_exception( const std::string & _message ) noexcept;
 			~stdex_exception() noexcept;
 
 		public:

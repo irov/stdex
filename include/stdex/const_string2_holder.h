@@ -13,12 +13,8 @@ namespace stdex
     {
     protected:
         const_string2_holder();
-
-    private:
-        void operator = ( const const_string2_holder & )
-        {
-        }
-
+        const_string2_holder( const const_string2_holder & _holder );
+        
 	public:
 		typedef size_t size_type;
 		typedef int64_t hash_type;

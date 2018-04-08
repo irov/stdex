@@ -1,9 +1,9 @@
-#	include "stdex/exception.h"
-#	include "stdex/stack.h"
+#include "stdex/exception.h"
+#include "stdex/stack.h"
 
-#	include <cstdio>
-#	include <string>
-#	include <stdarg.h>
+#include <cstdio>
+#include <string>
+#include <stdarg.h>
 
 namespace stdex
 {

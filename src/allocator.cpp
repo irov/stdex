@@ -1,41 +1,43 @@
-#   include "stdex/pool.h"
-#	include "stdex/memorycopy.h"
-#	include "stdex/exception.h"
+#include "stdex/pool.h"
+#include "stdex/memorycopy.h"
+#include "stdex/exception.h"
 
-#   include <stdint.h>
-#   include <memory.h>
+#include <stdint.h>
+#include <memory.h>
 
-#	define STDEX_ALLOCATOR_DISABLE
+#ifndef NDEBUG
+#   define STDEX_ALLOCATOR_DISABLE
+#endif
 
-#   ifndef STDEX_ALLOCATOR_INCLUDE
+#ifndef STDEX_ALLOCATOR_INCLUDE
 #	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
-#	endif
+#endif
 
-#   ifndef STDEX_ALLOCATOR_MALLOC
+#ifndef STDEX_ALLOCATOR_MALLOC
 #   define STDEX_ALLOCATOR_MALLOC malloc
-#   endif
+#endif
 
-#   ifndef STDEX_ALLOCATOR_REALLOC
+#ifndef STDEX_ALLOCATOR_REALLOC
 #   define STDEX_ALLOCATOR_REALLOC realloc
-#   endif
+#endif
 
-#   ifndef STDEX_ALLOCATOR_FREE
+#ifndef STDEX_ALLOCATOR_FREE
 #   define STDEX_ALLOCATOR_FREE free
-#   endif
+#endif
 
-#	ifndef STDEX_ALLOCATOR_NOTHREADSAFE
+#ifndef STDEX_ALLOCATOR_NOTHREADSAFE
 #	define STDEX_ALLOCATOR_THREADSAFE
-#	endif
+#endif
 
-#	ifdef STDEX_ALLOCATOR_THREADSAFE
+#ifdef STDEX_ALLOCATOR_THREADSAFE
 #	define STDEX_ALLOCATOR_LOCK() stdex::s_thread_lock()
 #	define STDEX_ALLOCATOR_UNLOCK() stdex::s_thread_unlock()
-#	else
+#else
 #	define STDEX_ALLOCATOR_LOCK()
 #	define STDEX_ALLOCATOR_UNLOCK()
-#	endif
+#endif
 
-#	include STDEX_ALLOCATOR_INCLUDE
+#include STDEX_ALLOCATOR_INCLUDE
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,8 +69,8 @@ extern "C" {
 		//////////////////////////////////////////////////////////////////////////
 		typedef uint32_t allocator_size_t;
 		//////////////////////////////////////////////////////////////////////////
-#	define __STDEX_GET_BYTE(I) value |= ((allocator_size_t)bytes[I]) << (8 * I)
-#	define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
+#define __STDEX_GET_BYTE(I) value |= ((allocator_size_t)bytes[I]) << (8 * I)
+#define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
 		//////////////////////////////////////////////////////////////////////////
 		inline static allocator_size_t mem_get_value( const void * _mem )
 		{
@@ -100,30 +102,27 @@ extern "C" {
 			//__STDEX_SET_BYTE( 2 );
 			//__STDEX_SET_BYTE( 3 );
 		}
-		//////////////////////////////////////////////////////////////////////////
-#	undef __STDEX_GET_BYTE
-#	undef __STDEX_SET_BYTE
-		//////////////////////////////////////////////////////////////////////////
-#   define memory_buf_allign(f) (((f + 3) / 4) * 4)
-#   define memory_buf_total(f) (memory_buf_allign(f) + sizeof(allocator_size_t))
+        //////////////////////////////////////////////////////////////////////////
+#undef __STDEX_GET_BYTE
+#undef __STDEX_SET_BYTE
+//////////////////////////////////////////////////////////////////////////
+#define memory_buf_allign(f) (((f + 3) / 4) * 4)
+#define memory_buf_total(f) (memory_buf_allign(f) + sizeof(allocator_size_t))
+#define pool_to_memory(m) static_cast<void *>(static_cast<uint8_t *>(m) + sizeof(allocator_size_t))
+#define pool_setup_index(m, i) mem_set_value(m, i)
+#define memory_ptr(m) (static_cast<uint8_t *>(m) - sizeof(allocator_size_t))
+#define memory_to_pool(m) static_cast<void *>(memory_ptr(m))
+#define memory_to_index(m) mem_get_value( memory_ptr(m) )
+//////////////////////////////////////////////////////////////////////////
+#define allocator_pool(i) s_p##i
+#define allocator_pool_size(i) s_s##i
 
-#   define pool_to_memory(m) static_cast<void *>(static_cast<uint8_t *>(m) + sizeof(allocator_size_t))
-
-#   define pool_setup_index(m, i) mem_set_value(m, i)
-
-#   define memory_ptr(m) (static_cast<uint8_t *>(m) - sizeof(allocator_size_t))
-#   define memory_to_pool(m) static_cast<void *>(memory_ptr(m))
-#   define memory_to_index(m) mem_get_value( memory_ptr(m) )
-		//////////////////////////////////////////////////////////////////////////
-#	define allocator_pool(i) s_p##i
-#	define allocator_pool_size(i) s_s##i
-
-#   define allocator_pool_def(i, f, c)\
+#define allocator_pool_def(i, f, c)\
     const static size_t allocator_pool_size(i) = memory_buf_allign(f);\
     typedef pool<uint8_t, c * memory_buf_total(f), detail::stdex_pool_allocator> t_pool_type_p##i;
 
 		//////////////////////////////////////////////////////////////////////////
-#   define allocator_pool_loop( function )\
+#define allocator_pool_loop( function )\
         function(0) \
         function(1) \
         function(2) \
@@ -191,7 +190,7 @@ extern "C" {
 		, allocator_pool_size( 19 )
 		};
 		//////////////////////////////////////////////////////////////////////////
-#   define allocator_pool_decl( i )\
+#define allocator_pool_decl( i )\
     static t_pool_type_p##i allocator_pool( i );
 		//////////////////////////////////////////////////////////////////////////
 		allocator_pool_loop( allocator_pool_decl );
@@ -202,14 +201,14 @@ extern "C" {
 		static stdex_allocator_thread_lock_t s_thread_lock_func = nullptr;
 		static stdex_allocator_thread_unlock_t s_thread_unlock_func = nullptr;
 		//////////////////////////////////////////////////////////////////////////
-#	ifdef _DEBUG
+#ifndef NDEBUG
 #	define SDTEX_ALLOCATOR_INITIALIZE_CHECK\
 		if( s_initialize == false ){STDEX_THROW_EXCEPTION("stdex allocator not initialize");}
-#	else
+#else
 #	define SDTEX_ALLOCATOR_INITIALIZE_CHECK
-#	endif		
+#endif		
 		//////////////////////////////////////////////////////////////////////////
-#   define allocator_pool_alloc( i )\
+#define allocator_pool_alloc( i )\
     if( align_size <= allocator_pool_size(i) )\
 			    {\
         mem = allocator_pool(i).alloc_block();\
@@ -250,7 +249,7 @@ extern "C" {
 			return mem_buff;
 		}
 		//////////////////////////////////////////////////////////////////////////
-#   define allocator_pool_free(i)\
+#define allocator_pool_free(i)\
     if( pi == i )\
 			    {\
     allocator_pool(i).free_block(mem_pool);\
@@ -356,7 +355,7 @@ extern "C" {
 			return count;
 		}
 		//////////////////////////////////////////////////////////////////////////
-#   define allocator_pool_clear(i) \
+#define allocator_pool_clear(i) \
 					{ \
 	allocator_pool(i).clear(); \
 					}
@@ -443,7 +442,7 @@ extern "C" {
 			return detail::stdex_pool_allocator::s_realloc( _mem, _size );
 		}
 		//////////////////////////////////////////////////////////////////////////
-#   else
+#else
 		//////////////////////////////////////////////////////////////////////////
 		void * stdex_malloc( size_t _size )
 		{
@@ -491,9 +490,9 @@ extern "C" {
 			return memory;
 		}
 		//////////////////////////////////////////////////////////////////////////
-#   endif
+#endif
 		//////////////////////////////////////////////////////////////////////////
-#   define allocator_pool_bound( i )\
+#define allocator_pool_bound( i )\
 	if( _size < stdex::allocator_pool_size(i) )\
 			{\
 	bound = stdex::allocator_pool_size(i);\
