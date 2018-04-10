@@ -79,18 +79,6 @@ namespace stdex
 		};
 
 		template<>
-		struct ref_attribute_pod<long>
-		{
-			typedef long type;
-		};
-
-		template<>
-		struct ref_attribute_pod<unsigned long>
-		{
-			typedef unsigned long type;
-		};
-
-		template<>
 		struct ref_attribute_pod<float>
 		{
 			typedef float type;
