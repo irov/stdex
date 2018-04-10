@@ -1,10 +1,26 @@
 cmake_minimum_required(VERSION 3.0)
 
-PROJECT(math)
+PROJECT(stdex)
 
 OPTION(STDEX_EXTERNAL_BUILD "STDEX_EXTERNAL_BUILD" OFF)
 
 IF( NOT STDEX_EXTERNAL_BUILD )
+    set( CMAKE_CXX_STANDARD 11 )
+    
+    if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
+    elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
+    elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
+    elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL Intel)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
+    elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /WX")
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /wd4710") #function not inlined 
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /wd4738") #storing 32-bit float result in memory, possible loss of performance
+    endif()    
+
     SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CMAKE_GENERATOR} )
     SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_GENERATOR} )    
 ENDIF()
