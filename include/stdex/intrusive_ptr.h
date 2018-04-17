@@ -24,243 +24,299 @@
 
 namespace stdex
 {
-	template<class T> 
-	class intrusive_ptr
-	{
-	public:
-		typedef T element_type;
+    template<class T>
+    class intrusive_ptr
+    {
+    public:
+        typedef T element_type;
 
-	public:
-		inline static const intrusive_ptr & none()
-		{
-			static intrusive_ptr ptr_none;
+    public:
+        inline static const intrusive_ptr & none()
+        {
+            static intrusive_ptr ptr_none;
 
-			return ptr_none;
-		}
+            return ptr_none;
+        }
 
-	public:
-		inline intrusive_ptr()
-			: m_ptr(nullptr)
-		{
-			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
-		}
+    public:
+        inline intrusive_ptr()
+            : m_ptr( nullptr )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+        }
 
-#	ifndef STDEX_UNSUPPOT_NULLPTR_T
-		inline intrusive_ptr( std::nullptr_t _ptr )
-			: m_ptr( _ptr )
-		{
-			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
-		}
-#	endif
+        inline intrusive_ptr( std::nullptr_t _ptr )
+            : m_ptr( _ptr )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+        }
 
-		inline intrusive_ptr( element_type * _ptr )
-			: m_ptr(_ptr)
-		{
-			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+        inline intrusive_ptr( const intrusive_ptr & _rhs )
+            : m_ptr( _rhs.get() )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
-			this->incref();
-		}
+            this->incref();
+        }
 
-		template<class U>
-		inline intrusive_ptr( U * _ptr )
-			: m_ptr(static_cast<element_type *>(_ptr))
-		{
-			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+        inline intrusive_ptr( intrusive_ptr && _rhs )
+            : m_ptr( _rhs.m_ptr )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
-			this->incref();
-		}
+            _rhs.reset();
+        }
 
-		inline intrusive_ptr( const intrusive_ptr & _rhs )
-			: m_ptr(_rhs.get())
-		{
-			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+        inline intrusive_ptr( element_type * _ptr )
+            : m_ptr( _ptr )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
-			this->incref();
-		}
+            this->incref();
+        }
 
-		template<class U>
-		inline intrusive_ptr( const intrusive_ptr<U> & _rhs )
-			: m_ptr(static_cast<T *>(_rhs.get()))
-		{
-			STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+        template<class U>
+        inline intrusive_ptr( const intrusive_ptr<U> & _rhs )
+            : m_ptr( static_cast<T *>(_rhs.get()) )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
-			this->incref();
-		}
+            this->incref();
+        }
 
-		inline ~intrusive_ptr()
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+        template<class U>
+        inline intrusive_ptr( intrusive_ptr<U> && _rhs )
+            : m_ptr( static_cast<T *>(_rhs.get()) )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
-			this->decref();
-		}
+            _rhs.reset();
+        }
 
-		inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+        template<class U>
+        inline intrusive_ptr( U * _ptr )
+            : m_ptr( static_cast<element_type *>(_ptr) )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
-			intrusive_ptr swap_ptr(_rhs);
-			swap_ptr.swap( *this );
+            this->incref();
+        }
 
-			return *this;
-		}
+        inline ~intrusive_ptr()
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-		inline intrusive_ptr & operator = ( element_type * _rhs )
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+            this->decref();
+        }
 
-			intrusive_ptr swap_ptr(_rhs);
-			swap_ptr.swap( *this );
+        inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			return *this;
-		}
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
 
-		template<class U>
-		inline intrusive_ptr & operator = (U * _rhs)
-		{
-			element_type * t = static_cast<element_type *>(_rhs);
+            return *this;
+        }
 
-			return this->operator = (t);
-		}
-		
-#	ifndef STDEX_UNSUPPOT_NULLPTR_T
-		inline intrusive_ptr & operator = (std::nullptr_t)
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+        inline intrusive_ptr & operator = ( intrusive_ptr && _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			intrusive_ptr swap_ptr;
-			swap_ptr.swap( *this );
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
 
-			return *this;
-		}
-#	endif
+            return *this;
+        }
 
-	public:
-		inline element_type * get() const
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+        inline intrusive_ptr & operator = ( element_type * _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			return m_ptr;
-		}
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
 
-		template<class K>
-		inline K getT() const
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+            return *this;
+        }
 
-			K ptr_t = static_cast<K>(m_ptr);
+        template<class U>
+        intrusive_ptr & operator = ( const intrusive_ptr<U> & _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			return ptr_t;
-		}
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
 
-		inline element_type * operator -> () const
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+            return *this;
+        }
+
+        template<class U>
+        intrusive_ptr & operator = ( intrusive_ptr<U> && _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        template<class U>
+        inline intrusive_ptr & operator = ( U * _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        inline intrusive_ptr & operator = ( std::nullptr_t )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr;
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+    public:
+        inline element_type * get() const
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            return m_ptr;
+        }
+
+        template<class K>
+        inline K getT() const
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            K ptr_t = static_cast<K>(m_ptr);
+
+            return ptr_t;
+        }
+
+        inline element_type * operator -> () const
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
-			if( m_ptr == nullptr )
-			{
-				STDEX_THROW_EXCEPTION("m_ptr == nullptr");
-			}
+            if( m_ptr == nullptr )
+            {
+                STDEX_THROW_EXCEPTION( "m_ptr == nullptr" );
+            }
 
-			if( T::intrusive_ptr_check_ref( m_ptr ) == false )
-			{
-				STDEX_THROW_EXCEPTION("ptr check == false");
-			}
+            if( T::intrusive_ptr_check_ref( m_ptr ) == false )
+            {
+                STDEX_THROW_EXCEPTION( "ptr check == false" );
+            }
 #	endif
 
-			return m_ptr;
-		}
+            return m_ptr;
+        }
 
-		inline void swap( intrusive_ptr & _rhs )
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+        inline void reset()
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			T * tmp = m_ptr;
-			m_ptr = _rhs.m_ptr;
-			_rhs.m_ptr = tmp;
-		}
+            m_ptr = nullptr;
+        }
 
-	protected:
-		inline void incref()
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-			if( m_ptr != nullptr ) 
-			{
-				T::intrusive_ptr_add_ref( m_ptr );
-			}
-		}
+        inline void swap( intrusive_ptr & _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-		inline void decref()
-		{
-			STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+            T * tmp = m_ptr;
+            m_ptr = _rhs.m_ptr;
+            _rhs.m_ptr = tmp;
+        }
 
-			if( m_ptr != nullptr )
-			{
-				T::intrusive_ptr_dec_ref( m_ptr );
-			}
-		}
+    protected:
+        inline void incref()
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-	protected:
-		element_type * m_ptr;
+            if( m_ptr != nullptr )
+            {
+                T::intrusive_ptr_add_ref( m_ptr );
+            }
+        }
 
-		STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
-	};
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline void swap( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
-	{
-		_left.swap( _right );
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class U, class T>
-	inline U intrusive_static_cast( const intrusive_ptr<T> & _iptr )
-	{
-		typedef typename U::element_type U_type;
+        inline void decref()
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-		T * t_ptr = _iptr.get();
-		U_type * u_ptr = static_cast<U_type *>(t_ptr);
+            if( m_ptr != nullptr )
+            {
+                T::intrusive_ptr_dec_ref( m_ptr );
+            }
+        }
 
-		return U(u_ptr);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class U, class T>
-	inline U intrusive_dynamic_cast( const intrusive_ptr<T> & _iptr )
-	{
-		typedef typename U::element_type U_type;
+    protected:
+        element_type * m_ptr;
 
-		T * t_ptr = _iptr.get();
-		U_type * u_ptr = dynamic_cast<U_type *>(t_ptr);
+        STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
+    };
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline void swap( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        _left.swap( _right );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T>
+    inline U intrusive_static_cast( const intrusive_ptr<T> & _iptr )
+    {
+        typedef typename U::element_type U_type;
 
-		return U(u_ptr);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class U, class T>
-	inline U intrusive_get( const intrusive_ptr<T> & _iptr )
-	{
-		T * t_ptr = _iptr.get();
-		U u_ptr = static_cast<U>(t_ptr);
+        T * t_ptr = _iptr.get();
+        U_type * u_ptr = static_cast<U_type *>(t_ptr);
 
-		return u_ptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator < ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
-	{
-		const T * l = _left.get();
-		const T * r = _right.get();
+        return U( u_ptr );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T>
+    inline U intrusive_dynamic_cast( const intrusive_ptr<T> & _iptr )
+    {
+        typedef typename U::element_type U_type;
 
-		return l < r;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator > ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
-	{
-		const T * l = _left.get();
-		const T * r = _right.get();
+        T * t_ptr = _iptr.get();
+        U_type * u_ptr = dynamic_cast<U_type *>(t_ptr);
 
-		return l > r;
-	}
+        return U( u_ptr );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T>
+    inline U intrusive_get( const intrusive_ptr<T> & _iptr )
+    {
+        T * t_ptr = _iptr.get();
+        U u_ptr = static_cast<U>(t_ptr);
+
+        return u_ptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator < ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l < r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator > ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l > r;
+    }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
     inline bool operator <= ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
@@ -279,113 +335,79 @@ namespace stdex
 
         return l >= r;
     }
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator == ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
-	{
-		const T * l = _left.get();
-		const T * r = _right.get();
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator == ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
 
-		return l == r;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator != ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
-	{
-		return !(_left == _right);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T, class U> 
-	inline bool operator != ( const intrusive_ptr<T> & _left, const U * _right )
-	{
-		const T * ptr = _left.get();
+        return l == r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator != ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    {
+        return !(_left == _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class U>
+    inline bool operator != ( const intrusive_ptr<T> & _left, const U * _right )
+    {
+        const T * ptr = _left.get();
 
-		return ptr != static_cast<const T *>(_right);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T, class U> 
-	inline bool operator != ( const U * _left , const intrusive_ptr<T> & _right )
-	{
-		const T * ptr = intrusive_get<T>(_right);
+        return ptr != static_cast<const T *>(_right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class U>
+    inline bool operator != ( const U * _left, const intrusive_ptr<T> & _right )
+    {
+        const T * ptr = intrusive_get<T>( _right );
 
-		return ptr != static_cast<const T *>(_left);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T, class U> 
-	inline bool operator == ( const U * _left , const intrusive_ptr<T> & _right )
-	{
-		return !(_left != _right);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T, class U> 
-	inline bool operator == ( const intrusive_ptr<T> & _left, const U * _right )
-	{
-		return !(_left != _right);
-	}
-	//////////////////////////////////////////////////////////////////////////
-#	ifndef STDEX_UNSUPPOT_NULLPTR_T
-	template<class T> 
-	inline bool operator != (const intrusive_ptr<T> & _left, std::nullptr_t)
-	{
-		const T * ptr = _left.get();
+        return ptr != static_cast<const T *>(_left);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class U>
+    inline bool operator == ( const U * _left, const intrusive_ptr<T> & _right )
+    {
+        return !(_left != _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class U>
+    inline bool operator == ( const intrusive_ptr<T> & _left, const U * _right )
+    {
+        return !(_left != _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator != ( const intrusive_ptr<T> & _left, std::nullptr_t )
+    {
+        const T * ptr = _left.get();
 
-		return ptr != nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator != ( std::nullptr_t , const intrusive_ptr<T> & _right )
-	{
-		const T * ptr = intrusive_get<T *>(_right);
+        return ptr != nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator != ( std::nullptr_t, const intrusive_ptr<T> & _right )
+    {
+        const T * ptr = intrusive_get<T *>( _right );
 
-		return ptr != nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator == (std::nullptr_t, const intrusive_ptr<T> & _right)
-	{
-		const T * ptr = intrusive_get<T *>(_right);
+        return ptr != nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator == ( std::nullptr_t, const intrusive_ptr<T> & _right )
+    {
+        const T * ptr = intrusive_get<T *>( _right );
 
-		return ptr == nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T>
-	inline bool operator == (const intrusive_ptr<T> & _left, std::nullptr_t)
-	{
-		const T * ptr = _left.get();
+        return ptr == nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline bool operator == ( const intrusive_ptr<T> & _left, std::nullptr_t )
+    {
+        const T * ptr = _left.get();
 
-		return ptr == nullptr;
-	}
-#	else
-	template<class T> 
-	inline bool operator != ( const intrusive_ptr<T> & _left, int )
-	{
-		const T * ptr = _left.get();
-
-		return ptr != nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator != ( int , const intrusive_ptr<T> & _right )
-	{
-		const T * ptr = intrusive_get<T *>(_right);
-
-		return ptr != nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T> 
-	inline bool operator == ( int , const intrusive_ptr<T> & _right )
-	{
-		const T * ptr = intrusive_get<T *>(_right);
-
-		return ptr == nullptr;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class T>
-	inline bool operator == ( const intrusive_ptr<T> & _left, int )
-	{
-		const T * ptr = _left.get();
-
-		return ptr == nullptr;
-	}
-#	endif
+        return ptr == nullptr;
+    }
 }

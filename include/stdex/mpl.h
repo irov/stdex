@@ -108,38 +108,26 @@ namespace stdex
 			typedef T * type;
 		};
 
-		template<class T>
-		struct is_dynamic_castable
-		{
-			template<class U>
-			static char test( T t = dynamic_cast<T>(nullptr) );
-
-			static double test( ... );
-
-			enum
-			{
-				result = sizeof( test( (T)nullptr ) ) == sizeof( char )
-			};
-		};
-
-		template<class T, bool D = is_dynamic_castable<T>::result>
+        template<class T, bool D = std::is_polymorphic<typename std::remove_pointer<T>::type>::value>
 		struct is_dynamic_cast;
 
 		template<class T>
-		struct is_dynamic_cast<T, false>
+		struct is_dynamic_cast<T, std::false_type::value>
 		{
-			static bool test( void * )
+            template<class U>
+			static bool test( U _pointer )
 			{
-				return true;
+				return static_cast<T>(_pointer) != nullptr;
 			}
 		};
 
 		template<class T>
-		struct is_dynamic_cast<T, true>
+		struct is_dynamic_cast<T, std::true_type::value>
 		{
-			static bool test( void * _pointer )
+            template<class U>
+            static bool test( U _pointer )
 			{
-				return dynamic_cast<T>(_pointer) == nullptr;
+                return dynamic_cast<T>(_pointer) != nullptr;
 			}
 		};
 

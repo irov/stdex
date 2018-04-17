@@ -1,102 +1,55 @@
-#	pragma once
+#pragma once
 
-#	include <stdex/allocator.h>
+#include <stdex/allocator.h>
 
-#	include <new>
-#	include <limits>
-#	include <memory>
+#include <new>
+#include <limits>
+#include <memory>
+#include <type_traits>
 
 namespace stdex
 {
-	template<typename T>
-	class stl_allocator
-	{
-	public: 
-		typedef T value_type;
-		typedef T * pointer;
-		typedef const T * const_pointer;
-		typedef T & reference;
-		typedef const T & const_reference;
-		typedef std::size_t size_type;
-		typedef std::ptrdiff_t difference_type;
+    template <typename T>
+    class stl_allocator
+    {
+    public:
+        typedef T value_type;
+       
+        stl_allocator() = default;              
+        template <class U> stl_allocator( const stl_allocator<U>& ) noexcept {}
 
-	public: 
-		template<typename U>
-		struct rebind 
-		{
-			typedef stl_allocator<U> other;
-		};
+        T * allocate( std::size_t n, const void * = nullptr )
+        {
+            return static_cast<T *>(malloc( n * sizeof( T ) ));
+        }
 
-	public: 
-		inline stl_allocator() 
-		{
-		}
+        void deallocate( T * p, std::size_t )
+        {
+            free( p );
+        }
 
-		inline stl_allocator( const stl_allocator & ) 
-		{
-		}
+        //template<class U, class... Args>
+        //void construct( U * p, Args&&... _args )
+        //{
+        //    ::new (static_cast<void *>(_Ptr)) U( std::forward<Args>( _args )... );
+        //}
+        //
+        //template<class U>
+        //void destroy( U * p )
+        //{
+        //    p->~U();
+        //}
+    };
 
-		template<typename U>
-		inline stl_allocator( const stl_allocator<U> & )
-		{
-		}
+    template <class T>
+    bool operator == ( const stl_allocator<T>&, const stl_allocator<T>& )
+    {
+        return true;
+    }
 
-		inline ~stl_allocator() 
-		{
-		}
-						
-	public:
-		inline pointer address( reference _ref ) 
-		{ 
-			return &_ref; 
-		}
-
-		inline const_pointer address( const_reference _ref ) 
-		{ 
-			return &_ref; 
-		}
-
-		inline pointer allocate( size_type _count, typename std::allocator<void>::const_pointer p = nullptr )
-		{ 
-			(void)p;
-
-			void * memory = stdex_malloc( _count * sizeof(T) );
-
-			return reinterpret_cast<pointer>(memory);
-		}
-
-		inline void deallocate( pointer _ptr, size_type _count ) 
-		{ 
-			(void) _count;
-
-			stdex_free( _ptr );
-		}
-
-		inline size_type max_size() const
-		{ 
-			return (std::numeric_limits<size_type>::max)() / sizeof(T);
-		}
-
-		inline void construct( pointer _ptr, const_reference _t )
-		{ 
-			new (_ptr) T(_t);
-		}
-
-		inline void destroy( pointer _ptr )
-		{ 
-			(void)_ptr;
-
-			_ptr->~T();
-		}
-
-		inline bool operator == ( stl_allocator const & ) const
-		{ 
-			return true; 
-		}
-
-		inline bool operator != ( stl_allocator const & ) const
-		{ 
-			return false;
-		}
-	};
+    template <class T>
+    bool operator != ( const stl_allocator<T>&, const stl_allocator<T>& )
+    {
+        return false;
+    }
 }

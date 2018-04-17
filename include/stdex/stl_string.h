@@ -1,7 +1,8 @@
-#	pragma once
+#pragma once
 
-#	include <stdex/stl_allocator.h>
-#	include <string>
+#include "stdex/stl_allocator.h"
+
+#include <string>
 
 namespace stdex
 {

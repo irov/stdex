@@ -1,7 +1,5 @@
 #	pragma once
 
-#	include "stdex/const_string.h"
-#	include "stdex/const_string2.h"
 #	include "stdex/memorycopy.h"
 #	include "stdex/stl_string.h"
 
@@ -54,6 +52,13 @@ namespace stdex
 			m_buffer[m_pos] = 0;
 		}
 
+        void append( char * _value )
+        {
+            size_t size = strlen( _value );
+
+            this->append( _value, size );
+        }
+
 		void append( const char * _value )
 		{
 			size_t size = strlen(_value);
@@ -61,31 +66,7 @@ namespace stdex
 			this->append( _value, size );
 		}
 
-		void append( const stdex::const_string & _value )
-		{
-			const char * value_str = _value.c_str();
-			size_t value_size = _value.size();
-
-			this->append( value_str, value_size );
-		}
-
-        void append( const stdex::const_string2 & _value )
-        {
-            const char * value_str = _value.c_str();
-            size_t value_size = _value.size();
-
-            this->append( value_str, value_size );
-        }
-
-		void append( const stdex::string & _value )
-		{
-			const char * value_str = _value.c_str();
-			size_t value_size = _value.size();
-
-			this->append( value_str, value_size );
-		}
-
-		void append( char _ch )
+		void append( const char _ch )
 		{
 			if( m_pos + 1 >= Size )
 			{
@@ -96,6 +77,15 @@ namespace stdex
 			m_pos += 1;
 			m_buffer[m_pos] = 0;
 		}
+
+        template<class T>
+        void append( const T & _value )
+        {
+            const char * value_str = _value.c_str();
+            size_t value_size = _value.size();
+
+            this->append( value_str, value_size );
+        }
 
 	public:
 		void replace_last( const char * _value )
@@ -110,7 +100,7 @@ namespace stdex
 			memorycopy( m_buffer, m_pos - size, _value, size );
 		}
 
-		void cut_before_last_of( char _ch )
+		void cut_before_last_of( const char _ch )
 		{
 			char * ch_pos = strrchr( m_buffer, _ch );
 
@@ -123,30 +113,26 @@ namespace stdex
 		}
 
 	public:
+        void operator += ( char * _value )
+        {
+            this->append( _value );
+        }
+
 		void operator += ( const char * _value )
 		{
 			this->append( _value );
 		}
 
-		void operator += ( const stdex::const_string & _value )
+		void operator += ( const char _value )
 		{
 			this->append( _value );
 		}
 
-        void operator += ( const stdex::const_string2 & _value )
+        template<class T>
+        void operator += ( const T & _value )
         {
             this->append( _value );
         }
-
-		void operator += ( const stdex::string & _value )
-		{
-			this->append( _value );
-		}
-
-		void operator += ( char _value )
-		{
-			this->append( _value );
-		}
 
 	protected:
 		char m_buffer[Size];

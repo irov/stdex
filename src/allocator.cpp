@@ -5,9 +5,9 @@
 #include <stdint.h>
 #include <memory.h>
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 #   define STDEX_ALLOCATOR_DISABLE
-#endif
+//#endif
 
 #ifndef STDEX_ALLOCATOR_INCLUDE
 #	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"

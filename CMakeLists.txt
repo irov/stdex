@@ -51,29 +51,6 @@ container
 )
 
 ADD_FILTER(
-const_string
-    ${INCLUDE_DIR}/const_string.h
-    ${INCLUDE_DIR}/const_string_holder.h
-    ${INCLUDE_DIR}/const_string_holder_local.h
-    ${INCLUDE_DIR}/const_string_holder_none.h
-    ${SOURCE_DIR}/const_string.cpp
-    ${SOURCE_DIR}/const_string_holder.cpp
-    ${SOURCE_DIR}/const_string_holder_local.cpp
-    ${SOURCE_DIR}/const_string_holder_none.cpp
-)
-
-ADD_FILTER(
-const_string2
-    ${INCLUDE_DIR}/const_string2.h
-    ${INCLUDE_DIR}/const_string2_holder.h
-    ${INCLUDE_DIR}/const_string2_holder_none.h
-    ${SOURCE_DIR}/const_string2.cpp
-    ${SOURCE_DIR}/const_string2_holder.cpp
-    ${SOURCE_DIR}/const_string2_holder_none.cpp
-)
-
-
-ADD_FILTER(
 exception
     ${INCLUDE_DIR}/exception.h
     ${SOURCE_DIR}/exception.cpp
