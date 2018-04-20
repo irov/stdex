@@ -34,9 +34,16 @@ SET( INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/stdex )
 SET( SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 
 ADD_FILTER(
+utils
+	${INCLUDE_DIR}/typename.h
+)
+
+ADD_FILTER(
 allocator
 	${INCLUDE_DIR}/allocator.h
+    ${INCLUDE_DIR}/allocator_report.h
     ${SOURCE_DIR}/allocator.cpp
+    ${SOURCE_DIR}/allocator_report.cpp
 )
 
 ADD_FILTER(

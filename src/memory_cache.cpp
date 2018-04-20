@@ -61,7 +61,7 @@ namespace stdex
 			currentBuffer = minBuffer;
 
 			void * memory = minBuffer->getMemory();
-			void * realloc_memory = stdex_realloc( memory, _size );
+			void * realloc_memory = stdex_realloc( memory, _size, "memory_cache" );
 
 			minBuffer->setMemory( realloc_memory, _size );
 		}
@@ -69,7 +69,7 @@ namespace stdex
 		{
 			currentBuffer = m_factoryBuffer.createT();
 
-			void * memory = stdex_malloc( _size );
+			void * memory = stdex_malloc( _size, "memory_cache" );
 			currentBuffer->setMemory( memory, _size );
 
 			m_buffers.push_back( currentBuffer );
@@ -115,7 +115,7 @@ namespace stdex
 			memory_buffer * buffer = *it;
 
 			void * memory = buffer->getMemory();
-			stdex_free( memory );
+			stdex_free( memory, "memory_cache" );
 		}
 
 		m_buffers.clear();

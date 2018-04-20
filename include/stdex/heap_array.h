@@ -22,7 +22,7 @@ namespace stdex
 
 		~heap_array()
 		{
-			stdex_free( m_buff );
+			stdex_free( m_buff, typeid(T).name() );
 		}
 
 	public:
@@ -46,7 +46,7 @@ namespace stdex
 		void allocate_buff_( size_t _size )
 		{
 			size_t memory_size = sizeof(T) * _size;
-			void * memory = stdex_malloc( memory_size );
+			void * memory = stdex_malloc( memory_size, typeid(T).name() );
 			m_buff = static_cast<T *>(memory);
 		}
 

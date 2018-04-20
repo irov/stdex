@@ -1,9 +1,10 @@
-#	pragma once
+#pragma once
 
-#	include "allocator.h"
+#include "stdex/allocator.h"
+#include "stdex/typename.h"
 
-#	include <stdint.h>
-#	include <new>
+#include <stdint.h>
+#include <new>
 
 namespace stdex
 {
@@ -54,19 +55,19 @@ namespace stdex
 	class stdex_pool_allocator_default
 	{		
 	public:
-		static void * s_malloc( size_t _size )
+		static void * s_malloc( size_t _size, const char * _doc )
 		{
-			return stdex_malloc( _size );
+			return stdex_malloc( _size, _doc );
 		}
 
-		static void * s_realloc( void * _mem, size_t _size )
+		static void * s_realloc( void * _mem, size_t _size, const char * _doc )
 		{
-			return stdex_realloc( _mem, _size );
+			return stdex_realloc( _mem, _size, _doc );
 		}
 		
-		static void s_free( void * _ptr )
+		static void s_free( void * _ptr, const char * _doc )
 		{
-			return stdex_free( _ptr );
+			return stdex_free( _ptr, _doc );
 		}
 	};
 
@@ -159,7 +160,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-				TAllocator::s_free( chunk );
+				TAllocator::s_free( chunk, type_name<TBlockType>::value );
 
                 chunk = prev;
             }
@@ -179,7 +180,7 @@ namespace stdex
 			{
 				chunk_t * prev = chunk->getPrev();
 
-				TAllocator::s_free( chunk );
+				TAllocator::s_free( chunk, type_name<TBlockType>::value );
 
 				chunk = prev;
 			}
@@ -193,11 +194,11 @@ namespace stdex
     protected:
         void addChunk_()
         {
-			void * mem_chunk = TAllocator::s_malloc( sizeof( chunk_t ) );
+			void * mem_chunk = TAllocator::s_malloc( sizeof( chunk_t ), type_name<TBlockType>::value );
 
 			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
-            chunk->prev = nullptr;
+            chunk->prev = m_chunk;
 
 			m_free = chunk->initialize();
             m_chunk = chunk;

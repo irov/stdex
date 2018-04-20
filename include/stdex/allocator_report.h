@@ -1,0 +1,39 @@
+#pragma once
+
+#include <stddef.h>
+#include <stdint.h>
+
+#ifndef NDEBUG
+#   ifdef WIN32
+#       define STDEX_ALLOCATOR_REPORT_ENABLE
+#   endif
+#endif
+
+#ifndef STDEX_ALLOCATOR_REPORT_MAX_NAME
+#   define STDEX_ALLOCATOR_REPORT_MAX_NAME 128
+#endif
+
+#ifndef STDEX_ALLOCATOR_REPORT_MAX_COUNT
+#   define STDEX_ALLOCATOR_REPORT_MAX_COUNT 1024
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    struct stdex_memory_report_t
+    {
+        char name[STDEX_ALLOCATOR_REPORT_MAX_NAME];
+        size_t count;
+    };
+
+    void stdex_allocator_report_new( size_t _size, const char * _name );
+    void stdex_allocator_report_free( void * _ptr, const char * _name );
+    void stdex_allocator_report_realoc( void * _ptr, size_t _size, const char * _name );
+
+    size_t stdex_allocator_report_count();
+    struct stdex_memory_report_t * stdex_allocator_report_info( size_t _index );
+
+#ifdef __cplusplus
+};
+#endif
