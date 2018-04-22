@@ -1,363 +1,123 @@
-#	pragma once
+#pragma once
+
+#include <stdint.h>
 
 namespace stdex
 {
-	template<size_t TBlockSize, size_t TBlockCount>
-	class pool_template_chunk
-	{
-    public:
-        typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_type;
-
-	public:
-		struct pool_block
-		{
-			char buff[TBlockSize];
-            chunk_type * chunk;
-			pool_block * next;
-		};
-
-	public:
-		pool_template_chunk()
-            : m_prev(nullptr)
-            , m_next(nullptr)
-            , m_freeBlock(nullptr)
-            , m_countBlock(0)
-            , m_allocBlock(1)
-		{       
-            m_freeBlock = buffer_block + 0;
-            m_freeBlock->chunk = this;
-            m_freeBlock->next = nullptr; 
-		}
-
-        pool_block * alloc()
-        {
-            pool_block * block = m_freeBlock;
-
-            if( m_freeBlock->next == nullptr && m_allocBlock != TBlockCount )
-            {
-                pool_block * next = buffer_block + m_allocBlock;
-                next->chunk = this;
-                next->next = nullptr;
-
-                ++m_allocBlock;
-
-                m_freeBlock->next = next;
-            }
-                        
-            m_freeBlock = m_freeBlock->next;
-
-            ++m_countBlock;
-
-            return block;
-        }
-
-        void free( pool_block * _block )
-        {
-            _block->next = m_freeBlock;
-            m_freeBlock = _block;
-
-            --m_countBlock;
-        }
-
-    public:
-        void unlink()
-        {
-            if( m_prev != nullptr )
-            {
-                m_prev->m_next = m_next;
-            }
-
-            if( m_next != nullptr )
-            {
-                m_next->m_prev = m_prev;
-            }
-
-            m_prev = nullptr;
-            m_next = nullptr;
-        }
-
-        void push_front( chunk_type * _chunk )
-        {
-            m_prev = nullptr;
-            m_next = _chunk;
-
-            _chunk->m_prev = this;
-        }
-
-    public:
-        chunk_type * getNext() const
-        {
-            return m_next;
-        }
-
-        size_t getCountBlock() const
-        {
-            return m_countBlock;
-        }
-
-    protected:
-		pool_block buffer_block[TBlockCount];
-
-    protected:
-        chunk_type * m_prev;
-        chunk_type * m_next;
-
-        pool_block * m_freeBlock;
-
-        size_t m_countBlock;
-        size_t m_allocBlock;
-	};
-
-	template<size_t TBlockSize, size_t TBlockCount>
-	class pool
-	{
-		typedef pool_template_chunk<TBlockSize, TBlockCount> chunk_type;
-		typedef typename chunk_type::pool_block block_type;
-
-    public:
-        pool()
-            : m_freeChunk(nullptr)
-            , m_fullChunk(nullptr)
-            , m_emptyChunk(nullptr)
-            , m_countBlock(0)
-            , m_countChunk(0)
-        {
-        }
-
-        ~pool()
-        {
-            chunk_type * chunk = m_freeChunk;
-
-            while( chunk != nullptr )
-            {
-                chunk_type * next = chunk->getNext();
-
-                delete chunk;
-
-                chunk = next;
-            }
-
-            chunk = m_fullChunk;
-
-            while( chunk != nullptr )
-            {
-                chunk_type * next = chunk->getNext();
-
-                delete chunk;
-
-                chunk = next;
-            }
-
-            chunk = m_emptyChunk;
-
-            while( chunk != nullptr )
-            {
-                chunk_type * next = chunk->getNext();
-
-                delete chunk;
-
-                chunk = next;
-            }
-        }
-
-	public:
-		void * alloc()
-		{
-			if( m_freeChunk == nullptr )
-			{
-                this->addChunk_();
-			}
-
-			block_type * free = m_freeChunk->alloc();
-
-            ++m_countBlock;
-
-            this->updateAllockChunks_();
-            
-            void * impl = static_cast<void *>(free);
-
-			return impl;
-		}
-
-		void free( void * _buff )
-		{
-			block_type * block = reinterpret_cast<block_type*>(_buff);
-            
-            chunk_type * chunk = block->chunk;
-			chunk->free( block );
-                        
-            --m_countBlock;
-
-            this->updateFreeChunks_( chunk );
-		}
-
-        bool empty() const
-        {
-            return m_countBlock == 0;
-        }
-
-	protected:
-        void updateAllockChunks_()
-        {            
-            size_t chunkCountBlock = m_freeChunk->getCountBlock();
-
-            const size_t chunkCount = TBlockCount;
-
-            if( chunkCountBlock != chunkCount )
-            {
-                return;
-            }
-             
-            chunk_type * free = m_freeChunk;
-            m_freeChunk = m_freeChunk->getNext();
-
-            free->unlink();
-
-            if( m_fullChunk != nullptr )
-            {
-                free->push_front( m_fullChunk );
-            }
-
-            m_fullChunk = free;
-        }
-
-        void updateFreeChunks_( chunk_type * _chunk )
-        {
-            size_t chunkCountBlock = _chunk->getCountBlock();
-
-            if( chunkCountBlock == 0 )
-            {
-                if( m_freeChunk == _chunk )
-                {
-                    m_freeChunk = m_freeChunk->getNext();
-                }
-                else if( m_fullChunk == _chunk )
-                {
-                    m_fullChunk = m_fullChunk->getNext();
-                }
-
-                _chunk->unlink();
-
-                if( m_emptyChunk != nullptr )
-                {
-                    _chunk->push_front( m_emptyChunk );
-                }
-
-                m_emptyChunk = _chunk;
-            }
-
-            this->updateEmptyChunk();
-        }
-
-        void updateEmptyChunk()
-        {
-            if( m_emptyChunk == nullptr )
-            {
-                return;
-            }
-
-            const size_t blockCount2 = TBlockCount * 2;
-            size_t countBlockMax = m_countChunk * TBlockCount;
-
-            if( countBlockMax - m_countBlock > blockCount2 )
-            {
-                chunk_type * free = m_emptyChunk;
-                m_emptyChunk = m_emptyChunk->getNext();
-
-                free->unlink();
-
-                delete free;
-
-                --m_countChunk;
-            }
-        }
-
-		void addChunk_()
-		{
-            chunk_type * chunk = nullptr;
-
-            if( m_emptyChunk != nullptr )
-            {
-                chunk = m_emptyChunk;
-                m_emptyChunk = m_emptyChunk->getNext();
-
-                chunk->unlink();
-            }
-            else
-            {
-			    chunk = new chunk_type();
-
-                ++m_countChunk;
-            }
-
-            if( m_freeChunk != nullptr )
-            {
-                chunk->push_front( m_freeChunk );
-            }
-
-            m_freeChunk = chunk;
-		}
-
-    public:
-        size_t getCountBlock() const
-        {
-            return m_countBlock;
-        }
-
-        size_t getBlockSize() const
-        {
-            return TBlockSize;
-        }
-
-        size_t getBlockCount() const
-        {
-            return TBlockCount;
-        }
-
-	protected:
-		chunk_type * m_freeChunk;
-        chunk_type * m_fullChunk;
-        chunk_type * m_emptyChunk;
-
-        size_t m_countBlock;
-        size_t m_countChunk;
-	};
-
-    template<class T, size_t TBlockCount>
-    class template_pool
+    template<size_t TBlockSize, size_t TBlockCount, class TAllocator>
+    class pool2
     {
+        struct block_t
+        {
+            uint8_t buff[TBlockSize];
+            block_t * next;
+        };
+
+        class chunk_t
+        {
+        public:
+            chunk_t( chunk_t * _prev )
+                : prev( _prev )
+            {
+            }
+
+        public:
+            block_t * initialize()
+            {
+                block_t * free = nullptr;
+
+                for( block_t * it = buffer_block,
+                    *it_end = buffer_block + TBlockCount;
+                    it != it_end;
+                    ++it )
+                {
+                    it->next = free;
+                    free = it;
+                }
+
+                return free;
+            }
+
+        public:
+            chunk_t * getPrev() const
+            {
+                return prev;
+            }
+
+        protected:
+            chunk_t * prev;
+            block_t buffer_block[TBlockCount];
+        };
+        
     public:
-        template_pool()
+        pool2()
+            : m_chunk( nullptr )
+            , m_free( nullptr )
         {
         }
 
-    public:
-        T * createT()
+        ~pool2()
         {
-            void * impl = m_pool.alloc();
-
-            T * t = new (impl) T;
-            
-            return t;
-        }
-
-        void destroyT( T * _t )
-        {
-            _t->~T();
-
-            m_pool.free( _t );
+            this->clear();
         }
 
     public:
-        bool empty() const
+        void * alloc_block()
         {
-            bool result = m_pool.empty();
+            if( m_free == nullptr )
+            {
+                this->addChunk_();
+            }
 
-            return result;
+            block_t * free = m_free;
+            m_free = m_free->next;
+
+            void * impl = reinterpret_cast<void *>(free);
+
+            return impl;
+        }
+
+        void free_block( void * _buff )
+        {
+            block_t * block = reinterpret_cast<block_t*>(_buff);
+
+            block->next = m_free;
+            m_free = block;
+        }
+
+    public:
+        void clear()
+        {
+            chunk_t * chunk = m_chunk;
+
+            while( chunk != nullptr )
+            {
+                chunk_t * prev = chunk->getPrev();
+
+                TAllocator::s_free( chunk, "pool2" );
+
+                chunk = prev;
+            }
+
+            m_chunk = nullptr;
+            m_free = nullptr;
         }
 
     protected:
-        typedef pool<sizeof(T), TBlockCount> pool_type;
-        pool_type m_pool;
+        void addChunk_()
+        {
+            const size_t sizeof_chunk_t = sizeof( chunk_t );
+            void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, "pool2" );
+            new (mem_chunk)chunk_t( m_chunk );
+
+            chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
+
+            m_free = chunk->initialize();
+            m_chunk = chunk;
+        }
+
+    protected:
+        chunk_t * m_chunk;
+        block_t * m_free;
     };
 }
