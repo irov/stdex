@@ -1,7 +1,7 @@
-#	include "stdex/stack.h"
+#include "stdex/stack.h"
 
-#	ifdef _DEBUG
-#	if (defined _M_IX86 || defined _M_X64 || defined _M_IA64) && WIN32
+#if defined _DEBUG
+#   if (defined _M_IX86 || defined _M_X64 || defined _M_IA64) && defined WIN32 && !defined __MINGW32__
 
 #	include <windows.h>
 #	include <stdio.h>

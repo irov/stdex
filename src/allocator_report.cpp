@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
+#include <malloc.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
