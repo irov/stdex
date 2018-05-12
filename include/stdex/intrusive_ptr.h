@@ -94,8 +94,8 @@ namespace stdex
         }
 
         template<class U>
-        inline intrusive_ptr( U * _ptr )
-            : m_ptr( static_cast<element_type *>(_ptr) )
+        inline intrusive_ptr( const U * _ptr )
+            : m_ptr( static_cast<element_type *>(const_cast<U *>(_ptr)) )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
@@ -362,7 +362,7 @@ namespace stdex
     template<class T, class U>
     inline bool operator != ( const U * _left, const intrusive_ptr<T> & _right )
     {
-        const T * ptr = intrusive_get<T>( _right );
+        const T * ptr = intrusive_get<const T *>( _right );
 
         return ptr != static_cast<const T *>(_left);
     }
@@ -390,7 +390,7 @@ namespace stdex
     template<class T>
     inline bool operator != ( std::nullptr_t, const intrusive_ptr<T> & _right )
     {
-        const T * ptr = intrusive_get<T *>( _right );
+        const T * ptr = intrusive_get<const T *>( _right );
 
         return ptr != nullptr;
     }
@@ -398,7 +398,7 @@ namespace stdex
     template<class T>
     inline bool operator == ( std::nullptr_t, const intrusive_ptr<T> & _right )
     {
-        const T * ptr = intrusive_get<T *>( _right );
+        const T * ptr = intrusive_get<const T *>( _right );
 
         return ptr == nullptr;
     }

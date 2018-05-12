@@ -14,6 +14,10 @@ namespace stdex
         {
         }
 
+        virtual ~intrusive_ptr_base()
+        {
+        }
+
     public:
         inline static void intrusive_ptr_add_ref( intrusive_ptr_base * _ptr );
         inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr );
@@ -25,7 +29,7 @@ namespace stdex
 #	endif
 
     protected:
-        virtual void destroy_intrusive_ptr() = 0;
+        virtual void destroy() = 0;
 
     protected:
         uint32_t m_reference;
@@ -79,7 +83,7 @@ namespace stdex
     {
         if( --_ptr->m_reference == 0 )
         {
-            _ptr->destroy_intrusive_ptr();
+            _ptr->destroy();
         }
     }
     //////////////////////////////////////////////////////////////////////////
