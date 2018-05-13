@@ -2,7 +2,7 @@
 
 #	include "stdex/intrusive_linked.h"
 #	include "stdex/intrusive_list.h"
-#	include "stdex/pool.h"
+#	include "stdex/template_pool.h"
 
 namespace stdex
 {
