@@ -71,11 +71,15 @@ intrusive
     ${INCLUDE_DIR}/intrusive_linked_ptr.h
     ${INCLUDE_DIR}/intrusive_list.h
     ${INCLUDE_DIR}/intrusive_ptr.h
+    ${INCLUDE_DIR}/intrusive_derived_ptr.h
     ${INCLUDE_DIR}/intrusive_ptr_base.h
     ${INCLUDE_DIR}/intrusive_slug.h
+    ${INCLUDE_DIR}/intrusive_slug_ptr.h
     ${INCLUDE_DIR}/intrusive_slug_linked.h
+    ${INCLUDE_DIR}/intrusive_slug_linked_ptr.h
     ${INCLUDE_DIR}/intrusive_slug_list.h
     ${INCLUDE_DIR}/intrusive_slug_list_size.h
+    ${INCLUDE_DIR}/intrusive_slug_list_size_ptr.h
     ${INCLUDE_DIR}/intrusive_splay_tree.h
     ${INCLUDE_DIR}/intrusive_tree.h
     ${INCLUDE_DIR}/intrusive_tree_base.h

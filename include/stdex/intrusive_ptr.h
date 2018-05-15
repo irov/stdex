@@ -60,7 +60,7 @@ namespace stdex
         }
 
         inline intrusive_ptr( intrusive_ptr && _rhs )
-            : m_ptr( _rhs.m_ptr )
+            : m_ptr( _rhs.get() )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
@@ -193,17 +193,15 @@ namespace stdex
         template<class K>
         inline K getT() const
         {
-            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+            element_type * ptr = this->get();
 
-            K ptr_t = static_cast<K>(m_ptr);
+            K ptr_t = static_cast<K>(ptr);
 
             return ptr_t;
         }
 
         inline element_type * operator -> () const
         {
-            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
-
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
             if( m_ptr == nullptr )
             {
