@@ -1,6 +1,6 @@
-#	pragma once
+#pragma once
 
-#	include "stdex/intrusive_tree_base.h"
+#include "stdex/intrusive_tree_base.h"
 
 namespace stdex
 {

@@ -1,6 +1,6 @@
-#	pragma once
+#pragma once
 
-#	include <iterator>
+#include <iterator>
 
 namespace stdex
 {

@@ -1,7 +1,7 @@
-#	pragma once
+#pragma once
 
-#	include "stdex/intrusive_slug_linked.h"
-#	include "stdex/intrusive_algorithm.h"
+#include "stdex/intrusive_slug_linked.h"
+#include "stdex/intrusive_algorithm.h"
 
 namespace stdex
 {

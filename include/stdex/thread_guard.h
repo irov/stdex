@@ -1,8 +1,8 @@
-#	pragma once
+#pragma once
 
-#	include <stdint.h>
+#include <stdint.h>
 
-#	include "stdex/exception.h"
+#include "stdex/exception.h"
 
 #ifndef STDEX_THREAD_GUARD_ENABLE
 #	ifndef NDEBUG

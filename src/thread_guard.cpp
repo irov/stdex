@@ -1,38 +1,38 @@
-#	include "stdex/thread_guard.h"
+#include "stdex/thread_guard.h"
 
-#	ifdef WIN32
+#ifdef WIN32
 
-#	ifdef _WIN32_WINNT	
-#       undef _WIN32_WINNT
-#       define _WIN32_WINNT 0x0500
-#   endif
+#ifdef _WIN32_WINNT	
+#   undef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0500
+#endif
 
-#   ifdef _WIN32_WINDOWS
-#       undef _WIN32_WINDOWS
-#       define _WIN32_WINDOWS 0x0500
-#   endif
+#ifdef _WIN32_WINDOWS
+#   undef _WIN32_WINDOWS
+#   define _WIN32_WINDOWS 0x0500
+#endif
 
-#	define WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 
-#	ifndef NOMINMAX
+#ifndef NOMINMAX
 #	define NOMINMAX
-#	endif
+#endif
 
-#	pragma warning(push, 0) 
-#	include <Windows.h>
-#   include <WinUser.h>
+#pragma warning(push, 0) 
+#include <Windows.h>
+#  include <WinUser.h>
 
-#   include <shellapi.h>
-#   include <shlobj.h>
-#	pragma warning(pop)
+#include <shellapi.h>
+#include <shlobj.h>
+#pragma warning(pop)
 
-#	endif
+#endif
 
-#	ifdef WIN32
-#	define STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID() ((ptrdiff_t)GetCurrentThreadId())
-#	else
-#	define STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID() (0U)
-#	endif
+#ifdef WIN32
+#   define STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID() ((ptrdiff_t)GetCurrentThreadId())
+#else
+#   define STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID() (0U)
+#endif
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {

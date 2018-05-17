@@ -1,10 +1,10 @@
-#	pragma once
+#pragma once
 
-#	include "stdex/memorycopy.h"
-#	include "stdex/stl_string.h"
+#include "stdex/memorycopy.h"
+#include "stdex/stl_string.h"
 
-#	include <memory.h>
-#	include <string.h>
+#include <memory.h>
+#include <string.h>
 
 namespace stdex
 {

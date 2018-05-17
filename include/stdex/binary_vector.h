@@ -1,9 +1,9 @@
-#   pragma once
+#pragma once
 
-#	include <stdex/stl_vector.h>
-#	include <stdex/stl_allocator.h>
+#include "stdex/stl_vector.h"
+#include "stdex/stl_allocator.h"
 
-#	include <functional>
+#include <functional>
 
 namespace stdex
 {

@@ -1,8 +1,8 @@
-#	pragma once
+#pragma once
 
-#	include <stdint.h>
+#include <stdint.h>
 
-#	include "stdex/memorycopy.h"
+#include "stdex/memorycopy.h"
 
 namespace stdex
 {

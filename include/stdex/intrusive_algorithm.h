@@ -130,31 +130,34 @@ namespace stdex
             }
         }
 
-        template<class T, class P>
-        void intrusive_sort_stable( T & _container, P _predicate )
+        template<class C, class P>
+        void intrusive_sort_stable( C & _container, P _predicate )
         {
-            typedef typename T::linked_type linked_type;
+            typedef typename C::iterator container_iterator_type;
+            typedef typename C::value_type_ptr container_value_type_ptr;
+            typedef typename C::linked_type linked_type;
+            typedef linked_type * linked_type_ptr;
 
-            typename T::iterator it_begin = _container.begin();
-            typename T::iterator it_end = _container.end();
+            container_iterator_type it_begin = _container.begin();
+            container_iterator_type it_end = _container.end();
 
-            for( typename T::iterator it = it_begin; it != it_end; )
+            for( container_iterator_type it = it_begin; it != it_end; )
             {
-                typename T::iterator it_next = it;
+                container_iterator_type it_next = it;
                 ++it_next;
 
                 while( it != _container.begin() )
                 {
-                    typename T::iterator it_prev = it;
+                    container_iterator_type it_prev = it;
                     --it_prev;
 
-                    typename T::value_type_ptr element_ptr = *it;
-                    typename T::value_type_ptr prev_element_ptr = *it_prev;
+                    container_value_type_ptr element_ptr = *it;
+                    container_value_type_ptr prev_element_ptr = *it_prev;
 
                     if( _predicate( prev_element_ptr, element_ptr ) == false && _predicate( element_ptr, prev_element_ptr ) == true )
                     {
-                        typename T::linked_type * element_linked = element_ptr.getT<typename T::linked_type *>();
-                        typename T::linked_type * prev_element_linked = element_ptr.getT<typename T::linked_type *>();
+                        linked_type_ptr element_linked = element_ptr.template getT<linked_type_ptr>();
+                        linked_type_ptr prev_element_linked = element_ptr.template getT<linked_type_ptr>();
 
                         element_linked->unlink();
                         prev_element_linked->link_before( element_linked );

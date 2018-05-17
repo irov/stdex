@@ -1,7 +1,7 @@
-#	pragma once
+#pragma once
 
-#   include "stdex/intrusive_ptr_base.h"
-#   include "stdex/intrusive_ptr.h"
+#include "stdex/intrusive_ptr_base.h"
+#include "stdex/intrusive_ptr.h"
 
 namespace stdex
 {

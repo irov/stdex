@@ -31,12 +31,12 @@ namespace stdex
         {
         }
 
-        inline intrusive_derived_ptr( const intrusive_ptr & _rhs )
+        inline intrusive_derived_ptr( const intrusive_ptr<derived_type> & _rhs )
             : intrusive_ptr<derived_type>( _rhs )
         {
         }
 
-        inline intrusive_derived_ptr( intrusive_ptr && _rhs )
+        inline intrusive_derived_ptr( intrusive_ptr<derived_type> && _rhs )
             : intrusive_ptr<derived_type>( _rhs )
         {
         }
@@ -144,7 +144,7 @@ namespace stdex
     public:
         inline element_type * get() const
         {
-            element_type * ptr = intrusive_ptr<derived_type>::getT<element_type *>();
+            element_type * ptr = intrusive_ptr<derived_type>::template getT<element_type *>();
 
             return ptr;
         }
@@ -154,7 +154,7 @@ namespace stdex
         {
             element_type * ptr = this->get();
 
-            K ptr_t = static_cast<K>(m_ptr);
+            K ptr_t = static_cast<K>(ptr);
 
             return ptr_t;
         }
@@ -170,7 +170,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            m_ptr = nullptr;
+            intrusive_ptr<derived_type>::m_ptr = nullptr;
         }
 
 

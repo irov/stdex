@@ -1,9 +1,9 @@
-#	pragma once
+#pragma once
 
-#	include <stdint.h>
+#include <stdint.h>
 
-#	include <exception>
-#	include <string>
+#include <exception>
+#include <string>
 
 namespace stdex
 {

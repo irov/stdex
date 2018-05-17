@@ -1,14 +1,9 @@
-#	pragma once
+#pragma once
+
+#include "stdex/intrusive_slug_linked_tag.h"
 
 namespace stdex
 {
-	enum EIntrusiveLinkedTag
-	{
-		EILT_ELEMENT,
-		EILT_END,
-		EILT_SLUG
-	};
-
     template<class Tag>
 	class intrusive_slug_linked
 	{
@@ -23,7 +18,7 @@ namespace stdex
 		{
 		}
 
-        inline intrusive_slug_linked( EIntrusiveLinkedTag _tag )
+        inline intrusive_slug_linked( EIntrusiveSlugLinkedTag _tag )
 			: m_right(nullptr)
 			, m_left(nullptr)
 			, m_tag(_tag)

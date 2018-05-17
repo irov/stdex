@@ -14,8 +14,8 @@
 
 #ifdef STDEX_INTRUSIVE_PTR_DEBUG
 #	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK() uint32_t m_debug_ptr_mask__;
-#	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() m_debug_ptr_mask__ = 0xABCDEF01
-#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( m_debug_ptr_mask__ != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("mask != 0xABCDEF01")
+#	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() this->m_debug_ptr_mask__ = 0xABCDEF01
+#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( this->m_debug_ptr_mask__ != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("mask != 0xABCDEF01")
 #else
 #	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
 #	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK()
@@ -265,6 +265,12 @@ namespace stdex
     inline void swap( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
     {
         _left.swap( _right );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    inline intrusive_ptr<T> intrusive_from_this( T * _self )
+    {
+        return intrusive_ptr<T>( _self );
     }
     //////////////////////////////////////////////////////////////////////////
     template<class U, class T>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stdex/intrusive_slug_linked_tag.h"
 #include "stdex/intrusive_ptr_base.h"
 
 namespace stdex
@@ -13,20 +14,12 @@ namespace stdex
         typedef intrusive_ptr<linked_type> linked_type_ptr;
 
     public:
-        enum EIntrusiveLinkedTag
-        {
-            EILT_ELEMENT,
-            EILT_END,
-            EILT_SLUG
-        };
-
-    public:
         inline intrusive_slug_linked_ptr()
             : m_tag( EILT_ELEMENT )
         {
         }
 
-        inline intrusive_slug_linked_ptr( EIntrusiveLinkedTag _tag )
+        inline intrusive_slug_linked_ptr( EIntrusiveSlugLinkedTag _tag )
             : m_tag( _tag )
         {
         }

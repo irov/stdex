@@ -1,8 +1,8 @@
-#	pragma once
+#pragma once
 
-#	include "stdex/intrusive_linked.h"
-#	include "stdex/intrusive_list.h"
-#	include "stdex/template_pool.h"
+#include "stdex/intrusive_linked.h"
+#include "stdex/intrusive_list.h"
+#include "stdex/template_pool.h"
 
 namespace stdex
 {
@@ -30,8 +30,8 @@ namespace stdex
 	protected:
 		void setMemory( void * _memory, size_t _size )
 		{
-			memory_buffer::m_memory = _memory;
-			memory_buffer::m_size = _size;
+			m_memory = _memory;
+			m_size = _size;
 		}
 
 	protected:

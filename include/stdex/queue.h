@@ -1,6 +1,6 @@
-#   pragma once
+#pragma once
 
-#   include <vector>
+#include <vector>
 
 namespace stdex
 {

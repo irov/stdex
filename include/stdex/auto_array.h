@@ -1,7 +1,7 @@
-#   pragma once
+#pragma once
 
-#	include <stdint.h>
-#	include <new>
+#include <stdint.h>
+#include <new>
 
 namespace stdex
 {
