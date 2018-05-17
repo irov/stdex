@@ -10,7 +10,7 @@ namespace stdex
     {
     public:
         typedef T element_type;
-        typedef D derived_type;
+        typedef typename intrusive_ptr<D>::element_type derived_type;
 
     public:
         inline static const intrusive_derived_ptr & none()
@@ -23,6 +23,16 @@ namespace stdex
     public:
         inline intrusive_derived_ptr()
             : intrusive_ptr<derived_type>( nullptr )
+        {
+        }
+
+        inline intrusive_derived_ptr( const intrusive_derived_ptr & _rhs )
+            : intrusive_ptr<derived_type>( _rhs.m_ptr )
+        {
+        }
+
+        inline intrusive_derived_ptr( intrusive_derived_ptr && _rhs )
+            : intrusive_ptr<derived_type>( std::move( _rhs.m_ptr ) )
         {
         }
 
@@ -172,7 +182,6 @@ namespace stdex
 
             intrusive_ptr<derived_type>::m_ptr = nullptr;
         }
-
 
         inline void swap( intrusive_derived_ptr & _rhs )
         {
