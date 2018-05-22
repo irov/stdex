@@ -465,7 +465,7 @@ extern "C" {
 		{
 			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			size_t bound = 0;
+			allocator_size_t bound = 0;
 			allocator_pool_loop( allocator_pool_bound )
 			{
 				return _size + 4;

@@ -12,6 +12,7 @@ extern "C" {
 #endif
     //////////////////////////////////////////////////////////////////////////
     stdex_memory_report_t * mm = nullptr;
+#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
     //////////////////////////////////////////////////////////////////////////
     static void stdex_allocator_report( size_t _incref, size_t _decref, const char * _name )
     {
@@ -19,7 +20,6 @@ extern "C" {
         (void)_decref;
         (void)_name;
 
-#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
         if( mm == nullptr )
         {
             mm = (stdex_memory_report_t *)malloc( sizeof( stdex_memory_report_t ) * STDEX_ALLOCATOR_REPORT_MAX_COUNT );
@@ -44,8 +44,8 @@ extern "C" {
 
             break;
         }
-#endif
     }
+#endif
     //////////////////////////////////////////////////////////////////////////
     void stdex_allocator_report_new( size_t _size, const char * _name )
     {
@@ -107,7 +107,7 @@ extern "C" {
         {
             stdex_memory_report_t * m = mm + i;
 
-            if( m->name == 0 )
+            if( m->count == 0 )
             {
                 break;
             }
