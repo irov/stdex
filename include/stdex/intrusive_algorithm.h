@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 
 namespace stdex
 {
@@ -65,9 +66,9 @@ namespace stdex
         }
 
         template<class I>
-        I intrusive_advance( I _it, I _end, size_t _count )
+        I intrusive_advance( I _it, I _end, uint32_t _count )
         {
-            for( size_t i = 0; i != _count; ++i )
+            for( uint32_t i = 0; i != _count; ++i )
             {
                 if( _it != _end )
                 {
@@ -83,9 +84,9 @@ namespace stdex
         }
 
         template<class I>
-        size_t intrusive_distance( I _begin, I _end )
+        uint32_t intrusive_distance( I _begin, I _end )
         {
-            size_t count = 0;
+            uint32_t count = 0;
             for( ; _begin != _end; ++_begin )
             {
                 ++count;

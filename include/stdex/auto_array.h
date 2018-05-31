@@ -9,6 +9,7 @@ namespace stdex
     class auto_array
     {
     public:
+        typedef uint32_t size_type;
         typedef T * iterator;
         typedef const T * const_iterator;
 
@@ -58,7 +59,7 @@ namespace stdex
         }
 
     public:
-        size_t size() const
+        size_type size() const
         {
             return m_end - m_begin;
         }

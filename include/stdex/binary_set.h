@@ -8,10 +8,11 @@ namespace stdex
 	template<class K, class T, class LK, class L = std::less<K> >
     class binary_set
     {
-    public:				
+    public:
+        typedef uint32_t size_type;
 		typedef std::vector<T> store_type;
-		typedef std::vector<size_t> free_type;
-        typedef std::vector<size_t> buffer_type;
+		typedef std::vector<size_type> free_type;
+        typedef std::vector<size_type> buffer_type;        
 
         typedef typename buffer_type::iterator iterator;
         typedef typename buffer_type::const_iterator const_iterator;
@@ -24,15 +25,15 @@ namespace stdex
         }
 
     public:
-        void reserve( size_t _size )
+        void reserve( size_type _size )
         {
 			m_store.reserve( _size );
             m_buffer.reserve( _size );
         }
 
-        size_t size() const
+        size_type size() const
         {
-            size_t size = m_buffer.size();
+            buffer_type::size_type size = m_buffer.size();
 
             return size;
         }
@@ -76,7 +77,7 @@ namespace stdex
 	public:
 		const K & get_key( iterator _it ) const
 		{
-			size_t index = *_it;
+            size_type index = *_it;
 
 			const T & value = m_store[index];
 
@@ -87,14 +88,14 @@ namespace stdex
 
 		void set_value( iterator _it, const T & _value )
 		{
-			size_t index = *_it;
+            size_type index = *_it;
 
 			m_store[index] = _value;
 		}
 
 		T & get_value( iterator _it ) const
 		{
-			size_t index = *_it;
+            size_type index = *_it;
 
 			T & value = m_store[index];
 
@@ -103,7 +104,7 @@ namespace stdex
 
 		T & get_value( const_iterator _it ) const
 		{
-			size_t index = *_it;
+            size_type index = *_it;
 
 			T & value = m_store[index];
 
@@ -111,9 +112,9 @@ namespace stdex
 		}
 
 	protected:
-		size_t story_value_( const T & _value )
+        size_type story_value_( const T & _value )
 		{
-			size_t index;
+            size_type index;
 
 			if( m_free.empty() == true )
 			{
@@ -146,7 +147,7 @@ namespace stdex
 			}
 
 		public:
-			bool operator () ( size_t _left, const K & _right ) const
+			bool operator () ( size_type _left, const K & _right ) const
 			{
 				const T & v_l = m_store[_left];
 
@@ -178,7 +179,7 @@ namespace stdex
                 }                
             }
 
-			size_t index = this->story_value_( _value );
+            size_type index = this->story_value_( _value );
             
             iterator it_insert = m_buffer.insert( it_lower_bound, index );
             

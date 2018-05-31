@@ -9,6 +9,7 @@ namespace stdex
 	class intrusive_slug_list
 	{
 	public:
+        typedef uint32_t size_type;
 		typedef intrusive_slug_linked<T> linked_type;
         typedef T * value_type;
 
@@ -366,11 +367,11 @@ namespace stdex
 			}
 		}
 
-		inline size_t size() const
+		inline size_type size() const
 		{
             const_iterator it = this->begin();
             const_iterator it_end = this->end();
-			size_t count = intrusive_distance( it, it_end );
+            size_type count = intrusive_distance( it, it_end );
 
 			return count;
 		}

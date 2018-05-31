@@ -8,49 +8,52 @@
 
 namespace stdex
 {
-	template<size_t Size>
-	class array_string
-	{
-	public:
-		array_string()
-			: m_pos(0)
-		{
-		}
+    template<uint32_t Size>
+    class array_string
+    {
+    public:
+        typedef uint32_t size_type;
 
-	public:
-		const char * c_str() const
-		{
-			return m_buffer;
-		}
+    public:
+        array_string()
+            : m_pos( 0 )
+        {
+        }
 
-		size_t size() const
-		{
-			return m_pos;
-		}
+    public:
+        const char * c_str() const
+        {
+            return m_buffer;
+        }
+
+        size_type size() const
+        {
+            return m_pos;
+        }
 
         bool empty() const
         {
             return m_pos == 0;
         }
 
-	public:
-		void clear()
-		{
-			m_pos = 0;
-		}
+    public:
+        void clear()
+        {
+            m_pos = 0;
+        }
 
-		void append( const char * _value, size_t _size )
-		{			
-			if( m_pos + _size >= Size )
-			{
-				return;
-			}
+        void append( const char * _value, size_type _size )
+        {
+            if( m_pos + _size >= Size )
+            {
+                return;
+            }
 
-			memorycopy( m_buffer, m_pos, _value, _size );
+            memorycopy( m_buffer, m_pos, _value, _size );
 
-			m_pos += _size;
-			m_buffer[m_pos] = 0;
-		}
+            m_pos += _size;
+            m_buffer[m_pos] = 0;
+        }
 
         void append( char * _value )
         {
@@ -59,74 +62,74 @@ namespace stdex
             this->append( _value, size );
         }
 
-		void append( const char * _value )
-		{
-			size_t size = strlen(_value);
+        void append( const char * _value )
+        {
+            size_t size = strlen( _value );
 
-			this->append( _value, size );
-		}
+            this->append( _value, size );
+        }
 
-		void append( const char _ch )
-		{
-			if( m_pos + 1 >= Size )
-			{
-				return;
-			}
+        void append( char _ch )
+        {
+            if( m_pos + 1 >= Size )
+            {
+                return;
+            }
 
-			m_buffer[m_pos] = _ch;
-			m_pos += 1;
-			m_buffer[m_pos] = 0;
-		}
+            m_buffer[m_pos] = _ch;
+            m_pos += 1;
+            m_buffer[m_pos] = 0;
+        }
 
         template<class T>
         void append( const T & _value )
         {
             const char * value_str = _value.c_str();
-            size_t value_size = _value.size();
+            size_type value_size = _value.size();
 
             this->append( value_str, value_size );
         }
 
-	public:
-		void replace_last( const char * _value )
-		{
-			size_t size = strlen( _value );
+    public:
+        void replace_last( const char * _value )
+        {
+            size_t size = strlen( _value );
 
-			if( size > m_pos )
-			{
-				return;
-			}
+            if( size > m_pos )
+            {
+                return;
+            }
 
-			memorycopy( m_buffer, m_pos - size, _value, size );
-		}
+            memorycopy( m_buffer, m_pos - size, _value, size );
+        }
 
-		void cut_before_last_of( const char _ch )
-		{
-			char * ch_pos = strrchr( m_buffer, _ch );
+        void cut_before_last_of( char _ch )
+        {
+            char * ch_pos = strrchr( m_buffer, _ch );
 
-			if( ch_pos == nullptr )
-			{
-				return;
-			}
+            if( ch_pos == nullptr )
+            {
+                return;
+            }
 
-			m_pos = ch_pos - m_buffer;
-		}
+            m_pos = ch_pos - m_buffer;
+        }
 
-	public:
+    public:
         void operator += ( char * _value )
         {
             this->append( _value );
         }
 
-		void operator += ( const char * _value )
-		{
-			this->append( _value );
-		}
+        void operator += ( const char * _value )
+        {
+            this->append( _value );
+        }
 
-		void operator += ( const char _value )
-		{
-			this->append( _value );
-		}
+        void operator += ( char _value )
+        {
+            this->append( _value );
+        }
 
         template<class T>
         void operator += ( const T & _value )
@@ -134,8 +137,8 @@ namespace stdex
             this->append( _value );
         }
 
-	protected:
-		char m_buffer[Size];
-		size_t m_pos;
-	};
+    protected:
+        char m_buffer[Size];
+        size_type m_pos;
+    };
 }

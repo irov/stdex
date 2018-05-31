@@ -22,7 +22,7 @@ namespace stdex
 			return m_memory;
 		}
 
-		size_t getSize() const
+        size_t getSize() const
 		{
 			return m_size;
 		}
@@ -47,7 +47,7 @@ namespace stdex
 
 	protected:
 		void * m_memory;
-		size_t m_size;
+        size_t m_size;
 
 		bool m_lock;
 

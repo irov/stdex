@@ -14,7 +14,7 @@ extern "C" {
     stdex_memory_report_t * mm = nullptr;
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
     //////////////////////////////////////////////////////////////////////////
-    static void stdex_allocator_report( size_t _incref, size_t _decref, const char * _name )
+    static void stdex_allocator_report( uint32_t _incref, uint32_t _decref, const char * _name )
     {
         (void)_incref;
         (void)_decref;
@@ -47,7 +47,7 @@ extern "C" {
     }
 #endif
     //////////////////////////////////////////////////////////////////////////
-    void stdex_allocator_report_new( size_t _size, const char * _name )
+    void stdex_allocator_report_new( uint32_t _size, const char * _name )
     {
         (void)_size;
         (void)_name;
@@ -74,7 +74,7 @@ extern "C" {
 #endif
     }
     //////////////////////////////////////////////////////////////////////////
-    void stdex_allocator_report_realoc( void * _ptr, size_t _size, const char * _name )
+    void stdex_allocator_report_realoc( void * _ptr, uint32_t _size, const char * _name )
     {
         (void)_ptr;
         (void)_size;
@@ -94,16 +94,16 @@ extern "C" {
 #endif
     }
     //////////////////////////////////////////////////////////////////////////
-    size_t stdex_allocator_report_count()
+    uint32_t stdex_allocator_report_count()
     {
         if( mm == nullptr )
         {
             return 0;
         }
 
-        size_t u = 0;
+        uint32_t u = 0;
 
-        for( size_t i = 0; i != STDEX_ALLOCATOR_REPORT_MAX_COUNT; ++i )
+        for( uint32_t i = 0; i != STDEX_ALLOCATOR_REPORT_MAX_COUNT; ++i )
         {
             stdex_memory_report_t * m = mm + i;
 
@@ -118,7 +118,7 @@ extern "C" {
         return u;
     }
     //////////////////////////////////////////////////////////////////////////
-    struct stdex_memory_report_t * stdex_allocator_report_info( size_t _index )
+    struct stdex_memory_report_t * stdex_allocator_report_info( uint32_t _index )
     {
         return mm + _index;
     }

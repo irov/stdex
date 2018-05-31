@@ -82,12 +82,12 @@ namespace stdex
 		}
 
 	public:
-		T & operator [] ( size_t _index )
+		T & operator [] ( uint32_t _index )
 		{
 			return m_ptr[_index];
 		}
 
-		const T & operator [] ( size_t _index ) const
+		const T & operator [] ( uint32_t _index ) const
 		{
 			return m_ptr[_index];
 		}

@@ -32,7 +32,7 @@ namespace stdex
 
 			linked_type * pos_right_adapt_right_adapt = nullptr;
 
-			size_t countSlugs = m_list.countSlugs();
+            T::size_type countSlugs = m_list.countSlugs();
 
 			if( countSlugs == 1 )
 			{

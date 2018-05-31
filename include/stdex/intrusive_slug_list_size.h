@@ -9,6 +9,7 @@ namespace stdex
 	class intrusive_slug_list_size
 	{
 	public:
+        typedef uint32_t size_type;
 		typedef intrusive_slug_linked<T> linked_type;
         typedef T * value_type;
 
@@ -504,7 +505,7 @@ namespace stdex
 			return value;
 		}
 
-		inline size_t size() const
+		inline size_type size() const
 		{            
 			return m_size;
 		}
@@ -570,7 +571,7 @@ namespace stdex
 			--m_slugs;
 		}
 
-		size_t countSlugs() const
+        size_type countSlugs() const
 		{
 			return m_slugs;
 		}
@@ -590,7 +591,7 @@ namespace stdex
 
 	protected:
 		mutable linked_type m_head;
-		size_t m_size;
-		size_t m_slugs;
+        size_type m_size;
+        size_type m_slugs;
 	};
 }
