@@ -27,12 +27,12 @@ extern "C" {
         size_t count;
     };
 
-    void stdex_allocator_report_new( size_t _size, const char * _name );
+    void stdex_allocator_report_new( uint32_t _size, const char * _name );
     void stdex_allocator_report_free( void * _ptr, const char * _name );
-    void stdex_allocator_report_realoc( void * _ptr, size_t _size, const char * _name );
+    void stdex_allocator_report_realoc( void * _ptr, uint32_t _size, const char * _name );
 
-    size_t stdex_allocator_report_count();
-    struct stdex_memory_report_t * stdex_allocator_report_info( size_t _index );
+    uint32_t stdex_allocator_report_count();
+    struct stdex_memory_report_t * stdex_allocator_report_info( uint32_t _index );
 
 #ifdef __cplusplus
 };
