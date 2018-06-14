@@ -1,8 +1,10 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "stdex/exception.h"
+
+#include <atomic>
+
+#include <stdint.h>
 
 #ifndef STDEX_THREAD_GUARD_ENABLE
 #	ifndef NDEBUG
@@ -23,19 +25,19 @@ namespace stdex
 		~thread_guard();
 
 	public:
-		void reset() volatile;
-		void check( const char * _file, uint32_t _line, const char * _doc ) const volatile;
-		bool lock( bool _value ) const volatile;
+		void reset();
+		void check( const char * _file, uint32_t _line, const char * _doc ) const;
+		bool lock( bool _value ) const;
 
 	protected:
-		volatile uint32_t m_id;
-		volatile mutable bool m_lock;
+		std::atomic_uint32_t m_id;
+		mutable std::atomic_bool m_lock;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class thread_guard_scope
 	{
 	public:
-		thread_guard_scope( volatile const thread_guard & _guard, const char * _file, uint32_t _line, const char * _doc );
+		thread_guard_scope( const thread_guard & _guard, const char * _file, uint32_t _line, const char * _doc );
 		~thread_guard_scope();
 
 	private:
@@ -44,7 +46,7 @@ namespace stdex
 		};
 
 	protected:
-		volatile const thread_guard & m_guard;
+		const thread_guard & m_guard;
 
 		const char * m_file;
 		uint32_t m_line;
@@ -55,7 +57,7 @@ namespace stdex
 	//////////////////////////////////////////////////////////////////////////
 #	define STDEX_THREAD_GUARD_INIT\
 	public:\
-	volatile stdex::thread_guard m_stdex_thread_guard\
+	stdex::thread_guard m_stdex_thread_guard\
 	//////////////////////////////////////////////////////////////////////////
 #	define STDEX_THREAD_GUARD_CHECK(Self, Doc)\
 	Self->m_stdex_thread_guard.check( __FILE__, __LINE__, Doc )

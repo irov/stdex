@@ -25,7 +25,7 @@ namespace stdex
         
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
     public:
-        inline static bool intrusive_ptr_check_ref( intrusive_ptr_base * _ptr );
+        inline static bool intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr );
 #	endif
 
     protected:
@@ -94,7 +94,7 @@ namespace stdex
     //////////////////////////////////////////////////////////////////////////
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
     //////////////////////////////////////////////////////////////////////////
-    inline bool intrusive_ptr_base::intrusive_ptr_check_ref( intrusive_ptr_base * _ptr )
+    inline bool intrusive_ptr_base::intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr )
     {
         if( _ptr->m_reference == 0 )
         {

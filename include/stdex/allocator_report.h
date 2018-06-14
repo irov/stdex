@@ -24,7 +24,7 @@ extern "C" {
     struct stdex_memory_report_t
     {
         char name[STDEX_ALLOCATOR_REPORT_MAX_NAME];
-        size_t count;
+        uint32_t count;
     };
 
     void stdex_allocator_report_new( uint32_t _size, const char * _name );

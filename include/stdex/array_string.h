@@ -57,14 +57,14 @@ namespace stdex
 
         void append( char * _value )
         {
-            size_t size = strlen( _value );
+            size_type size = (size_type)strlen( _value );
 
             this->append( _value, size );
         }
 
         void append( const char * _value )
         {
-            size_t size = strlen( _value );
+            size_type size = (size_type)strlen( _value );
 
             this->append( _value, size );
         }
@@ -85,15 +85,15 @@ namespace stdex
         void append( const T & _value )
         {
             const char * value_str = _value.c_str();
-            size_type value_size = _value.size();
+            typename T::size_type value_size = _value.size();
 
-            this->append( value_str, value_size );
+            this->append( value_str, (size_type)value_size );
         }
 
     public:
         void replace_last( const char * _value )
         {
-            size_t size = strlen( _value );
+            size_type size = (size_type)strlen( _value );
 
             if( size > m_pos )
             {
@@ -112,7 +112,9 @@ namespace stdex
                 return;
             }
 
-            m_pos = ch_pos - m_buffer;
+            ptrdiff_t d = ch_pos - m_buffer;
+
+            m_pos = (uint32_t)d;
         }
 
     public:

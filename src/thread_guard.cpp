@@ -47,12 +47,12 @@ namespace stdex
 	{
 	}
 	//////////////////////////////////////////////////////////////////////////
-	void thread_guard::reset() volatile
+	void thread_guard::reset()
 	{
 		m_id = 0;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	void thread_guard::check( const char * _file, uint32_t _line, const char * _doc ) const volatile
+	void thread_guard::check( const char * _file, uint32_t _line, const char * _doc ) const
 	{
 		uint32_t id = STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID();
 
@@ -64,7 +64,7 @@ namespace stdex
 		stdex::helper::throw_exception( _file, _line )(_doc);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	bool thread_guard::lock( bool _value ) const volatile
+	bool thread_guard::lock( bool _value ) const
 	{
 		bool lock = m_lock;
 
@@ -73,7 +73,7 @@ namespace stdex
 		return lock;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	thread_guard_scope::thread_guard_scope( volatile const thread_guard & _guard, const char * _file, uint32_t _line, const char * _doc )
+	thread_guard_scope::thread_guard_scope( const thread_guard & _guard, const char * _file, uint32_t _line, const char * _doc )
 		: m_guard( _guard )
 		, m_file( _file )
 		, m_line( _line )

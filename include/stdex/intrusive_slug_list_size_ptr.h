@@ -11,6 +11,7 @@ namespace stdex
     {
     public:
         typedef T value_type;
+        typedef uint32_t size_type;
         typedef intrusive_ptr<T> value_type_ptr;
         typedef intrusive_slug_linked_ptr<T> linked_type;
         typedef intrusive_ptr<linked_type> linked_type_ptr;
@@ -507,7 +508,7 @@ namespace stdex
             return value;
         }
 
-        inline uint32_t size() const
+        inline size_type size() const
         {
             return m_size;
         }
@@ -573,7 +574,7 @@ namespace stdex
             --m_slugs;
         }
 
-        uint32_t countSlugs() const
+        size_type countSlugs() const
         {
             return m_slugs;
         }
@@ -598,7 +599,7 @@ namespace stdex
         }
 
     protected:
-        uint32_t m_size;
-        mutable uint32_t m_slugs;
+        size_type m_size;
+        mutable size_type m_slugs;
     };
 }

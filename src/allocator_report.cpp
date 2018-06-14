@@ -70,7 +70,7 @@ extern "C" {
 
         size_t ptr_size = _msize( _ptr );
 
-        stdex_allocator_report( 0U, ptr_size, _name );
+        stdex_allocator_report( 0U, (uint32_t)ptr_size, _name );
 #endif
     }
     //////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ extern "C" {
         {
             size_t ptr_size = _msize( _ptr );
 
-            stdex_allocator_report( _size, ptr_size, _name );
+            stdex_allocator_report( _size, (uint32_t)ptr_size, _name );
         }
 #endif
     }
