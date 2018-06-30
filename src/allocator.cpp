@@ -124,11 +124,9 @@ extern "C" {
 //////////////////////////////////////////////////////////////////////////
 #define allocator_pool(i) s_p##i
 #define allocator_pool_size(i) s_s##i
-#define allocator_pool_totalsize(i) s_ts##i
 
 #define allocator_pool_def(i, f, c)\
     const static allocator_size_t allocator_pool_size(i) = memory_buf_align(f);\
-    const static allocator_size_t allocator_pool_totalsize(i) = memory_buf_total(f);\
     typedef pool2<memory_buf_total(f), c, detail::stdex_pool_allocator> t_pool_type_p##i;
 
 		//////////////////////////////////////////////////////////////////////////
