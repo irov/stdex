@@ -26,7 +26,7 @@ namespace stdex
 		}
 
 	public:
-		void reserve( size_t _size )
+		void reserve( size_type _size )
 		{
 			this->allocate_buff_( _size );
 						
@@ -34,7 +34,7 @@ namespace stdex
 			m_current = m_buff;
 		}
 
-		void resize( size_t _size )
+		void resize( size_type _size )
 		{
 			this->allocate_buff_( _size );
 						
@@ -43,9 +43,9 @@ namespace stdex
 		}
 
 	protected:
-		void allocate_buff_( size_t _size )
+		void allocate_buff_( size_type _size )
 		{
-			size_t memory_size = sizeof(T) * _size;
+            size_type memory_size = sizeof(T) * _size;
 			void * memory = stdex_malloc( memory_size, typeid(T).name() );
 			m_buff = static_cast<T *>(memory);
 		}
@@ -96,12 +96,12 @@ namespace stdex
             return m_current;
         }
 
-        iterator advance( size_t _index )
+        iterator advance( size_type _index )
         {
             return m_buff + _index;
         }
 
-        const_iterator advance( size_t _index ) const
+        const_iterator advance( size_type _index ) const
         {
             return m_buff + _index;
         }
@@ -115,7 +115,7 @@ namespace stdex
             return *element;
         }
 
-		T * emplace_count( size_t _count )
+		T * emplace_count( size_type _count )
 		{
 			T * element = m_current;
 			m_current += _count;
@@ -138,23 +138,28 @@ namespace stdex
             return m_current == m_last;
         }
 
-        size_t size() const
+        size_type size() const
         {
             return m_current - m_buff;
         }
 
-		size_t capacity() const
+        size_type capacity() const
 		{
 			return m_last - m_buff;
 		}
 
+        size_type distance( T * _ptr ) const
+        {
+            return _ptr - m_buff;
+        }
+
     public:
-        T & operator [] ( size_t _index )
+        T & operator [] ( size_type _index )
         {
             return m_buff[_index];
         }
 
-        const T & operator [] ( size_t _index ) const
+        const T & operator [] ( size_type _index ) const
         {
             return m_buff[_index];
         }

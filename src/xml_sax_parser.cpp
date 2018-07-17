@@ -218,6 +218,11 @@ namespace stdex
 		{
 			char * end_name_node_attribute = strpbrk( _attribute, " =" );
 
+            if( end_name_node_attribute == nullptr )
+            {
+                return nullptr;
+            }
+
 			if( *end_name_node_attribute == ' ' )
 			{
 				*end_name_node_attribute = '\0';

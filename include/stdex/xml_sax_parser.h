@@ -73,9 +73,9 @@ namespace stdex
 
 			char * end_name_node = strpbrk( begin_name_node, " />" );
 
-			if( end_name_node == 0 )
+			if( end_name_node == nullptr )
 			{
-				return 0;
+				return nullptr;
 			}
 
 			if( *end_name_node == ' ' )
@@ -104,9 +104,9 @@ namespace stdex
 
 				char * end_node_attribute = s_xml_parse_node_attribute( attr, find_node_attribute, begin_name_node );
 
-				if( end_node_attribute == 0 )
+				if( end_node_attribute == nullptr )
 				{
-					return 0;
+					return nullptr;
 				}
 
 				_callback.callback_node_attributes( begin_name_node, attr.count, attr.key, attr.value );
@@ -145,7 +145,7 @@ namespace stdex
 				return end_name_node2 + 1;
 			}
 
-			return 0;
+			return nullptr;
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
