@@ -47,7 +47,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline void intrusive_ptr_setup( T *& _ptr, const stdex::intrusive_ptr<T> & _other )
+    inline void intrusive_ptr_setup( T *& _ptr, const stdex::intrusive_ptr<T, void> & _other )
     {
         T * other_ptr = _other.get();
 

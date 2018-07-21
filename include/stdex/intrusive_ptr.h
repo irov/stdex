@@ -24,8 +24,376 @@
 
 namespace stdex
 {
-    template<class T>
+    template<class T, class D = void>
     class intrusive_ptr
+        : public intrusive_ptr<D, void>
+    {
+    public:
+        typedef T element_type;
+        typedef D derived_type;
+        typedef intrusive_ptr<D, void> derived_type_ptr;
+
+    public:
+        inline static const intrusive_ptr & none()
+        {
+            static intrusive_ptr ptr_none;
+
+            return ptr_none;
+        }
+
+    public:
+        inline intrusive_ptr()
+            : intrusive_ptr<derived_type>( nullptr )
+        {
+        }
+
+        inline intrusive_ptr( const intrusive_ptr & _rhs )
+            : intrusive_ptr<derived_type>( _rhs.m_ptr )
+        {
+        }
+
+        inline intrusive_ptr( intrusive_ptr && _rhs )
+            : intrusive_ptr<derived_type>( std::move( _rhs.m_ptr ) )
+        {
+        }
+
+        inline intrusive_ptr( std::nullptr_t _ptr )
+            : intrusive_ptr<derived_type>( _ptr )
+        {
+        }
+
+        inline intrusive_ptr( const derived_type_ptr & _rhs )
+            : intrusive_ptr<derived_type>( _rhs )
+        {
+        }
+
+        inline intrusive_ptr( derived_type_ptr && _rhs )
+            : derived_type_ptr( _rhs )
+        {
+        }
+
+        inline intrusive_ptr( element_type * _ptr )
+            : derived_type_ptr( _ptr )
+        {
+        }
+
+        template<class U, class UD>
+        inline intrusive_ptr( const intrusive_ptr<U, UD> & _rhs )
+            : intrusive_ptr<derived_type>( _rhs )
+        {
+        }
+
+        template<class U, class UD>
+        inline intrusive_ptr( intrusive_ptr<U, UD> && _rhs )
+            : intrusive_ptr<derived_type>( _rhs )
+        {
+        }
+
+        template<class U>
+        inline intrusive_ptr( const U * _ptr )
+            : intrusive_ptr<derived_type>( _ptr )
+        {
+        }
+
+        inline ~intrusive_ptr()
+        {
+        }
+
+        inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        inline intrusive_ptr & operator = ( intrusive_ptr && _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        inline intrusive_ptr & operator = ( element_type * _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        template<class U, class UD>
+        intrusive_ptr & operator = ( const intrusive_ptr<U, UD> & _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        template<class U, class UD>
+        intrusive_ptr & operator = ( intrusive_ptr<U, UD> && _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        template<class U>
+        inline intrusive_ptr & operator = ( U * _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        inline intrusive_ptr & operator = ( std::nullptr_t )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr;
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+    public:
+        inline element_type * get() const
+        {
+            element_type * ptr = intrusive_ptr<derived_type>::template getT<element_type *>();
+
+            return ptr;
+        }
+
+        template<class K>
+        inline K getT() const
+        {
+            element_type * ptr = this->get();
+
+            K ptr_t = static_cast<K>(ptr);
+
+            return ptr_t;
+        }
+
+        inline element_type * operator -> () const
+        {
+            derived_type * ptr = intrusive_ptr<derived_type>::operator ->();
+
+            return static_cast<element_type *>(ptr);
+        }
+
+        inline void reset()
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr<derived_type>::m_ptr = nullptr;
+        }
+
+        inline void swap( intrusive_ptr & _rhs )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            derived_type * tmp = intrusive_ptr<derived_type>::m_ptr;
+            intrusive_ptr<derived_type>::m_ptr = _rhs.m_ptr;
+            _rhs.m_ptr = tmp;
+        }
+    };
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline void swap( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        _left.swap( _right );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T, class D>
+    inline U intrusive_static_cast( const intrusive_ptr<T, D> & _iptr )
+    {
+        typedef typename U::element_type U_type;
+
+        T * t_ptr = _iptr.get();
+        U_type * u_ptr = static_cast<U_type *>(t_ptr);
+
+        return U( u_ptr );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T, class D>
+    inline U intrusive_dynamic_cast( const intrusive_ptr<T, D> & _iptr )
+    {
+        typedef typename U::element_type U_type;
+
+        T * t_ptr = _iptr.get();
+        U_type * u_ptr = dynamic_cast<U_type *>(t_ptr);
+
+        return U( u_ptr );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T, class D>
+    inline U intrusive_get( const intrusive_ptr<T, D> & _iptr )
+    {
+        T * t_ptr = _iptr.get();
+        U u_ptr = static_cast<U>(t_ptr);
+
+        return u_ptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator < ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l < r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator > ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l > r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator <= ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l <= r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator >= ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l >= r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator == ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        const T * l = _left.get();
+        const T * r = _right.get();
+
+        return l == r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator != ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        return !(_left == _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator == ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<D> & _right )
+    {
+        const T * l = _left.get();
+        const D * r = _right.get();
+
+        return l == r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator != ( const intrusive_ptr<T, D> & _left, const intrusive_ptr<D> & _right )
+    {
+        return !(_left == _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator == ( const intrusive_ptr<D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        const D * l = _left.get();
+        const T * r = _right.get();
+
+        return l == r;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator != ( const intrusive_ptr<D> & _left, const intrusive_ptr<T, D> & _right )
+    {
+        return !(_left == _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D, class U>
+    inline bool operator != ( const intrusive_ptr<T, D> & _left, const U * _right )
+    {
+        const T * ptr = _left.get();
+
+        return ptr != static_cast<const T *>(_right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T, class D>
+    inline bool operator != ( const U * _left, const intrusive_ptr<T, D> & _right )
+    {
+        const T * ptr = intrusive_get<const T *>( _right );
+
+        return ptr != static_cast<const T *>(_left);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D, class U>
+    inline bool operator == ( const U * _left, const intrusive_ptr<T, D> & _right )
+    {
+        return !(_left != _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D, class U>
+    inline bool operator == ( const intrusive_ptr<T, D> & _left, const U * _right )
+    {
+        return !(_left != _right);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator != ( const intrusive_ptr<T, D> & _left, std::nullptr_t )
+    {
+        const T * ptr = _left.get();
+
+        return ptr != nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator != ( std::nullptr_t, const intrusive_ptr<T, D> & _right )
+    {
+        const T * ptr = intrusive_get<const T *>( _right );
+
+        return ptr != nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator == ( std::nullptr_t, const intrusive_ptr<T, D> & _right )
+    {
+        const T * ptr = intrusive_get<const T *>( _right );
+
+        return ptr == nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T, class D>
+    inline bool operator == ( const intrusive_ptr<T, D> & _left, std::nullptr_t )
+    {
+        const T * ptr = _left.get();
+
+        return ptr == nullptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class T>
+    class intrusive_ptr<T, void>
     {
     public:
         typedef T element_type;
@@ -76,7 +444,7 @@ namespace stdex
         }
 
         template<class U>
-        inline intrusive_ptr( const intrusive_ptr<U> & _rhs )
+        inline intrusive_ptr( const intrusive_ptr<U, void> & _rhs )
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -85,7 +453,25 @@ namespace stdex
         }
 
         template<class U>
-        inline intrusive_ptr( intrusive_ptr<U> && _rhs )
+        inline intrusive_ptr( intrusive_ptr<U, void> && _rhs )
+            : m_ptr( static_cast<T *>(_rhs.get()) )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+
+            _rhs.reset();
+        }
+
+        template<class U, class Y>
+        inline intrusive_ptr( const intrusive_ptr<U, Y> & _rhs )
+            : m_ptr( static_cast<T *>(_rhs.get()) )
+        {
+            STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
+
+            this->incref();
+        }
+
+        template<class U, class Y>
+        inline intrusive_ptr( intrusive_ptr<U, Y> && _rhs )
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -140,7 +526,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr & operator = ( const intrusive_ptr<U> & _rhs )
+        intrusive_ptr & operator = ( const intrusive_ptr<U, void> & _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -151,7 +537,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr & operator = ( intrusive_ptr<U> && _rhs )
+        intrusive_ptr & operator = ( intrusive_ptr<U, void> && _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -262,19 +648,19 @@ namespace stdex
     };
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline void swap( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline void swap( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         _left.swap( _right );
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline intrusive_ptr<T> intrusive_from_this( T * _self )
+    inline intrusive_ptr<T, void> intrusive_from_this( T * _self )
     {
-        return intrusive_ptr<T>( _self );
+        return intrusive_ptr<T, void>( _self );
     }
     //////////////////////////////////////////////////////////////////////////
     template<class U, class T>
-    inline U intrusive_static_cast( const intrusive_ptr<T> & _iptr )
+    inline U intrusive_static_cast( const intrusive_ptr<T, void> & _iptr )
     {
         typedef typename U::element_type U_type;
 
@@ -285,7 +671,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class U, class T>
-    inline U intrusive_dynamic_cast( const intrusive_ptr<T> & _iptr )
+    inline U intrusive_dynamic_cast( const intrusive_ptr<T, void> & _iptr )
     {
         typedef typename U::element_type U_type;
 
@@ -296,7 +682,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class U, class T>
-    inline U intrusive_get( const intrusive_ptr<T> & _iptr )
+    inline U intrusive_get( const intrusive_ptr<T, void> & _iptr )
     {
         T * t_ptr = _iptr.get();
         U u_ptr = static_cast<U>(t_ptr);
@@ -305,7 +691,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator < ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline bool operator < ( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         const T * l = _left.get();
         const T * r = _right.get();
@@ -314,7 +700,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator > ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline bool operator > ( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         const T * l = _left.get();
         const T * r = _right.get();
@@ -323,7 +709,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator <= ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline bool operator <= ( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         const T * l = _left.get();
         const T * r = _right.get();
@@ -332,7 +718,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator >= ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline bool operator >= ( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         const T * l = _left.get();
         const T * r = _right.get();
@@ -341,7 +727,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator == ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline bool operator == ( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         const T * l = _left.get();
         const T * r = _right.get();
@@ -350,13 +736,13 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator != ( const intrusive_ptr<T> & _left, const intrusive_ptr<T> & _right )
+    inline bool operator != ( const intrusive_ptr<T, void> & _left, const intrusive_ptr<T, void> & _right )
     {
         return !(_left == _right);
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T, class U>
-    inline bool operator != ( const intrusive_ptr<T> & _left, const U * _right )
+    inline bool operator != ( const intrusive_ptr<T, void> & _left, const U * _right )
     {
         const T * ptr = _left.get();
 
@@ -364,7 +750,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T, class U>
-    inline bool operator != ( const U * _left, const intrusive_ptr<T> & _right )
+    inline bool operator != ( const U * _left, const intrusive_ptr<T, void> & _right )
     {
         const T * ptr = intrusive_get<const T *>( _right );
 
@@ -372,19 +758,19 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T, class U>
-    inline bool operator == ( const U * _left, const intrusive_ptr<T> & _right )
+    inline bool operator == ( const U * _left, const intrusive_ptr<T, void> & _right )
     {
         return !(_left != _right);
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T, class U>
-    inline bool operator == ( const intrusive_ptr<T> & _left, const U * _right )
+    inline bool operator == ( const intrusive_ptr<T, void> & _left, const U * _right )
     {
         return !(_left != _right);
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator != ( const intrusive_ptr<T> & _left, std::nullptr_t )
+    inline bool operator != ( const intrusive_ptr<T, void> & _left, std::nullptr_t )
     {
         const T * ptr = _left.get();
 
@@ -392,7 +778,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator != ( std::nullptr_t, const intrusive_ptr<T> & _right )
+    inline bool operator != ( std::nullptr_t, const intrusive_ptr<T, void> & _right )
     {
         const T * ptr = intrusive_get<const T *>( _right );
 
@@ -400,7 +786,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator == ( std::nullptr_t, const intrusive_ptr<T> & _right )
+    inline bool operator == ( std::nullptr_t, const intrusive_ptr<T, void> & _right )
     {
         const T * ptr = intrusive_get<const T *>( _right );
 
@@ -408,7 +794,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline bool operator == ( const intrusive_ptr<T> & _left, std::nullptr_t )
+    inline bool operator == ( const intrusive_ptr<T, void> & _left, std::nullptr_t )
     {
         const T * ptr = _left.get();
 
