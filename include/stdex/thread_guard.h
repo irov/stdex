@@ -30,8 +30,8 @@ namespace stdex
 		bool lock( bool _value ) const;
 
 	protected:
-		std::atomic_uint32_t m_id;
-		mutable std::atomic_bool m_lock;
+        std::atomic<std::uint32_t> m_id;
+		mutable std::atomic<bool> m_lock;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class thread_guard_scope
