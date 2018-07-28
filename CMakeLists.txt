@@ -51,8 +51,9 @@ container
     ${INCLUDE_DIR}/array_string.h
     ${INCLUDE_DIR}/auto_array.h
     ${INCLUDE_DIR}/binary_set.h
-    ${INCLUDE_DIR}/binary_vector.h    
-    ${INCLUDE_DIR}/heap_array.h
+    ${INCLUDE_DIR}/binary_vector.h
+	${INCLUDE_DIR}/static_array.h
+    ${INCLUDE_DIR}/dynamic_array.h
     ${INCLUDE_DIR}/queue.h
     ${INCLUDE_DIR}/unchecked_array_iterator.h
 )
