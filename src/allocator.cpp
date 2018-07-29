@@ -50,26 +50,60 @@ extern "C" {
 		//////////////////////////////////////////////////////////////////////////
 		namespace detail
 		{
+            //////////////////////////////////////////////////////////////////////////
+            class malloc_pool_allocator
+            {
+            public:
+                inline static void * s_malloc( size_t _size, const char * _doc )
+                {
+                    (void)_doc;
+
+                    return ::malloc( _size );
+                }
+
+                inline static void s_free( void * _ptr, const char * _doc )
+                {
+                    (void)_doc;
+
+                    ::free( _ptr );
+                }
+
+                inline static void * s_realloc( void * _ptr, size_t _size, const char * _doc )
+                {
+                    (void)_doc;
+
+                    void * newptr = ::realloc( _ptr, _size );
+
+                    return newptr;
+                }
+            };
+            //////////////////////////////////////////////////////////////////////////
 			class stdex_pool_allocator
 			{
 			public:
 				inline static void * s_malloc( size_t _size, const char * _doc )
 				{
+#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_new( (uint32_t)_size, _doc );
+#endif
 
 					return STDEX_ALLOCATOR_MALLOC( _size );
 				}
 
                 inline static void s_free( void * _ptr, const char * _doc )
 				{
+#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_free( _ptr, _doc );
+#endif
 
 					STDEX_ALLOCATOR_FREE( _ptr );
 				}
 
                 inline static void * s_realloc( void * _ptr, size_t _size, const char * _doc )
                 {
+#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_realoc( _ptr, (uint32_t)_size, _doc );
+#endif
 
                     return STDEX_ALLOCATOR_REALLOC( _ptr, _size );
                 }
@@ -127,7 +161,7 @@ extern "C" {
 
 #define allocator_pool_def(i, f, c)\
     const static allocator_size_t allocator_pool_size(i) = memory_buf_align(f);\
-    typedef pool2<memory_buf_total(f), c, detail::stdex_pool_allocator> t_pool_type_p##i;
+    typedef pool2<memory_buf_total(f), c, detail::malloc_pool_allocator> t_pool_type_p##i;
 
 		//////////////////////////////////////////////////////////////////////////
 #define allocator_pool_loop( function )\
@@ -218,6 +252,7 @@ extern "C" {
 #define allocator_pool_alloc( i )\
     if( align_size <= allocator_pool_size(i) )\
 			    {\
+        stdex_allocator_report_new( s[i], _doc );\
         mem = allocator_pool(i).alloc_block();\
         pi = i;\
 			    } else
@@ -253,11 +288,12 @@ extern "C" {
 			void * mem_buff = pool_to_memory( mem );
 
 			return mem_buff;
-		}
-		//////////////////////////////////////////////////////////////////////////
+        }
+        //////////////////////////////////////////////////////////////////////////
 #define allocator_pool_free(i)\
     if( pi == i )\
 			    {\
+    stdex_allocator_report_free_n(s[pi], _doc);\
     allocator_pool(i).free_block(mem_pool);\
 			    } else
 		//////////////////////////////////////////////////////////////////////////

@@ -54,8 +54,15 @@ container
     ${INCLUDE_DIR}/binary_vector.h
 	${INCLUDE_DIR}/static_array.h
     ${INCLUDE_DIR}/dynamic_array.h
+    ${INCLUDE_DIR}/static_hash_array.h
     ${INCLUDE_DIR}/queue.h
     ${INCLUDE_DIR}/unchecked_array_iterator.h
+)
+
+ADD_FILTER(
+pool
+    ${INCLUDE_DIR}/pool.h
+    ${INCLUDE_DIR}/pool2.h
 )
 
 ADD_FILTER(

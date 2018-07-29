@@ -8,7 +8,7 @@ namespace stdex
     class dynamic_array
     {
 	public:
-		typedef size_t size_type;
+		typedef uint32_t size_type;
 		typedef T value_type;
 
     public:

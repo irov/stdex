@@ -1,12 +1,14 @@
-#   pragma once
+#pragma once
+
+#include <stdint.h>
 
 namespace stdex
 {
-    template<class T, size_t I>
+    template<class T, uint32_t Size>
     class static_array
     {
 	public:
-		typedef size_t size_type;
+		typedef uint32_t size_type;
 		typedef T value_type;
 
     public:
@@ -61,12 +63,12 @@ namespace stdex
             return m_current;
         }
 
-        iterator advance( size_t _index )
+        iterator advance( size_type _index )
         {
             return m_buff + _index;
         }
 
-        const_iterator advance( size_t _index ) const
+        const_iterator advance( size_type _index ) const
         {
             return m_buff + _index;
         }
@@ -80,7 +82,7 @@ namespace stdex
             return *element;
         }
 
-		T * emplace_count( size_t _count )
+		T * emplace_count( uint32_t _count )
 		{
 			T * element = m_current;
 			m_current += _count;
@@ -100,36 +102,36 @@ namespace stdex
 
         bool full() const
         {
-            const T * end = m_buff + I;
+            const T * end = m_buff + Size;
 
             return m_current == end;
         }
 
-        size_t size() const
+        size_type size() const
         {
-			size_t countElement = m_current - m_buff;
+            size_type countElement = m_current - m_buff;
 			
             return countElement;
         }
 
-		size_t capacity() const
+        size_type capacity() const
 		{
-			return I;
+			return Size;
 		}
 
     public:
-        T & operator [] ( size_t _index )
+        T & operator [] ( size_type _index )
         {
             return m_buff[_index];
         }
 
-        const T & operator [] ( size_t _index ) const
+        const T & operator [] ( size_type _index ) const
         {
             return m_buff[_index];
         }
 
     protected:
-        T m_buff[I];
+        T m_buff[Size];
         T * m_current;
     };
 }

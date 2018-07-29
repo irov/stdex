@@ -29,6 +29,7 @@ extern "C" {
 
     void stdex_allocator_report_new( uint32_t _size, const char * _name );
     void stdex_allocator_report_free( void * _ptr, const char * _name );
+    void stdex_allocator_report_free_n( uint32_t _size, const char * _name );
     void stdex_allocator_report_realoc( void * _ptr, uint32_t _size, const char * _name );
 
     uint32_t stdex_allocator_report_count();

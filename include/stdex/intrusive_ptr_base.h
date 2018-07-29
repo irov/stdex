@@ -9,7 +9,7 @@ namespace stdex
     class intrusive_ptr_base
     {
     public:
-        intrusive_ptr_base()
+        intrusive_ptr_base() noexcept
             : m_reference( 0 )
         {
         }

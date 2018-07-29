@@ -74,6 +74,16 @@ extern "C" {
 #endif
     }
     //////////////////////////////////////////////////////////////////////////
+    void stdex_allocator_report_free_n( uint32_t _size, const char * _name )
+    {
+        (void)_size;
+        (void)_name;
+
+#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
+        stdex_allocator_report( 0U, _size, _name );
+#endif
+    }
+    //////////////////////////////////////////////////////////////////////////
     void stdex_allocator_report_realoc( void * _ptr, uint32_t _size, const char * _name )
     {
         (void)_ptr;

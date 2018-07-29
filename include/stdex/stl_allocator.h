@@ -5,7 +5,6 @@
 #include <new>
 #include <limits>
 #include <memory>
-#include <type_traits>
 
 namespace stdex
 {
@@ -20,25 +19,15 @@ namespace stdex
 
         T * allocate( std::size_t n, const void * = nullptr )
         {
-            return static_cast<T *>(malloc( n * sizeof( T ) ));
+            std::size_t element_size = sizeof( T );
+            std::size_t total_size = element_size * n;
+            return static_cast<T *>(stdex_malloc( total_size, "stl_allocator" ));
         }
 
         void deallocate( T * p, std::size_t )
         {
-            free( p );
+            stdex_free( p, "stl_allocator" );
         }
-
-        //template<class U, class... Args>
-        //void construct( U * p, Args&&... _args )
-        //{
-        //    ::new (static_cast<void *>(_Ptr)) U( std::forward<Args>( _args )... );
-        //}
-        //
-        //template<class U>
-        //void destroy( U * p )
-        //{
-        //    p->~U();
-        //}
     };
 
     template <class T>
