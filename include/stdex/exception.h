@@ -28,7 +28,7 @@ namespace stdex
 		class throw_exception
 		{
 		public:
-			throw_exception( const char * _file, uint32_t _line )
+			throw_exception( const char * _file, uint32_t _line ) noexcept
 				: m_file(_file)
 				, m_line( _line )
 			{

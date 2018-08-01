@@ -407,7 +407,7 @@ namespace stdex
         }
 
     public:
-        inline intrusive_ptr()
+        inline intrusive_ptr() noexcept
             : m_ptr( nullptr )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -427,7 +427,7 @@ namespace stdex
             this->incref();
         }
 
-        inline intrusive_ptr( intrusive_ptr && _rhs )
+        inline intrusive_ptr( intrusive_ptr && _rhs ) noexcept
             : m_ptr( _rhs.get() )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -505,7 +505,7 @@ namespace stdex
             return *this;
         }
 
-        inline intrusive_ptr & operator = ( intrusive_ptr && _rhs )
+        inline intrusive_ptr & operator = ( intrusive_ptr && _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 

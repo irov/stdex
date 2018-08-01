@@ -14,18 +14,18 @@ namespace stdex
         {
         }
 
-        virtual ~intrusive_ptr_base()
+        virtual ~intrusive_ptr_base() noexcept
         {
         }
 
     public:
-        inline static void intrusive_ptr_add_ref( intrusive_ptr_base * _ptr );
+        inline static void intrusive_ptr_add_ref( intrusive_ptr_base * _ptr ) noexcept;
         inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr );
-        inline static uint32_t intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr );
+        inline static uint32_t intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept;
         
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
     public:
-        inline static bool intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr );
+        inline static bool intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept;
 #	endif
 
     protected:
@@ -74,7 +74,7 @@ namespace stdex
         intrusive_ptr_base::intrusive_ptr_dec_ref( _ptr );
     }
     //////////////////////////////////////////////////////////////////////////
-    inline void intrusive_ptr_base::intrusive_ptr_add_ref( intrusive_ptr_base * _ptr )
+    inline void intrusive_ptr_base::intrusive_ptr_add_ref( intrusive_ptr_base * _ptr ) noexcept
     {
         ++_ptr->m_reference;
     }
@@ -87,14 +87,14 @@ namespace stdex
         }
     }
     //////////////////////////////////////////////////////////////////////////
-    inline uint32_t intrusive_ptr_base::intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr )
+    inline uint32_t intrusive_ptr_base::intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept
     {
         return _ptr->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
     //////////////////////////////////////////////////////////////////////////
-    inline bool intrusive_ptr_base::intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr )
+    inline bool intrusive_ptr_base::intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept
     {
         if( _ptr->m_reference == 0 )
         {

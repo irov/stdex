@@ -19,8 +19,8 @@ namespace stdex
 
         T * allocate( std::size_t n, const void * = nullptr )
         {
-            std::size_t element_size = sizeof( T );
-            std::size_t total_size = element_size * n;
+            const std::size_t element_size = sizeof( T );
+            const std::size_t total_size = element_size * n;
             return static_cast<T *>(stdex_malloc( total_size, "stl_allocator" ));
         }
 
