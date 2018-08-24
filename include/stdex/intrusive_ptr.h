@@ -99,7 +99,7 @@ namespace stdex
         {
         }
 
-        inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
+        inline intrusive_ptr & operator = ( const intrusive_ptr & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -109,7 +109,7 @@ namespace stdex
             return *this;
         }
 
-        inline intrusive_ptr & operator = ( intrusive_ptr && _rhs )
+        inline intrusive_ptr & operator = ( intrusive_ptr && _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -119,18 +119,7 @@ namespace stdex
             return *this;
         }
 
-        inline intrusive_ptr & operator = ( element_type * _rhs )
-        {
-            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
-
-            intrusive_ptr swap_ptr( _rhs );
-            swap_ptr.swap( *this );
-
-            return *this;
-        }
-
-        template<class U, class UD>
-        intrusive_ptr & operator = ( const intrusive_ptr<U, UD> & _rhs )
+        inline intrusive_ptr & operator = ( element_type * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -141,7 +130,18 @@ namespace stdex
         }
 
         template<class U, class UD>
-        intrusive_ptr & operator = ( intrusive_ptr<U, UD> && _rhs )
+        intrusive_ptr & operator = ( const intrusive_ptr<U, UD> & _rhs ) noexcept
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            intrusive_ptr swap_ptr( _rhs );
+            swap_ptr.swap( *this );
+
+            return *this;
+        }
+
+        template<class U, class UD>
+        intrusive_ptr & operator = ( intrusive_ptr<U, UD> && _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -152,7 +152,7 @@ namespace stdex
         }
 
         template<class U>
-        inline intrusive_ptr & operator = ( U * _rhs )
+        inline intrusive_ptr & operator = ( U * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -162,7 +162,7 @@ namespace stdex
             return *this;
         }
 
-        inline intrusive_ptr & operator = ( std::nullptr_t )
+        inline intrusive_ptr & operator = ( std::nullptr_t ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 

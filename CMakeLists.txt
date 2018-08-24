@@ -36,6 +36,7 @@ SET( SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 ADD_FILTER(
 utils
 	${INCLUDE_DIR}/typename.h
+    ${INCLUDE_DIR}/span.h
 )
 
 ADD_FILTER(
