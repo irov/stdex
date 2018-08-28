@@ -380,6 +380,11 @@ namespace stdex
 			return (_where);
 		}
 
+        inline void remove( linked_type * _node )
+        {
+            _node->unlink();
+        }
+
 		template<class F>
 		inline iterator erase_if( F _pred )
 		{
