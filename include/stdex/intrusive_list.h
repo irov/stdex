@@ -334,7 +334,7 @@ namespace stdex
 		{
             const_iterator it = this->begin();
             const_iterator it_end = this->end();
-            size_type count = intrusive_distance( it, it_end );
+            size_type count = stdex::helper::intrusive_distance( it, it_end );
 
 			return count;
 		}

@@ -6,19 +6,20 @@
 
 namespace stdex
 {
-    template<class T, class List = intrusive_slug_list_size_ptr<T> >
+    template<class C>
     class intrusive_slug_ptr
-        : public intrusive_slug_linked_ptr<T>
+        : public intrusive_slug_linked_ptr<typename C::value_type>
     {
     public:
-        typedef intrusive_ptr<T> value_type_ptr;
-        typedef List list_type;
-        typedef intrusive_slug_linked_ptr<T> linked_type;
+        typedef typename C::value_type value_type;
+        typedef intrusive_ptr<value_type> value_type_ptr;
+        typedef C list_type;
+        typedef intrusive_slug_linked_ptr<value_type> linked_type;
         typedef intrusive_ptr<linked_type> linked_type_ptr;
 
     public:
         explicit intrusive_slug_ptr( const list_type & _list )
-            : intrusive_slug_linked_ptr<T>( EILT_SLUG )
+            : intrusive_slug_linked_ptr<value_type>( EILT_SLUG )
             , m_list( _list )
         {
             intrusive_this_acquire( this );
@@ -79,32 +80,32 @@ namespace stdex
             return pos == head;
         }
 
-        inline const T * operator -> () const
+        inline const value_type * operator -> () const
         {
             const linked_type * linked = this->current();
 
-            return static_cast<const T *>(linked);
+            return static_cast<const value_type *>(linked);
         }
 
-        inline const T * operator * () const
+        inline const value_type * operator * () const
         {
             const linked_type * linked = this->current();
 
-            return static_cast<const T *>(linked);
+            return static_cast<const value_type *>(linked);
         }
 
-        inline T * operator -> ()
+        inline value_type * operator -> ()
         {
             linked_type * linked = this->current();
 
-            return static_cast<T *>(linked);
+            return static_cast<value_type *>(linked);
         }
 
-        inline T * operator * ()
+        inline value_type * operator * ()
         {
             linked_type * linked = this->current();
 
-            return static_cast<T *>(linked);
+            return static_cast<value_type *>(linked);
         }
 
     protected:

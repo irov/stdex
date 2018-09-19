@@ -371,7 +371,7 @@ namespace stdex
 		{
             const_iterator it = this->begin();
             const_iterator it_end = this->end();
-            size_type count = intrusive_distance( it, it_end );
+            size_type count = stdex::helper::intrusive_distance( it, it_end );
 
 			return count;
 		}
@@ -379,7 +379,6 @@ namespace stdex
 		inline bool empty() const
 		{
 			return this->begin() == this->end();
-			//return m_head.m_right == &m_head;
 		}
 
 		inline iterator insert( iterator _where, linked_type * _node )
