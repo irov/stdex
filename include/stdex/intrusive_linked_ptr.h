@@ -5,25 +5,24 @@
 
 namespace stdex
 {
-    template<class Tag>
-	class intrusive_linked_ptr
+    template<class T, class D = void>
+    class intrusive_linked_ptr
         : public intrusive_ptr_base
-	{
+    {
     public:
-		typedef intrusive_linked_ptr<Tag> linked_type;
-        typedef intrusive_ptr<linked_type> linked_type_ptr;
+        typedef T value_type;
+        typedef D derived_type;
+        typedef intrusive_ptr<T, D> value_type_ptr;
 
-	public:
-		inline intrusive_linked_ptr()
-			: m_right(nullptr)
-			, m_left(nullptr)
-		{
-		}
+    public:
+        inline intrusive_linked_ptr()
+        {
+        }
 
-		inline ~intrusive_linked_ptr()
-		{
-			this->unlink();
-		}
+        inline ~intrusive_linked_ptr()
+        {
+            this->unlink();
+        }
 
     private:
         intrusive_linked_ptr & operator = ( const intrusive_linked_ptr & _linked )
@@ -33,213 +32,215 @@ namespace stdex
             return *this;
         }
 
-	public:
-		inline bool unique() const
-		{
-			return (m_right == nullptr) && (m_left == nullptr);
-		}
+    public:
+        inline bool unique() const
+        {
+            return (m_right == nullptr) && (m_left == nullptr);
+        }
 
-		inline linked_type * left() const
-		{
-			return m_left;
-		}
+        inline const value_type_ptr & left() const
+        {
+            return m_left;
+        }
 
-		inline linked_type * right() const
-		{
-			return m_right;
-		}
-        
-		inline void link_after( linked_type * _other )
-		{
-			_other->m_right = m_right;
-			_other->m_left = (this);
+        inline const value_type_ptr & right() const
+        {
+            return m_right;
+        }
 
-			if( m_right != nullptr )
-			{
-				m_right->m_left = _other;
-			}
+        inline void link_after( const value_type_ptr & _other )
+        {
+            _other->m_right = m_right;
+            _other->m_left = value_type_ptr( static_cast<T *>(this) );
 
-			m_right = _other;
-		}
+            if( m_right != nullptr )
+            {
+                m_right->m_left = _other;
+            }
 
-		inline void link_before( linked_type * _other )
-		{
-			_other->m_left = m_left;
-			_other->m_right = (this);
+            m_right = _other;
+        }
 
-			if( m_left != nullptr )
-			{
-				m_left->m_right = _other;
-			}
+        inline void link_before( const value_type_ptr & _other )
+        {
+            _other->m_left = m_left;
+            _other->m_right = value_type_ptr( static_cast<T *>(this) );
 
-			m_left = _other;
-		}
+            if( m_left != nullptr )
+            {
+                m_left->m_right = _other;
+            }
 
-		inline void unlink()
-		{
-			if( m_right != nullptr )
-			{
-				m_right->m_left = m_left;
-			}
+            m_left = _other;
+        }
 
-			if( m_left != nullptr )
-			{
-				m_left->m_right = m_right;
-			}
-			
-			m_left = nullptr;
-			m_right = nullptr;
-		}
+        inline void unlink()
+        {
+            if( m_right != nullptr )
+            {
+                m_right->m_left = m_left;
+            }
 
-		inline linked_type * leftcast() const
-		{
-			linked_type * it = m_left;
+            if( m_left != nullptr )
+            {
+                m_left->m_right = m_right;
+            }
 
-			while( it->m_left != nullptr )
-			{
-				it = it->m_left;
-			}
+            m_left = nullptr;
+            m_right = nullptr;
+        }
 
-			return it;
-		}
+        inline value_type_ptr leftcast() const
+        {
+            value_type_ptr it = m_left;
 
-		inline linked_type * rightcast() const
-		{
-			linked_type * it = m_right;
+            while( it->m_left != nullptr )
+            {
+                it = it->m_left;
+            }
 
-			while( it->m_right != nullptr )
-			{
-				it = it->m_right;
-			}
+            return it;
+        }
 
-			return it;
-		}
+        inline value_type_ptr rightcast() const
+        {
+            value_type_ptr it = m_right;
 
-		void linkall( linked_type * _other )
-		{
-			linked_type * other_right = _other->m_right;
+            while( it->m_right != nullptr )
+            {
+                it = it->m_right;
+            }
 
-			if( m_left != nullptr )
-			{
-				linked_type * left = this->leftcast();
+            return it;
+        }
 
-				left->m_left = _other;
-				_other->m_right = left;
-			}
-			else
-			{
-				m_left = _other;
-				_other->m_right = (this);
-			}
+        void linkall( const value_type_ptr & _other )
+        {
+            const value_type_ptr & other_right = _other->m_right;
 
-			if( m_right != nullptr )
-			{
-				if( other_right != nullptr )
-				{
-					linked_type * right = this->rightcast();
+            if( m_left != nullptr )
+            {
+                value_type_ptr left = this->leftcast();
 
-					other_right->m_left = right;
-					right->m_right = other_right;
-				}
-			}
-			else
-			{
-				if( other_right != nullptr )
-				{
-					other_right->m_left = (this);
-					m_right = other_right;
-				}
-			}
-		}
+                left->m_left = _other;
+                _other->m_right = left;
+            }
+            else
+            {
+                m_left = _other;
+                _other->m_right = value_type_ptr( static_cast<T *>(this) );
+            }
 
-		template<class F>
-		void foreach( F _f ) const
-		{
-			foreach_self<F>( _f );
-			foreach_other<F>( _f );
-		}
+            if( m_right != nullptr )
+            {
+                if( other_right != nullptr )
+                {
+                    value_type_ptr right = this->rightcast();
 
-		template<class F>
-		void foreach_self( F _f ) const
-		{
-			const linked_type * nc_this = (this);
-			_f( const_cast<linked_type *>(nc_this) );
-		}
+                    other_right->m_left = right;
+                    right->m_right = other_right;
+                }
+            }
+            else
+            {
+                if( other_right != nullptr )
+                {
+                    other_right->m_left = value_type_ptr( static_cast<T *>(this) );
+                    m_right = other_right;
+                }
+            }
+        }
 
-		template<class F>
-		void foreach_other( F _pred ) const
-		{
-			linked_type * it_right = m_right;
-			while( it_right != nullptr )
-			{
-				_pred( it_right );
-				it_right = it_right->m_right;
-			}
+        template<class F>
+        void foreach( F _f ) const
+        {
+            this->foreach_self<F>( _f );
+            this->foreach_other<F>( _f );
+        }
 
-			linked_type * it_left = m_left;
-			while( it_left != nullptr )
-			{
-				_pred( (it_left) );
-				it_left = it_left->m_left;
-			}
-		}
+        template<class F>
+        void foreach_self( F _f ) const
+        {
+            const value_type * nc_this = static_cast<const value_type *>(this);
+            (_f)(const_cast<value_type *>(nc_this));
+        }
 
-		template<class F>
-		const linked_type * find( F _pred ) const
-		{
-			linked_type * node_found = this->find_self( _pred );
+        template<class F>
+        void foreach_other( F _pred ) const
+        {
+            linked_type * it_right = m_right;
+            while( it_right != nullptr )
+            {
+                _pred( it_right );
+                it_right = it_right->m_right;
+            }
 
-			if( node_found != nullptr )
-			{
-				return node_found;
-			}
+            linked_type * it_left = m_left;
+            while( it_left != nullptr )
+            {
+                _pred( (it_left) );
+                it_left = it_left->m_left;
+            }
+        }
 
-            const linked_type * other = find_other( _pred );
+        template<class F>
+        const value_type_ptr find( F _pred ) const
+        {
+            value_type_ptr node_found = this->find_self( _pred );
 
-			return other;
-		}
+            if( node_found != nullptr )
+            {
+                return node_found;
+            }
 
-		template<class F>
-		const linked_type * find_self( F _pred ) const
-		{
-			if( _pred(this) == true )
-			{
-				return this;
-			}
+            value_type_ptr other = this->find_other( _pred );
 
-			return nullptr;
-		}
+            return other;
+        }
 
-		template<class F>
-		const linked_type * find_other( F _pred ) const
-		{
-			linked_type * it_right = m_right;
-			while( it_right != nullptr )
-			{
-				if( _pred( it_right ) == true )
-				{
-					return this;
-				}
+        template<class F>
+        value_type_ptr find_self( F _pred ) const
+        {
+            if( _pred( this ) == true )
+            {
+                return static_cast<value_type *>(this);
+            }
 
-				it_right = it_right->m_right;
-			}
+            return nullptr;
+        }
 
-			linked_type * it_left = m_left;
-			while( it_left )
-			{
-				if( _pred( it_left ) == true )
-				{
-					return this;
-				}
+        template<class F>
+        value_type_ptr find_other( F _pred ) const
+        {
+            value_type_ptr it_right = m_right;
 
-				it_left = it_left->m_left;
-			}
+            while( it_right != nullptr )
+            {
+                if( _pred( it_right ) == true )
+                {
+                    return static_cast<value_type *>(this);
+                }
 
-			return nullptr;
-		}
+                it_right = it_right->m_right;
+            }
+
+            value_type_ptr it_left = m_left;
+
+            while( it_left )
+            {
+                if( _pred( it_left ) == true )
+                {
+                    return static_cast<value_type *>(this);
+                }
+
+                it_left = it_left->m_left;
+            }
+
+            return nullptr;
+        }
 
     public:
-		mutable linked_type_ptr m_right;
-		mutable linked_type_ptr m_left;
+        mutable value_type_ptr m_right;
+        mutable value_type_ptr m_left;
     };
 }

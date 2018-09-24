@@ -279,12 +279,12 @@ namespace stdex
 	public:
 		inline T * front() const
 		{
-			return *this->begin();
+            return static_cast<T *>(m_head.m_right);
 		}
 
 		inline T * back() const
 		{
-			return *this->end();
+            return static_cast<T *>(m_head.m_left);
 		}
 
 	public:

@@ -321,7 +321,7 @@ namespace stdex
 
 		inline T * back() const
 		{
-			return *this->end();
+			return *(--this->end());
 		}
 
 	public:

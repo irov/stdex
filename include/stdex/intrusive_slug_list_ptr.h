@@ -443,14 +443,14 @@ namespace stdex
 
 
     public:
-        inline T * front() const
+        inline value_type_ptr front() const
         {
             return *this->begin();
         }
 
-        inline T * back() const
+        inline value_type_ptr back() const
         {
-            return *this->end();
+            return *(--this->end());
         }
 
     public:

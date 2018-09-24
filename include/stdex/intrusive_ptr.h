@@ -29,7 +29,7 @@ namespace stdex
         : public intrusive_ptr<D, void>
     {
     public:
-        typedef T element_type;
+        typedef T value_type;
         typedef D derived_type;
         typedef intrusive_ptr<D, void> derived_type_ptr;
 
@@ -72,7 +72,7 @@ namespace stdex
         {
         }
 
-        inline intrusive_ptr( element_type * _ptr )
+        inline intrusive_ptr( value_type * _ptr )
             : derived_type_ptr( _ptr )
         {
         }
@@ -119,7 +119,7 @@ namespace stdex
             return *this;
         }
 
-        inline intrusive_ptr & operator = ( element_type * _rhs ) noexcept
+        inline intrusive_ptr & operator = ( value_type * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -173,9 +173,9 @@ namespace stdex
         }
 
     public:
-        inline element_type * get() const
+        inline value_type * get() const
         {
-            element_type * ptr = intrusive_ptr<derived_type>::template getT<element_type *>();
+            value_type * ptr = intrusive_ptr<derived_type>::template getT<value_type *>();
 
             return ptr;
         }
@@ -183,18 +183,18 @@ namespace stdex
         template<class K>
         inline K getT() const
         {
-            element_type * ptr = this->get();
+            value_type * ptr = this->get();
 
             K ptr_t = static_cast<K>(ptr);
 
             return ptr_t;
         }
 
-        inline element_type * operator -> () const
+        inline value_type * operator -> () const
         {
             derived_type * ptr = intrusive_ptr<derived_type>::operator ->();
 
-            return static_cast<element_type *>(ptr);
+            return static_cast<value_type *>(ptr);
         }
 
         inline void reset()
@@ -396,7 +396,7 @@ namespace stdex
     class intrusive_ptr<T, void>
     {
     public:
-        typedef T element_type;
+        typedef T value_type;
 
     public:
         inline static const intrusive_ptr & none()
@@ -435,7 +435,7 @@ namespace stdex
             _rhs.reset();
         }
 
-        inline intrusive_ptr( element_type * _ptr )
+        inline intrusive_ptr( value_type * _ptr )
             : m_ptr( _ptr )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -481,7 +481,7 @@ namespace stdex
 
         template<class U>
         inline intrusive_ptr( const U * _ptr )
-            : m_ptr( static_cast<element_type *>(const_cast<U *>(_ptr)) )
+            : m_ptr( static_cast<value_type *>(const_cast<U *>(_ptr)) )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
@@ -515,7 +515,7 @@ namespace stdex
             return *this;
         }
 
-        inline intrusive_ptr & operator = ( element_type * _rhs )
+        inline intrusive_ptr & operator = ( value_type * _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -569,7 +569,7 @@ namespace stdex
         }
 
     public:
-        inline element_type * get() const
+        inline value_type * get() const
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -579,14 +579,14 @@ namespace stdex
         template<class K>
         inline K getT() const
         {
-            element_type * ptr = this->get();
+            value_type * ptr = this->get();
 
             K ptr_t = static_cast<K>(ptr);
 
             return ptr_t;
         }
 
-        inline element_type * operator -> () const
+        inline value_type * operator -> () const
         {
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
             if( m_ptr == nullptr )
@@ -642,7 +642,7 @@ namespace stdex
         }
 
     protected:
-        element_type * m_ptr;
+        value_type * m_ptr;
 
         STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
     };
@@ -662,7 +662,7 @@ namespace stdex
     template<class U, class T>
     inline U intrusive_static_cast( const intrusive_ptr<T, void> & _iptr )
     {
-        typedef typename U::element_type U_type;
+        typedef typename U::value_type U_type;
 
         T * t_ptr = _iptr.get();
         U_type * u_ptr = static_cast<U_type *>(t_ptr);
@@ -673,7 +673,7 @@ namespace stdex
     template<class U, class T>
     inline U intrusive_dynamic_cast( const intrusive_ptr<T, void> & _iptr )
     {
-        typedef typename U::element_type U_type;
+        typedef typename U::value_type U_type;
 
         T * t_ptr = _iptr.get();
         U_type * u_ptr = dynamic_cast<U_type *>(t_ptr);
