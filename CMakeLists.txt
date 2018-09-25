@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 PROJECT(stdex)
 
 OPTION(STDEX_EXTERNAL_BUILD "STDEX_EXTERNAL_BUILD" OFF)
+OPTION(STDEX_INSTALL "STDEX_INSTALL" ON)
 
 IF( NOT STDEX_EXTERNAL_BUILD )
     set( CMAKE_CXX_STANDARD 14 )
@@ -19,10 +20,7 @@ IF( NOT STDEX_EXTERNAL_BUILD )
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /WX")
         set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /wd4710") #function not inlined 
         set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /wd4738") #storing 32-bit float result in memory, possible loss of performance
-    endif()    
-
-    SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CMAKE_GENERATOR} )
-    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_GENERATOR} )    
+    endif()   
 ENDIF()
 
 MACRO( ADD_FILTER group_name )
@@ -144,3 +142,13 @@ xml_sax_parser
 INCLUDE_DIRECTORIES( ${PROJECT_NAME} include ) 
 
 ADD_LIBRARY( ${PROJECT_NAME} STATIC ${SRC_FILES} )
+
+if(STDEX_INSTALL)
+    install(DIRECTORY include
+        DESTINATION .
+        FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
+
+    install(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+endif()
