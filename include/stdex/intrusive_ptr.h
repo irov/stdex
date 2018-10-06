@@ -220,10 +220,18 @@ namespace stdex
         _left.swap( _right );
     }
     //////////////////////////////////////////////////////////////////////////
+    template<class T, class U>
+    inline T make_intrusive_ptr( const U * _iptr )
+    {
+        typedef typename T::value_type value_type;
+
+        return T( static_cast<const value_type *>(_iptr) );
+    }
+    //////////////////////////////////////////////////////////////////////////
     template<class U, class T, class D>
     inline U intrusive_static_cast( const intrusive_ptr<T, D> & _iptr )
     {
-        typedef typename U::element_type U_type;
+        typedef typename U::value_type U_type;
 
         T * t_ptr = _iptr.get();
         U_type * u_ptr = static_cast<U_type *>(t_ptr);
@@ -234,7 +242,7 @@ namespace stdex
     template<class U, class T, class D>
     inline U intrusive_dynamic_cast( const intrusive_ptr<T, D> & _iptr )
     {
-        typedef typename U::element_type U_type;
+        typedef typename U::value_type U_type;
 
         T * t_ptr = _iptr.get();
         U_type * u_ptr = dynamic_cast<U_type *>(t_ptr);
