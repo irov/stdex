@@ -577,6 +577,13 @@ namespace stdex
         }
 
     public:
+        inline void set( value_type * _ptr )
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            m_ptr = _ptr;
+        }
+
         inline value_type * get() const
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
