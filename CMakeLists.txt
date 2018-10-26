@@ -101,6 +101,7 @@ memory
     ${INCLUDE_DIR}/memory_cache.h
     ${INCLUDE_DIR}/memory_reader.h
     ${INCLUDE_DIR}/memory_writer.h
+    ${INCLUDE_DIR}/container_writer.h
     ${INCLUDE_DIR}/memorycopy.h
     ${SOURCE_DIR}/memory_cache.cpp
     ${SOURCE_DIR}/memorycopy.cpp

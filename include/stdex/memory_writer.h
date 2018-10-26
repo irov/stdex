@@ -91,16 +91,15 @@ namespace stdex
 			m_write += _size;
 		}
 
-	public:
-		template<class T>
-		void operator << ( const T & _t )
-		{
-			this->writePOD( _t );
-		}
-
 	protected:
 		unsigned char * m_buff;
 		size_t m_capacity;
 		size_t & m_write;
 	};
+
+    template<class T>
+    void operator << ( memory_writer & aw, const T & _value )
+    {
+        aw.writePOD( _value );
+    }
 }
