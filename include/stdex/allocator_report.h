@@ -3,12 +3,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifndef NDEBUG
-#   ifdef WIN32
-#       define STDEX_ALLOCATOR_REPORT_ENABLE
-#   endif
-#endif
-
 #ifndef STDEX_ALLOCATOR_REPORT_MAX_NAME
 #   define STDEX_ALLOCATOR_REPORT_MAX_NAME 128
 #endif

@@ -3,9 +3,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define STDEX_ALLOCATOR_REPORT_DISABLE
+
+#ifndef NDEBUG
+#   ifdef WIN32
+#       ifndef STDEX_ALLOCATOR_REPORT_DISABLE
+#           define STDEX_ALLOCATOR_REPORT_ENABLE
+#       endif
+#   endif
+#endif
+
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
 #include <malloc.h>
 #endif
+
+#include <algorithm>
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,6 +56,10 @@ extern "C" {
 
             break;
         }
+
+        //std::sort( mm, mm + STDEX_ALLOCATOR_REPORT_MAX_COUNT
+        //    , []( const stdex_memory_report_t & l, const stdex_memory_report_t & r ) { return l.count > r.count; }
+        //);
     }
 #endif
     //////////////////////////////////////////////////////////////////////////

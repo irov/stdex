@@ -8,24 +8,24 @@
 #include <stdlib.h>
 #include <memory.h>
 
-//#ifndef NDEBUG
+#ifndef NDEBUG
 //#   define STDEX_ALLOCATOR_DISABLE
-//#endif
+#endif
 
 #ifndef STDEX_ALLOCATOR_INCLUDE
-#	define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
+#define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
 #endif
 
 #ifndef STDEX_ALLOCATOR_MALLOC
-#   define STDEX_ALLOCATOR_MALLOC malloc
+#define STDEX_ALLOCATOR_MALLOC malloc
 #endif
 
 #ifndef STDEX_ALLOCATOR_REALLOC
-#   define STDEX_ALLOCATOR_REALLOC realloc
+#define STDEX_ALLOCATOR_REALLOC realloc
 #endif
 
 #ifndef STDEX_ALLOCATOR_FREE
-#   define STDEX_ALLOCATOR_FREE free
+#define STDEX_ALLOCATOR_FREE free
 #endif
 
 #ifndef STDEX_ALLOCATOR_NOTHREADSAFE
