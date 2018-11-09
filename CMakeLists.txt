@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-PROJECT(stdex)
-
 OPTION(STDEX_EXTERNAL_BUILD "STDEX_EXTERNAL_BUILD" OFF)
 OPTION(STDEX_INSTALL "STDEX_INSTALL" ON)
 
@@ -21,7 +19,11 @@ IF( NOT STDEX_EXTERNAL_BUILD )
         set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /wd4710") #function not inlined 
         set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /wd4738") #storing 32-bit float result in memory, possible loss of performance
     endif()   
+    
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 ENDIF()
+
+PROJECT(stdex)
 
 MACRO( ADD_FILTER group_name )
 	SOURCE_GROUP( ${group_name} FILES ${ARGN} )
