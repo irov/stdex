@@ -12,717 +12,113 @@ namespace stdex
 
 	namespace detail
 	{
+        template<size_t I>
+        struct void_size_t
+        {
+        };
+
+        template<bool Cond, template <size_t> typename T = void_size_t, size_t I = 0> struct function_types_args
+        {
+            typedef void type;
+        };
+
+        template<template <size_t> typename T, size_t I> struct function_types_args<true, T, I>
+        {
+            typedef T<I> type;
+        };
+
 		template<class T>
 		struct function_types;
 
-		template<class R>
-		struct function_types< R( *)() >
+        template<class R, class ... Args>
+        struct function_types< R( *)(Args ...) >
 		{
 			typedef R ret_type;
 			typedef void class_type;
 
-			static const bool method = false;
-			static const size_t arity = 0;
-		};
+            typedef std::tuple<Args...> params;
 
-		template<class R, class P0>
-		struct function_types< R( *)(P0) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
+            template<size_t I>
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
 			static const bool method = false;
-			static const size_t arity = 1;
+			static const size_t arity = sizeof ... (Args);
+
+            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
+            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
 		};
 
-		template<class R, class P0, class P1>
-		struct function_types< R( *)(P0, P1) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-
-			static const bool method = false;
-			static const size_t arity = 2;
-		};
-
-		template<class R, class P0, class P1, class P2>
-		struct function_types< R( *)(P0, P1, P2) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-
-			static const bool method = false;
-			static const size_t arity = 3;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3>
-		struct function_types< R( *)(P0, P1, P2, P3) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-
-			static const bool method = false;
-			static const size_t arity = 4;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4>
-		struct function_types< R( *)(P0, P1, P2, P3, P4) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-
-			static const bool method = false;
-			static const size_t arity = 5;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-
-			static const bool method = false;
-			static const size_t arity = 6;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5, P6) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-
-			static const bool method = false;
-			static const size_t arity = 7;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5, P6, P7) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-
-			static const bool method = false;
-			static const size_t arity = 8;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5, P6, P7, P8) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-
-
-			static const bool method = false;
-			static const size_t arity = 9;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-
-			static const bool method = false;
-			static const size_t arity = 10;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-
-			static const bool method = false;
-			static const size_t arity = 11;
-		};
-
-		template<class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11>
-		struct function_types< R( *)(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) >
-		{
-			typedef R ret_type;
-			typedef void class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-			typedef typename external_type_cast<P11>::Type param11;
-
-			static const bool method = false;
-			static const size_t arity = 12;
-		};
-
-		template<class R, class C>
-		struct function_types< R( C::* )() >
+		template<class R, class C, class ... Args>
+		struct function_types< R( C::* )(Args ...) >
 		{
 			typedef R ret_type;
 			typedef C class_type;
 
-			static const bool method = true;
-			static const size_t arity = 0;
-		};
+            typedef std::tuple<Args...> params;
 
-		template<class R, class C>
-		struct function_types< R( C::* )() const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
+            template<size_t I>
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
 			static const bool method = true;
-			static const size_t arity = 0;
+			static const size_t arity = sizeof ... (Args);
+
+            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
+            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
 		};
 
-		template<class R, class C, class P0>
-		struct function_types< R( C::* )(P0) >
-		{
-			typedef R ret_type;
-			typedef C class_type;
+        template<class R, class C, class ... Args>
+        struct function_types< R( C::* )(Args ...) noexcept >
+        {
+            typedef R ret_type;
+            typedef C class_type;
 
-			typedef typename external_type_cast<P0>::Type param0;
+            typedef std::tuple<Args...> params;
 
-			static const bool method = true;
-			static const size_t arity = 1;
-		};
+            template<size_t I>
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
-		template<class R, class C, class P0>
-		struct function_types< R( C::* )(P0) const >
-		{
-			typedef R ret_type;
-			typedef C class_type;
+            static const bool method = true;
+            static const size_t arity = sizeof ... (Args);
 
-			typedef typename external_type_cast<P0>::Type param0;
+            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
+            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+        };
 
-			static const bool method = true;
-			static const size_t arity = 1;
-		};
+        template<class R, class C, class ... Args>
+        struct function_types< R( C::* )(Args ...) const >
+        {
+            typedef R ret_type;
+            typedef C class_type;
 
-		template<class R, class C, class P0, class P1>
-		struct function_types< R( C::* )(P0, P1) >
-		{
-			typedef R ret_type;
-			typedef C class_type;
+            typedef std::tuple<Args...> params;
 
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
+            template<size_t I>
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
-			static const bool method = true;
-			static const size_t arity = 2;
-		};
+            static const bool method = true;
+            static const size_t arity = sizeof ... (Args);
 
-		template<class R, class C, class P0, class P1>
-		struct function_types< R( C::* )(P0, P1) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
+            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
+            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+        };
 
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
+        template<class R, class C, class ... Args>
+        struct function_types< R( C::* )(Args ...) const noexcept>
+        {
+            typedef R ret_type;
+            typedef C class_type;
 
-			static const bool method = true;
-			static const size_t arity = 2;
-		};
+            typedef std::tuple<Args...> params;
 
-		template<class R, class C, class P0, class P1, class P2>
-		struct function_types< R( C::* )(P0, P1, P2) >
-		{
-			typedef R ret_type;
-			typedef C class_type;
+            template<size_t I>
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
+            static const bool method = true;
+            static const size_t arity = sizeof ... (Args);
 
-			static const bool method = true;
-			static const size_t arity = 3;
-		};
-
-		template<class R, class C, class P0, class P1, class P2>
-		struct function_types< R( C::* )(P0, P1, P2) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-
-			static const bool method = true;
-			static const size_t arity = 3;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3>
-		struct function_types< R( C::* )(P0, P1, P2, P3) >
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-
-			static const bool method = true;
-			static const size_t arity = 4;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3>
-		struct function_types< R( C::* )(P0, P1, P2, P3) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-
-			static const bool method = true;
-			static const size_t arity = 4;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4) >
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-
-			static const bool method = true;
-			static const size_t arity = 5;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-
-			static const bool method = true;
-			static const size_t arity = 5;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-
-			static const bool method = true;
-			static const size_t arity = 6;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-
-			static const bool method = true;
-			static const size_t arity = 6;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-
-			static const bool method = true;
-			static const size_t arity = 7;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-
-			static const bool method = true;
-			static const size_t arity = 7;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-
-			static const bool method = true;
-			static const size_t arity = 8;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-
-			static const bool method = true;
-			static const size_t arity = 8;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-
-			static const bool method = true;
-			static const size_t arity = 9;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-
-			static const bool method = true;
-			static const size_t arity = 9;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-
-			static const bool method = true;
-			static const size_t arity = 10;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-
-			static const bool method = true;
-			static const size_t arity = 10;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-
-			static const bool method = true;
-			static const size_t arity = 11;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-
-			static const bool method = true;
-			static const size_t arity = 11;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-			typedef typename external_type_cast<P11>::Type param11;
-
-			static const bool method = true;
-			static const size_t arity = 12;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-			typedef typename external_type_cast<P11>::Type param11;
-
-			static const bool method = true;
-			static const size_t arity = 12;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11, class P12>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12)>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-			typedef typename external_type_cast<P11>::Type param11;
-			typedef typename external_type_cast<P12>::Type param12;
-
-			static const bool method = true;
-			static const size_t arity = 13;
-		};
-
-		template<class R, class C, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10, class P11, class P12>
-		struct function_types< R( C::* )(P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) const>
-		{
-			typedef R ret_type;
-			typedef C class_type;
-
-			typedef typename external_type_cast<P0>::Type param0;
-			typedef typename external_type_cast<P1>::Type param1;
-			typedef typename external_type_cast<P2>::Type param2;
-			typedef typename external_type_cast<P3>::Type param3;
-			typedef typename external_type_cast<P4>::Type param4;
-			typedef typename external_type_cast<P5>::Type param5;
-			typedef typename external_type_cast<P6>::Type param6;
-			typedef typename external_type_cast<P7>::Type param7;
-			typedef typename external_type_cast<P8>::Type param8;
-			typedef typename external_type_cast<P9>::Type param9;
-			typedef typename external_type_cast<P10>::Type param10;
-			typedef typename external_type_cast<P11>::Type param11;
-			typedef typename external_type_cast<P12>::Type param12;
-
-			static const bool method = true;
-			static const size_t arity = 13;
-		};
+            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
+            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+        };
 	}
 
 	template<class F>
