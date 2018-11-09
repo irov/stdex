@@ -1,6 +1,8 @@
-#	pragma once
+#pragma once
 
-#	include <stdint.h>
+#include <tuple>
+
+#include <stdint.h>
 
 namespace stdex
 {
@@ -17,12 +19,12 @@ namespace stdex
         {
         };
 
-        template<bool Cond, template <size_t> typename T = void_size_t, size_t I = 0> struct function_types_args
+        template<bool Cond, template <size_t> class T = void_size_t, size_t I = 0> struct function_types_args
         {
             typedef void type;
         };
 
-        template<template <size_t> typename T, size_t I> struct function_types_args<true, T, I>
+        template<template <size_t> class T, size_t I> struct function_types_args<true, T, I>
         {
             typedef T<I> type;
         };
