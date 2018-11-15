@@ -69,7 +69,7 @@ namespace stdex
 		};
 
         template<class R, class C, class ... Args>
-        struct function_types< R( C::* )(Args ...) noexcept >
+        struct function_types< R( C::* )(Args ...) const >
         {
             typedef R ret_type;
             typedef C class_type;
@@ -86,8 +86,9 @@ namespace stdex
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
         };
 
+#ifdef MSVC
         template<class R, class C, class ... Args>
-        struct function_types< R( C::* )(Args ...) const >
+        struct function_types< R( C::* )(Args ...) noexcept >
         {
             typedef R ret_type;
             typedef C class_type;
@@ -121,6 +122,7 @@ namespace stdex
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
         };
+#endif
 	}
 
 	template<class F>
