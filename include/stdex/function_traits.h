@@ -14,17 +14,17 @@ namespace stdex
 
 	namespace detail
 	{
-        template<size_t I>
+        template<uint32_t I>
         struct void_size_t
         {
         };
 
-        template<bool Cond, template <size_t> class T = void_size_t, size_t I = 0> struct function_types_args
+        template<bool Cond, template <uint32_t> class T = void_size_t, uint32_t I = 0> struct function_types_args
         {
             typedef void type;
         };
 
-        template<template <size_t> class T, size_t I> struct function_types_args<true, T, I>
+        template<template <uint32_t> class T, uint32_t I> struct function_types_args<true, T, I>
         {
             typedef T<I> type;
         };
@@ -40,11 +40,11 @@ namespace stdex
 
             typedef std::tuple<Args...> params;
 
-            template<size_t I>
+            template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
 			static const bool method = false;
-			static const size_t arity = sizeof ... (Args);
+			static const uint32_t arity = sizeof ... (Args);
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
@@ -58,11 +58,11 @@ namespace stdex
 
             typedef std::tuple<Args...> params;
 
-            template<size_t I>
+            template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
 			static const bool method = true;
-			static const size_t arity = sizeof ... (Args);
+			static const uint32_t arity = sizeof ... (Args);
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
@@ -76,11 +76,11 @@ namespace stdex
 
             typedef std::tuple<Args...> params;
 
-            template<size_t I>
+            template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
             static const bool method = true;
-            static const size_t arity = sizeof ... (Args);
+            static const uint32_t arity = sizeof ... (Args);
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
@@ -94,11 +94,11 @@ namespace stdex
 
             typedef std::tuple<Args...> params;
 
-            template<size_t I>
+            template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
             static const bool method = true;
-            static const size_t arity = sizeof ... (Args);
+            static const uint32_t arity = sizeof ... (Args);
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
@@ -112,11 +112,11 @@ namespace stdex
 
             typedef std::tuple<Args...> params;
 
-            template<size_t I>
+            template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
 
             static const bool method = true;
-            static const size_t arity = sizeof ... (Args);
+            static const uint32_t arity = sizeof ... (Args);
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
