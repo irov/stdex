@@ -86,7 +86,7 @@ namespace stdex
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
         };
 
-#ifdef MSVC
+#ifdef _MSC_VER
         template<class R, class C, class ... Args>
         struct function_types< R( C::* )(Args ...) noexcept >
         {
