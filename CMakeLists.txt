@@ -82,6 +82,7 @@ intrusive
     ${INCLUDE_DIR}/intrusive_list_ptr.h
     ${INCLUDE_DIR}/intrusive_ptr.h
     ${INCLUDE_DIR}/intrusive_ptr_base.h
+    ${INCLUDE_DIR}/intrusive_ptr_view.h
     ${INCLUDE_DIR}/intrusive_slug.h
     ${INCLUDE_DIR}/intrusive_slug_ptr.h
     ${INCLUDE_DIR}/intrusive_slug_linked.h

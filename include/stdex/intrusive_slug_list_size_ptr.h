@@ -191,12 +191,12 @@ namespace stdex
             }
 
         public:
-            inline bool operator == ( base_iterator _it ) const
+            inline bool operator == ( const base_iterator & _it ) const
             {
                 return this->equal_iterator( _it );
             }
 
-            inline bool operator != ( base_iterator _it ) const
+            inline bool operator != ( const base_iterator & _it ) const
             {
                 return !this->operator == ( _it );
             }
@@ -271,12 +271,12 @@ namespace stdex
             }
 
         public:
-            inline bool operator == ( base_const_iterator _it ) const
+            inline bool operator == ( const base_const_iterator & _it ) const
             {
                 return this->equal_iterator( _it );
             }
 
-            inline bool operator != ( base_const_iterator _it ) const
+            inline bool operator != ( const base_const_iterator & _it ) const
             {
                 return !this->operator == ( _it );
             }
@@ -332,12 +332,12 @@ namespace stdex
             }
 
         public:
-            inline bool operator == ( base_reverse_iterator _it ) const
+            inline bool operator == ( const base_reverse_iterator & _it ) const
             {
                 return this->equal_iterator( _it );
             }
 
-            inline bool operator != ( base_reverse_iterator _it ) const
+            inline bool operator != ( const base_reverse_iterator & _it ) const
             {
                 return !this->operator == ( _it );
             }
@@ -518,25 +518,27 @@ namespace stdex
             return m_size == 0;
         }
 
-        inline iterator insert( iterator _where, const linked_type_ptr & _node )
+        inline iterator insert( const iterator & _where, const linked_type_ptr & _node )
         {
             this->insert_( _where, _node );
 
-            return (--_where);
+            iterator prev_it = _where;
+            return (--prev_it);
         }
 
-        inline iterator erase( iterator _where )
+        inline iterator erase( const iterator & _where )
         {
-            iterator it = _where++;
+            iterator prev_it = _where;
+            ++prev_it;
 
-            if( it != this->end() )
+            if( _where != this->end() )
             {
-                const linked_type_ptr & node = it.get();
+                const linked_type_ptr & node = _where.get();
 
                 this->remove( node );
             }
 
-            return (_where);
+            return prev_it;
         }
 
         inline void remove( const linked_type_ptr & _node )
@@ -585,7 +587,7 @@ namespace stdex
         }
 
     protected:
-        inline void insert_( iterator _where, const linked_type_ptr & _node )
+        inline void insert_( const iterator & _where, const linked_type_ptr & _node )
         {
             const linked_type_ptr & linked = _where.get();
             linked->link_before( _node );

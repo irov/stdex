@@ -31,7 +31,7 @@ namespace stdex
     public:
         typedef T value_type;
         typedef D derived_type;
-        typedef intrusive_ptr<D, void> derived_type_ptr;
+        typedef intrusive_ptr<derived_type, void> derived_type_ptr;
 
     public:
         inline static const intrusive_ptr & none()
