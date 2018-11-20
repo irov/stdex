@@ -86,7 +86,7 @@ namespace stdex
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
         };
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
         template<class R, class C, class ... Args>
         struct function_types< R( C::* )(Args ...) noexcept >
         {
