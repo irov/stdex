@@ -36,7 +36,7 @@ namespace stdex
         {
             typename C::size_type size = _container.size();
 
-            int32_t diff_from = (_from + size) % size;
+            uint32_t diff_from = (_from + size) % size;
 
             typename C::const_iterator it_begin = _container.begin();
 
@@ -48,8 +48,8 @@ namespace stdex
         {
             typename C::size_type size = _container.size();
 
-            int32_t diff_from = (_from + size) % size;
-            int32_t diff_to = (_to + size) % size;
+            uint32_t diff_from = (_from + size) % size;
+            uint32_t diff_to = (_to + size) % size;
 
             typename C::const_iterator it_begin = _container.begin();
 
