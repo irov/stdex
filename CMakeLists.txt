@@ -148,8 +148,8 @@ INCLUDE_DIRECTORIES( ${PROJECT_NAME} include )
 ADD_LIBRARY( ${PROJECT_NAME} STATIC ${SRC_FILES} )
 
 if(STDEX_INSTALL)
-    install(DIRECTORY include
-        DESTINATION .
+    install(DIRECTORY include/stdex 
+        DESTINATION include
         FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
 
     install(TARGETS ${PROJECT_NAME}
