@@ -118,6 +118,12 @@ namespace stdex
         }
 
     public:
+        void operator = ( const char * _value )
+        {
+            this->clear();
+            this->append( _value );
+        }
+
         void operator += ( char * _value )
         {
             this->append( _value );
@@ -130,6 +136,13 @@ namespace stdex
 
         void operator += ( char _value )
         {
+            this->append( _value );
+        }
+
+        template<class T>
+        void operator = ( const T & _value )
+        {
+            this->clear();
             this->append( _value );
         }
 
