@@ -25,11 +25,13 @@ namespace stdex
 		{
 		}
 
+        ~memory_reader()
+        {
+        }
+
 	private:
-		memory_reader & operator = ( const memory_reader & )
-		{
-			return *this;
-		}
+        memory_reader( const memory_reader & );
+        memory_reader & operator = ( const memory_reader & );
 
 	public:
 		template<class T>
@@ -95,9 +97,11 @@ namespace stdex
 
 	public:
 		template<class T>
-		void operator << ( T & _t )
+        memory_reader & operator << ( T & _t )
 		{
 			this->readPOD( _t );
+
+            return *this;
 		}
 
 	protected:

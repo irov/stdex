@@ -41,9 +41,8 @@ namespace stdex
 		~thread_guard_scope();
 
 	private:
-		void operator = (const thread_guard_scope &)
-		{
-		};
+        thread_guard_scope( const thread_guard_scope & );
+        void operator = ( const thread_guard_scope & );
 
 	protected:
 		const thread_guard & m_guard;

@@ -15,6 +15,12 @@ namespace stdex
 		{
 		}
 
+        inline intrusive_linked( const intrusive_linked & _linked )
+            : m_right( _linked.m_right )
+            , m_left( _linked.m_left )
+        {
+        }
+
 		inline ~intrusive_linked()
 		{
 			this->unlink();
