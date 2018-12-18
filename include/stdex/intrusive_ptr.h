@@ -13,6 +13,7 @@
 #endif
 
 #ifdef STDEX_INTRUSIVE_PTR_DEBUG
+#   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE) if( PTR != nullptr && dynamic_cast<TYPE>(PTR) == nullptr ) STDEX_THROW_EXCEPTION("ptr invalid cast")
 #	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK() uint32_t m_debug_ptr_mask__;
 #	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() this->m_debug_ptr_mask__ = 0xABCDEF01
 #	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( this->m_debug_ptr_mask__ != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("mask != 0xABCDEF01")
@@ -30,6 +31,8 @@ namespace stdex
     {
     public:
         typedef T value_type;
+        typedef T * pointer_type;
+        typedef const T * const_pointer_type;
         typedef D derived_type;
         typedef intrusive_ptr<derived_type, void> derived_type_ptr;
 
@@ -405,6 +408,8 @@ namespace stdex
     {
     public:
         typedef T value_type;
+        typedef T * pointer_type;
+        typedef const T * const_pointer_type;
 
     public:
         inline static const intrusive_ptr & none()
@@ -443,9 +448,10 @@ namespace stdex
             _rhs.reset();
         }
 
-        inline intrusive_ptr( value_type * _ptr )
-            : m_ptr( _ptr )
+        inline intrusive_ptr( const value_type * _ptr )
+            : m_ptr( const_cast<pointer_type>(_ptr) )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
             this->incref();
@@ -455,6 +461,7 @@ namespace stdex
         inline intrusive_ptr( const intrusive_ptr<U, void> & _rhs )
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
             this->incref();
@@ -464,6 +471,7 @@ namespace stdex
         inline intrusive_ptr( intrusive_ptr<U, void> && _rhs )
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
             _rhs.reset();
@@ -473,6 +481,7 @@ namespace stdex
         inline intrusive_ptr( const intrusive_ptr<U, Y> & _rhs )
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
             this->incref();
@@ -482,6 +491,7 @@ namespace stdex
         inline intrusive_ptr( intrusive_ptr<U, Y> && _rhs )
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
             _rhs.reset();
@@ -491,6 +501,7 @@ namespace stdex
         inline intrusive_ptr( const U * _ptr )
             : m_ptr( static_cast<value_type *>(const_cast<U *>(_ptr)) )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
 
             this->incref();
@@ -596,6 +607,8 @@ namespace stdex
         {
             value_type * ptr = this->get();
 
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( ptr, K );
+
             K ptr_t = static_cast<K>(ptr);
 
             return ptr_t;
@@ -675,12 +688,25 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class U, class T>
-    inline U intrusive_static_cast( const intrusive_ptr<T, void> & _iptr )
+    inline U intrusive_reinterpret_cast( const intrusive_ptr<T, void> & _iptr )
     {
-        typedef typename U::value_type U_type;
+        typedef typename U::pointer_type U_type;
 
         T * t_ptr = _iptr.get();
-        U_type * u_ptr = static_cast<U_type *>(t_ptr);
+        U_type u_ptr = static_cast<U_type>(t_ptr);
+
+        return U( u_ptr );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T>
+    inline U intrusive_static_cast( const intrusive_ptr<T, void> & _iptr )
+    {
+        typedef typename U::pointer_type U_type;
+
+        T * t_ptr = _iptr.get();
+        U_type u_ptr = static_cast<U_type>(t_ptr);
+
+        STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( t_ptr, U_type );
 
         return U( u_ptr );
     }
@@ -701,6 +727,8 @@ namespace stdex
     {
         T * t_ptr = _iptr.get();
         U u_ptr = static_cast<U>(t_ptr);
+
+        STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( t_ptr, U );
 
         return u_ptr;
     }

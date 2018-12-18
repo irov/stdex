@@ -59,12 +59,12 @@ namespace stdex
         public:
             inline value_type_ptr operator -> () const
             {
-                return stdex::intrusive_static_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
             inline value_type_ptr operator * () const
             {
-                return stdex::intrusive_static_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
         public:
@@ -129,12 +129,12 @@ namespace stdex
         public:
             inline value_type_ptr operator -> () const
             {
-                return stdex::intrusive_static_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
             inline value_type_ptr operator * () const
             {
-                return stdex::intrusive_static_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
         public:
@@ -497,7 +497,7 @@ namespace stdex
 
             const linked_type_ptr & first = this->right();
 
-            value_type_ptr value = stdex::intrusive_static_cast<value_type_ptr>(first);
+            value_type_ptr value = stdex::intrusive_reinterpret_cast<value_type_ptr>(first);
 
             return value;
         }
