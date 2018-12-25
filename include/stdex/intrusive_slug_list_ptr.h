@@ -52,11 +52,18 @@ namespace stdex
             }
 
             inline base_slug_iterator( const base_slug_iterator & _it )
-                : m_node( _it.get() )
+                : m_node( _it.m_node )
             {
             }
 
         public:
+            inline base_slug_iterator & operator = ( const base_slug_iterator & _it )
+            {
+                m_node = _it.m_node;
+
+                return *this;
+            }
+
             inline value_type_ptr operator -> () const
             {
                 return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
@@ -122,11 +129,18 @@ namespace stdex
             }
 
             inline base_unslug_iterator( const base_unslug_iterator & _it )
-                : m_node( _it.get() )
+                : m_node( _it.m_node )
             {
             }
 
         public:
+            inline base_unslug_iterator & operator = ( const base_unslug_iterator & _it )
+            {
+                m_node = _it.m_node;
+
+                return *this;
+            }
+
             inline value_type_ptr operator -> () const
             {
                 return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);

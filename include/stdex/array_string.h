@@ -49,7 +49,7 @@ namespace stdex
                 return;
             }
 
-            memorycopy( m_buffer, m_pos, _value, _size );
+            memorycopy( m_buffer, (size_t)m_pos, _value, (size_t)_size );
 
             m_pos += _size;
             m_buffer[m_pos] = 0;
@@ -93,14 +93,14 @@ namespace stdex
     public:
         void replace_last( const char * _value )
         {
-            size_type size = (size_type)strlen( _value );
+            size_t size = strlen( _value );
 
-            if( size > m_pos )
+            if( size > (size_t)m_pos )
             {
                 return;
             }
 
-            memorycopy( m_buffer, m_pos - size, _value, size );
+            memorycopy( m_buffer, (size_t)m_pos - size, _value, size );
         }
 
         void cut_before_last_of( char _ch )

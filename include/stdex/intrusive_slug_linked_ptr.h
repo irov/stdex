@@ -30,10 +30,12 @@ namespace stdex
         }
 
     private:
-        intrusive_slug_linked_ptr & operator = ( const intrusive_slug_linked_ptr & _linked )
+        inline intrusive_slug_linked_ptr( const intrusive_slug_linked_ptr & )
         {
-            (void)_linked;
+        }
 
+        inline intrusive_slug_linked_ptr & operator = ( const intrusive_slug_linked_ptr & )
+        {
             return *this;
         }
 
