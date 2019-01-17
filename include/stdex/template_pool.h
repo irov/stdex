@@ -6,7 +6,7 @@
 
 namespace stdex
 {
-    template<class TBlockType, uint32_t TBlockCount>
+    template<class TBlockType, uint32_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
     class template_pool
     {
     public:
@@ -44,7 +44,7 @@ namespace stdex
         }
 
     protected:
-        typedef pool<TBlockType, TBlockCount> pool_t;
+        typedef pool<TBlockType, TBlockCount, TAllocator> pool_t;
         pool_t m_pool;
     };
 }
