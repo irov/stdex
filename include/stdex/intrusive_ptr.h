@@ -56,7 +56,7 @@ namespace stdex
         {
         }
 
-        inline intrusive_ptr( intrusive_ptr && _rhs )
+        inline intrusive_ptr( intrusive_ptr && _rhs ) noexcept
             : intrusive_ptr<derived_type>( std::move( _rhs.m_ptr ) )
         {
         }
