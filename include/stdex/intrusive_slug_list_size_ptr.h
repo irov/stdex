@@ -386,9 +386,71 @@ namespace stdex
             }
         };
 
+        template<class It>
+        class base_const_reverse_iterator
+            : public It
+        {
+        public:
+            inline explicit base_const_reverse_iterator( const linked_type_ptr & _node )
+                : It( _node )
+            {
+            }
+
+            inline base_const_reverse_iterator( const linked_type_ptr & _node, bool _stable )
+                : It( _node, _stable )
+            {
+            }
+
+            inline base_const_reverse_iterator( const base_const_reverse_iterator & _it )
+                : It( _it )
+            {
+            }
+
+        public:
+            inline bool operator == ( const base_const_reverse_iterator & _it ) const
+            {
+                return this->equal_iterator( _it );
+            }
+
+            inline bool operator != ( const base_const_reverse_iterator & _it ) const
+            {
+                return !this->operator == ( _it );
+            }
+
+        public:
+            inline base_const_reverse_iterator & operator ++ ()
+            {
+                this->shuffle_prev();
+
+                return *this;
+            }
+
+            inline base_const_reverse_iterator operator ++ ( int )
+            {
+                base_const_reverse_iterator tmp = *this;
+                --*this;
+                return tmp;
+            }
+
+            inline base_const_reverse_iterator & operator -- () const
+            {
+                this->shuffle_next();
+
+                return *this;
+            }
+
+            inline base_const_reverse_iterator operator -- ( int ) const
+            {
+                base_const_reverse_iterator tmp = *this;
+                ++*this;
+                return tmp;
+            }
+        };
+
         typedef base_iterator<base_slug_iterator> iterator;
         typedef base_const_iterator<base_slug_iterator> const_iterator;
         typedef base_reverse_iterator<base_slug_iterator> reverse_iterator;
+        typedef base_const_reverse_iterator<base_slug_iterator> const_reverse_iterator;
 
         typedef base_iterator<base_unslug_iterator> unslug_iterator;
         typedef base_const_iterator<base_unslug_iterator> unslug_const_iterator;
@@ -423,6 +485,16 @@ namespace stdex
         inline reverse_iterator rend()
         {
             return reverse_iterator( this, true );
+        }
+
+        inline const_reverse_iterator rbegin() const
+        {
+            return const_reverse_iterator( intrusive_slug_linked_ptr<T>::m_left );
+        }
+
+        inline const_reverse_iterator rend() const
+        {
+            return const_reverse_iterator( this, true );
         }
 
     public:
