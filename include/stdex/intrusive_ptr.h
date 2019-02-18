@@ -76,7 +76,7 @@ namespace stdex
         {
         }
 
-        inline intrusive_ptr( value_type * _ptr )
+        inline explicit intrusive_ptr( value_type * _ptr )
             : derived_type_ptr( _ptr )
         {
         }
@@ -94,7 +94,7 @@ namespace stdex
         }
 
         template<class U>
-        inline intrusive_ptr( const U * _ptr )
+        inline explicit intrusive_ptr( const U * _ptr )
             : intrusive_ptr<derived_type>( _ptr )
         {
         }
