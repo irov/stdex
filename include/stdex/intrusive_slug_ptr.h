@@ -24,7 +24,7 @@ namespace stdex
         {
             intrusive_this_acquire( this );
 
-            m_list.increfSlug( this );
+            m_list.increfSlug( linked_type_ptr( this ) );
         }
 
         ~intrusive_slug_ptr()
@@ -68,7 +68,7 @@ namespace stdex
 
             this->unlink();
 
-            pos_right_adapt_right_adapt->link_before( this );
+            pos_right_adapt_right_adapt->link_before( linked_type_ptr( this ) );
         }
 
         inline bool eof() const

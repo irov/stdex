@@ -449,7 +449,7 @@ namespace stdex
             _rhs.reset();
         }
 
-        inline intrusive_ptr( const value_type * _ptr )
+        inline explicit intrusive_ptr( const value_type * _ptr )
             : m_ptr( const_cast<pointer_type>(_ptr) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
@@ -499,7 +499,7 @@ namespace stdex
         }
 
         template<class U>
-        inline intrusive_ptr( const U * _ptr )
+        inline explicit intrusive_ptr( const U * _ptr )
             : m_ptr( static_cast<value_type *>(const_cast<U *>(_ptr)) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );

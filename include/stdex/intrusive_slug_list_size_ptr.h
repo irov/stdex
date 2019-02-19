@@ -464,7 +464,7 @@ namespace stdex
 
         inline iterator end()
         {
-            return iterator( this, true );
+            return iterator( linked_type_ptr( this ), true );
         }
 
         inline const_iterator begin() const
@@ -474,7 +474,7 @@ namespace stdex
 
         inline const_iterator end() const
         {
-            return const_iterator( this, true );
+            return const_iterator( linked_type_ptr( this ), true );
         }
 
         inline reverse_iterator rbegin()
@@ -484,7 +484,7 @@ namespace stdex
 
         inline reverse_iterator rend()
         {
-            return reverse_iterator( this, true );
+            return reverse_iterator( linked_type_ptr( this ), true );
         }
 
         inline const_reverse_iterator rbegin() const
@@ -494,7 +494,7 @@ namespace stdex
 
         inline const_reverse_iterator rend() const
         {
-            return const_reverse_iterator( this, true );
+            return const_reverse_iterator( linked_type_ptr( this ), true );
         }
 
     public:
@@ -515,7 +515,7 @@ namespace stdex
 
         inline unslug_const_iterator uend() const
         {
-            return unslug_const_iterator( this );
+            return unslug_const_iterator( linked_type_ptr( this ) );
         }
 
         inline unslug_reverse_iterator urbegin()
@@ -525,7 +525,7 @@ namespace stdex
 
         inline unslug_reverse_iterator urend()
         {
-            return unslug_reverse_iterator( this );
+            return unslug_reverse_iterator( linked_type_ptr(this) );
         }
 
     public:
