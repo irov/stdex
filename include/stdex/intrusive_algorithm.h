@@ -136,7 +136,6 @@ namespace stdex
         {
             typedef typename C::iterator container_iterator_type;
             typedef typename C::value_type_ptr container_value_type_ptr;
-            typedef typename C::linked_type linked_type;
             typedef typename C::linked_type_ptr linked_type_ptr;
             //typedef linked_type * linked_type_ptr;
 
