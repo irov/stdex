@@ -39,6 +39,11 @@ namespace stdex
 				char * begin_name_node_end = str_unfind( begin_name_node + 1, ' ' );
 				char * end_name_node_end = strpbrk( begin_name_node, " >" );
 
+                if( end_name_node_end == nullptr )
+                {
+                    return nullptr;
+                }
+
 				if( *end_name_node_end == ' ' )
 				{
 					*end_name_node_end = '\0';

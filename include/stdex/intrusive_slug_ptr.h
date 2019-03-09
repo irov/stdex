@@ -6,24 +6,22 @@
 
 namespace stdex
 {
-    template<class C>
+    template<class T, template <class> class IntrusivePtr, class IntrusivePtrBase>
     class intrusive_slug_ptr
-        : public intrusive_slug_linked_ptr<typename C::value_type>
+        : public intrusive_slug_linked_ptr<typename T::value_type, IntrusivePtr, IntrusivePtrBase>
     {
     public:
-        typedef typename C::value_type value_type;
-        typedef intrusive_ptr<value_type> value_type_ptr;
-        typedef C list_type;
-        typedef intrusive_slug_linked_ptr<value_type> linked_type;
-        typedef intrusive_ptr<linked_type> linked_type_ptr;
+        typedef T list_type;
+        typedef typename list_type::value_type value_type;
+        typedef IntrusivePtr<value_type> value_type_ptr;
+        typedef intrusive_slug_linked_ptr<value_type, IntrusivePtr, IntrusivePtrBase> linked_type;
+        typedef IntrusivePtr<linked_type> linked_type_ptr;
 
     public:
         explicit intrusive_slug_ptr( const list_type & _list )
-            : intrusive_slug_linked_ptr<value_type>( EILT_SLUG )
+            : linked_type( EILT_SLUG )
             , m_list( _list )
         {
-            intrusive_this_acquire( this );
-
             m_list.increfSlug( linked_type_ptr( this ) );
         }
 
@@ -157,12 +155,6 @@ namespace stdex
             }
 
             return pos;
-        }
-
-    protected:
-        void destroy() override
-        {
-            //Empty
         }
 
     protected:

@@ -5,35 +5,32 @@
 
 namespace stdex
 {
-    template<class T>
+    template<class T, template <class> class IntrusivePtr, class IntrusivePtrBase, template <class> class IntrusiveSlugHead>
     class intrusive_slug_list_size_ptr
-        : public intrusive_slug_linked_ptr<T>
     {
     public:
         typedef T value_type;
         typedef uint32_t size_type;
-        typedef intrusive_ptr<T> value_type_ptr;
-        typedef intrusive_slug_linked_ptr<T> linked_type;
-        typedef intrusive_ptr<linked_type> linked_type_ptr;
+        typedef IntrusivePtr<value_type> value_type_ptr;
+        typedef intrusive_slug_linked_ptr<value_type, IntrusivePtr, IntrusivePtrBase> linked_type;
+        typedef IntrusivePtr<linked_type> linked_type_ptr;
+        typedef IntrusiveSlugHead<value_type> head_type;
 
     public:
         intrusive_slug_list_size_ptr()
-            : intrusive_slug_linked_ptr<T>( EILT_END )
-            , m_size( 0 )
+            : m_size( 0 )
             , m_slugs( 0 )
         {
-            intrusive_this_acquire( this );
-
-            intrusive_slug_linked_ptr<T>::m_right = this;
-            intrusive_slug_linked_ptr<T>::m_left = this;
+            m_head.m_right = &m_head;
+            m_head.m_left = &m_head;
         }
 
         ~intrusive_slug_list_size_ptr()
         {
             this->clear();
 
-            intrusive_slug_linked_ptr<T>::m_right = nullptr;
-            intrusive_slug_linked_ptr<T>::m_left = nullptr;
+            m_head.m_right = nullptr;
+            m_head.m_left = nullptr;
         }
 
     protected:
@@ -459,73 +456,73 @@ namespace stdex
     public:
         inline iterator begin()
         {
-            return iterator( intrusive_slug_linked_ptr<T>::m_right );
+            return iterator( m_head.m_right );
         }
 
         inline iterator end()
         {
-            return iterator( linked_type_ptr( this ), true );
+            return iterator( linked_type_ptr( &m_head ), true );
         }
 
         inline const_iterator begin() const
         {
-            return const_iterator( intrusive_slug_linked_ptr<T>::m_right );
+            return const_iterator( m_head.m_right );
         }
 
         inline const_iterator end() const
         {
-            return const_iterator( linked_type_ptr( this ), true );
+            return const_iterator( linked_type_ptr( &m_head ), true );
         }
 
         inline reverse_iterator rbegin()
         {
-            return reverse_iterator( intrusive_slug_linked_ptr<T>::m_left );
+            return reverse_iterator( m_head.m_left );
         }
 
         inline reverse_iterator rend()
         {
-            return reverse_iterator( linked_type_ptr( this ), true );
+            return reverse_iterator( linked_type_ptr( &m_head ), true );
         }
 
         inline const_reverse_iterator rbegin() const
         {
-            return const_reverse_iterator( intrusive_slug_linked_ptr<T>::m_left );
+            return const_reverse_iterator( m_head.m_left );
         }
 
         inline const_reverse_iterator rend() const
         {
-            return const_reverse_iterator( linked_type_ptr( this ), true );
+            return const_reverse_iterator( linked_type_ptr( &m_head ), true );
         }
 
     public:
         inline unslug_iterator ubegin()
         {
-            return unslug_iterator( intrusive_slug_linked_ptr<T>::m_right );
+            return unslug_iterator( m_head.m_right );
         }
 
         inline unslug_iterator uend()
         {
-            return unslug_iterator( this );
+            return unslug_iterator( linked_type_ptr( &m_head ) );
         }
 
         inline unslug_const_iterator ubegin() const
         {
-            return unslug_const_iterator( intrusive_slug_linked_ptr<T>::m_right );
+            return unslug_const_iterator( m_head.m_right );
         }
 
         inline unslug_const_iterator uend() const
         {
-            return unslug_const_iterator( linked_type_ptr( this ) );
+            return unslug_const_iterator( linked_type_ptr( &m_head ) );
         }
 
         inline unslug_reverse_iterator urbegin()
         {
-            return unslug_reverse_iterator( intrusive_slug_linked_ptr<T>::m_left );
+            return unslug_reverse_iterator( m_head.m_left );
         }
 
         inline unslug_reverse_iterator urend()
         {
-            return unslug_reverse_iterator( linked_type_ptr(this) );
+            return unslug_reverse_iterator( linked_type_ptr( &m_head ) );
         }
 
     public:
@@ -586,7 +583,7 @@ namespace stdex
                 return nullptr;
             }
 
-            const linked_type_ptr & first = this->right();
+            const linked_type_ptr & first = m_head.right();
 
             value_type_ptr value = stdex::intrusive_reinterpret_cast<value_type_ptr>(first);
 
@@ -668,7 +665,7 @@ namespace stdex
 
         const linked_type * head() const
         {
-            return this;
+            return &m_head;
         }
 
     protected:
@@ -680,12 +677,8 @@ namespace stdex
         }
 
     protected:
-        void destroy() override
-        {
-            //Empty
-        }
+        head_type m_head;
 
-    protected:
         size_type m_size;
         mutable size_type m_slugs;
     };
