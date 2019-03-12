@@ -5,16 +5,17 @@
 
 namespace stdex
 {
-    template<class T, template <class> class IntrusivePtr, class IntrusivePtrBase, template <class> class IntrusiveSlugHead>
+    template<class T, class D, template <class, class> class IntrusivePtr, class IntrusivePtrBase, template <class, class> class IntrusiveSlugHead>
     class intrusive_slug_list_size_ptr
     {
     public:
         typedef T value_type;
+        typedef D derived_type;
         typedef uint32_t size_type;
-        typedef IntrusivePtr<value_type> value_type_ptr;
-        typedef intrusive_slug_linked_ptr<value_type, IntrusivePtr, IntrusivePtrBase> linked_type;
-        typedef IntrusivePtr<linked_type> linked_type_ptr;
-        typedef IntrusiveSlugHead<value_type> head_type;
+        typedef IntrusivePtr<value_type, derived_type> value_type_ptr;
+        typedef intrusive_slug_linked_ptr<value_type, derived_type, IntrusivePtr, IntrusivePtrBase> linked_type;
+        typedef IntrusivePtr<linked_type, void> linked_type_ptr;
+        typedef IntrusiveSlugHead<value_type, derived_type> head_type;
 
     public:
         intrusive_slug_list_size_ptr()

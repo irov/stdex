@@ -5,13 +5,13 @@
 
 namespace stdex
 {
-    template<class Tag, template <class> class IntrusivePtr, class IntrusivePtrBase>
+    template<class Tag, class Derived, template <class, class> class IntrusivePtr, class IntrusivePtrBase>
     class intrusive_slug_linked_ptr
         : virtual public IntrusivePtrBase
     {
     public:
-        typedef intrusive_slug_linked_ptr<Tag, IntrusivePtr, IntrusivePtrBase> linked_type;
-        typedef IntrusivePtr<linked_type> linked_type_ptr;
+        typedef intrusive_slug_linked_ptr<Tag, Derived, IntrusivePtr, IntrusivePtrBase> linked_type;
+        typedef IntrusivePtr<linked_type, void> linked_type_ptr;
 
     public:
         inline intrusive_slug_linked_ptr()
