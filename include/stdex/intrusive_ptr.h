@@ -45,6 +45,11 @@ namespace stdex
             return ptr_none;
         }
 
+        inline static intrusive_ptr from( pointer_type _pointer )
+        {
+            return intrusive_ptr( _pointer );
+        }
+
     public:
         inline intrusive_ptr()
             : intrusive_ptr<derived_type>( nullptr )
@@ -418,6 +423,11 @@ namespace stdex
             static intrusive_ptr ptr_none;
 
             return ptr_none;
+        }
+
+        inline static intrusive_ptr from( pointer_type _pointer )
+        {
+            return intrusive_ptr( _pointer );
         }
 
     public:
