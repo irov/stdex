@@ -61,6 +61,11 @@ namespace stdex
 			return;
 		}
 
+#if defined(WIN32) && !defined(NDEBUG)
+		unsigned int *p = nullptr;
+		*p = 0xBADF00D;
+#endif
+
 		stdex::helper::throw_exception( _file, _line )(_doc);
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -81,6 +86,11 @@ namespace stdex
 	{
 		if( m_guard.lock( true ) == true )
 		{
+#if defined(WIN32) && !defined(NDEBUG)
+			unsigned int *p = nullptr;
+			*p = 0xBADF00D;
+#endif
+
 			stdex::helper::throw_exception( m_file, m_line )(m_doc);
 		}
 	}
@@ -89,6 +99,11 @@ namespace stdex
 	{
 		if( m_guard.lock( false ) == false )
 		{
+#if defined(WIN32) && !defined(NDEBUG)
+			unsigned int *p = nullptr;
+			*p = 0xBADF00D;
+#endif
+
 			stdex::helper::throw_exception( m_file, m_line )(m_doc);
 		}
 	}
