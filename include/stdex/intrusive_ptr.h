@@ -630,11 +630,21 @@ namespace stdex
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
             if( m_ptr == nullptr )
             {
+#if defined(WIN32) && !defined(NDEBUG)
+                unsigned int *p = nullptr;
+                *p = 0xBADF00D;
+#endif
+
                 STDEX_THROW_EXCEPTION( "m_ptr == nullptr" );
             }
 
             if( T::intrusive_ptr_check_ref( m_ptr ) == false )
             {
+#if defined(WIN32) && !defined(NDEBUG)
+                unsigned int *p = nullptr;
+                *p = 0xBADF00D;
+#endif
+
                 STDEX_THROW_EXCEPTION( "ptr check == false" );
             }
 #	endif
