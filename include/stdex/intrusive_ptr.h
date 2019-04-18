@@ -12,11 +12,17 @@
 #	define STDEX_INTRUSIVE_PTR_DEBUG
 #endif
 
+#if defined(WIN32) && !defined(NDEBUG)
+#define STDEX_CRITICAL_CRASH_ERROR unsigned int *p = nullptr; *p = 0xBADF00D;
+#else
+#define STDEX_CRITICAL_CRASH_ERROR 
+#endif
+
 #ifdef STDEX_INTRUSIVE_PTR_DEBUG
-#   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE) if( PTR != nullptr && dynamic_cast<TYPE>(PTR) == nullptr ) STDEX_THROW_EXCEPTION("ptr invalid cast")
+#   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE) if( PTR != nullptr && dynamic_cast<TYPE>(PTR) == nullptr ) { STDEX_CRITICAL_CRASH_ERROR; STDEX_THROW_EXCEPTION("ptr invalid cast");}
 #	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK() uint32_t m_debug_ptr_mask__;
 #	define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() this->m_debug_ptr_mask__ = 0xABCDEF01
-#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( this->m_debug_ptr_mask__ != 0xABCDEF01 ) STDEX_THROW_EXCEPTION("mask != 0xABCDEF01")
+#	define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() if( this->m_debug_ptr_mask__ != 0xABCDEF01 ) { STDEX_CRITICAL_CRASH_ERROR; STDEX_THROW_EXCEPTION("mask != 0xABCDEF01");}
 #else
 #   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE)
 #	define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
@@ -74,6 +80,7 @@ namespace stdex
         inline intrusive_ptr( const derived_type_ptr & _rhs )
             : intrusive_ptr<derived_type>( _rhs )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
         }
 
         inline intrusive_ptr( derived_type_ptr && _rhs )
@@ -90,6 +97,7 @@ namespace stdex
         inline intrusive_ptr( const intrusive_ptr<U, UD> & _rhs )
             : intrusive_ptr<derived_type>( _rhs )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
         }
 
         template<class U, class UD>
@@ -102,6 +110,7 @@ namespace stdex
         inline explicit intrusive_ptr( const U * _ptr )
             : intrusive_ptr<derived_type>( _ptr )
         {
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs, pointer_type );
         }
 
         inline ~intrusive_ptr()
@@ -630,21 +639,13 @@ namespace stdex
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
             if( m_ptr == nullptr )
             {
-#if defined(WIN32) && !defined(NDEBUG)
-                unsigned int *p = nullptr;
-                *p = 0xBADF00D;
-#endif
-
+                STDEX_CRITICAL_CRASH_ERROR;
                 STDEX_THROW_EXCEPTION( "m_ptr == nullptr" );
             }
 
             if( T::intrusive_ptr_check_ref( m_ptr ) == false )
             {
-#if defined(WIN32) && !defined(NDEBUG)
-                unsigned int *p = nullptr;
-                *p = 0xBADF00D;
-#endif
-
+                STDEX_CRITICAL_CRASH_ERROR;
                 STDEX_THROW_EXCEPTION( "ptr check == false" );
             }
 #	endif
