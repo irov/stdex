@@ -110,7 +110,7 @@ namespace stdex
         inline explicit intrusive_ptr( const U * _ptr )
             : intrusive_ptr<derived_type>( _ptr )
         {
-            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs, pointer_type );
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, pointer_type );
         }
 
         inline ~intrusive_ptr()
