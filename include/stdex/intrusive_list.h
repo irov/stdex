@@ -216,7 +216,7 @@ namespace stdex
             }
 
         private:
-            inline reverse_iterator & operator = ( const reverse_iterator & _it )
+            inline reverse_iterator & operator = ( const reverse_iterator & )
             {
                 return *this;
             }
