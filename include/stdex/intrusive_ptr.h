@@ -13,7 +13,17 @@
 #endif
 
 #if defined(WIN32) && !defined(NDEBUG)
-#define STDEX_CRITICAL_CRASH_ERROR unsigned int *p = nullptr; *p = 0xBADF00D;
+
+#pragma warning(disable:6011)
+
+inline void stdex_critical_crash_error()
+{
+    unsigned int* p = nullptr; *p = 0xBADF00D;
+}
+
+#pragma warning(default:6011)
+
+#define STDEX_CRITICAL_CRASH_ERROR stdex_critical_crash_error()
 #else
 #define STDEX_CRITICAL_CRASH_ERROR 
 #endif
