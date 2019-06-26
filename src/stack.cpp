@@ -436,6 +436,9 @@ namespace stdex
 {
 	bool get_callstack( std::string & _message, void * _context )
 	{		
+        (void)_message;
+        (void)_context;
+        
 		return true;
 	}
 }
