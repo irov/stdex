@@ -3,7 +3,7 @@
 namespace stdex
 {
     //////////////////////////////////////////////////////////////////////////
-    static inline const unsigned int roll( const unsigned int value, const unsigned int steps )
+    static inline unsigned int roll( const unsigned int value, const unsigned int steps )
     {
         return ((value << steps) | (value >> (32 - steps)));
     }
