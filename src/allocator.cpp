@@ -83,6 +83,8 @@ extern "C" {
 			public:
 				inline static void * s_malloc( size_t _size, const char * _doc )
 				{
+                    (void)_doc;
+                    
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_new( (uint32_t)_size, _doc );
 #endif
@@ -92,6 +94,8 @@ extern "C" {
 
                 inline static void s_free( void * _ptr, const char * _doc )
 				{
+                    (void)_doc;
+                    
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_free( _ptr, _doc );
 #endif
@@ -101,6 +105,8 @@ extern "C" {
 
                 inline static void * s_realloc( void * _ptr, size_t _size, const char * _doc )
                 {
+                    (void)_doc;
+                    
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_realoc( _ptr, (uint32_t)_size, _doc );
 #endif
