@@ -18,7 +18,7 @@
 
 inline void stdex_critical_crash_error()
 {
-    unsigned int* p = nullptr; *p = 0xBADF00D;
+    volatile unsigned int* p = nullptr; *p = 0xBADF00D;
 }
 
 #pragma warning(default:6011)
