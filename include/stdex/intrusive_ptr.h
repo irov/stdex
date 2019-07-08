@@ -81,7 +81,7 @@ namespace stdex
             return ptr_none;
         }
 
-        inline static intrusive_ptr from( pointer_type _pointer )
+        inline static intrusive_ptr from( const pointer_type _pointer )
         {
             return intrusive_ptr( _pointer );
         }
