@@ -140,17 +140,17 @@ namespace stdex
 
         size_type size() const
         {
-            return m_current - m_buff;
+            return (size_type)(m_current - m_buff);
         }
 
         size_type capacity() const
 		{
-			return m_last - m_buff;
+            return (size_type)(m_last - m_buff);
 		}
 
         size_type distance( T * _ptr ) const
         {
-            return _ptr - m_buff;
+            return (size_type)(_ptr - m_buff);
         }
 
     public:
