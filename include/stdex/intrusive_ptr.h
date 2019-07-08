@@ -81,7 +81,7 @@ namespace stdex
             return ptr_none;
         }
 
-        inline static intrusive_ptr from( const pointer_type _pointer )
+        inline static intrusive_ptr from( const_pointer_type _pointer )
         {
             return intrusive_ptr( _pointer );
         }
@@ -118,7 +118,7 @@ namespace stdex
         {
         }
 
-        inline explicit intrusive_ptr( value_type * _ptr )
+        inline explicit intrusive_ptr( const value_type * _ptr )
             : derived_type_ptr( _ptr )
         {
         }
@@ -464,7 +464,7 @@ namespace stdex
             return ptr_none;
         }
 
-        inline static intrusive_ptr from( const pointer_type _pointer )
+        inline static intrusive_ptr from( const_pointer_type _pointer )
         {
             return intrusive_ptr( _pointer );
         }
