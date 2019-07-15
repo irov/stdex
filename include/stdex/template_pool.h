@@ -36,6 +36,12 @@ namespace stdex
         }
 
     public:
+        void clear()
+        {
+            m_pool.clear();
+        }
+
+    public:
         bool empty() const
         {
             bool result = m_pool.empty();
