@@ -226,12 +226,12 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 	TSymLoadModule64 pSymLoadModule64 = (TSymLoadModule64)GetProcAddress( hDbhHelp, "SymLoadModule64" );
 	TSymGetSearchPath pSymGetSearchPath = (TSymGetSearchPath)GetProcAddress( hDbhHelp, "SymGetSearchPath" );
 
-	if( pStackWalk64 == NULL || pSymGetOptions == NULL ||
+	if( pRtlCaptureContext == NULL || pStackWalk64 == NULL || pSymGetOptions == NULL ||
 		pSymSetOptions == NULL || pSymFunctionTableAccess64 == NULL || pSymGetModuleBase64 == NULL ||
 		pSymGetModuleInfo64 == NULL || pSymGetSymFromAddr64 == NULL || pUnDecorateSymbolName == NULL || pSymLoadModule64 == NULL ||
 		pSymGetSearchPath == NULL )
 	{
-		FreeLibrary( hDbhHelp );
+        _message.append( "invalid get function" );
 
 		return false;
 	}
@@ -244,6 +244,8 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 
 	if( GetModuleListPSAPI( pSymLoadModule64, hProcess ) == FALSE )
 	{
+        _message.append( "invalid GetModuleListPSAPI" );
+
 		return false;
 	}
 
@@ -321,11 +323,15 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 		// CONTEXT need not to be suplied if imageTyp is IMAGE_FILE_MACHINE_I386!
 		if( pStackWalk64( imageType, hProcess, hThread, &frame, &contex, &ReadMemoryRoutine, pSymFunctionTableAccess64, pSymGetModuleBase64, NULL ) == FALSE )
 		{
+            _message.append( "invalid pStackWalk64" );
+
 			return false;
 		}
 
 		if( frame.AddrPC.Offset == frame.AddrReturn.Offset )
 		{
+            _message.append( "invalid frame.AddrPC.Offset == frame.AddrReturn.Offset" );
+
 			return false;
 		}
 
@@ -373,7 +379,7 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 		{
 			break;
 		}
-	} // for ( frameNum )
+	}
 
 	return true;
 }
