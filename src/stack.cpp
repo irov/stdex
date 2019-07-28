@@ -1,7 +1,7 @@
 #include "stdex/stack.h"
 
 #if defined _DEBUG
-#   if (defined _M_IX86 || defined _M_X64 || defined _M_IA64) && defined WIN32 && !defined __MINGW32__
+#   if (defined _M_IX86 || defined _M_X64 || defined _M_IA64) && defined WIN32
 
 #	include <windows.h>
 #	include <stdio.h>
@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 // dbghelp.dll
 //////////////////////////////////////////////////////////////////////////
+typedef VOID( __stdcall *TRtlCaptureContext )(OUT PCONTEXT ContextRecord);
 typedef BOOL( __stdcall *TSymCleanup )(IN HANDLE hProcess);
 typedef PVOID( __stdcall *TSymFunctionTableAccess64 )(HANDLE hProcess, DWORD64 AddrBase);
 typedef BOOL( __stdcall *TSymGetLineFromAddr64 )(IN HANDLE hProcess, IN DWORD64 dwAddr,
@@ -209,8 +210,9 @@ static void OnCallstackEntry( std::string & _message, CallstackEntry & entry )
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDbhHelp, HANDLE hThread, HANDLE hProcess )
+static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDbhHelp, HMODULE hKernel32, HANDLE hThread, HANDLE hProcess )
 {
+    TRtlCaptureContext pRtlCaptureContext = (TRtlCaptureContext)GetProcAddress( hKernel32, "RtlCaptureContext" );
 	TStackWalk64 pStackWalk64 = (TStackWalk64)GetProcAddress( hDbhHelp, "StackWalk64" );
 	TSymGetOptions pSymGetOptions = (TSymGetOptions)GetProcAddress( hDbhHelp, "SymGetOptions" );
 	TSymSetOptions pSymSetOptions = (TSymSetOptions)GetProcAddress( hDbhHelp, "SymSetOptions" );
@@ -251,7 +253,7 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 	{
 		memset( &contex, 0, sizeof( CONTEXT ) );
 		contex.ContextFlags = CONTEXT_FULL;
-		RtlCaptureContext( &contex );
+        (*pRtlCaptureContext)( &contex );
 	}
 	else
 	{
@@ -387,6 +389,8 @@ namespace stdex
 
 		if( hDbhHelp == NULL )
 		{
+            _message.append( "invalid load dbghelp.dll" );
+
 			return false;
 		}
 
@@ -395,24 +399,41 @@ namespace stdex
 
 		if( pSymInitialize == NULL || pSymCleanup == NULL )
 		{
+            _message.append( "invalid get dbghelp.dll [SymInitialize||SymCleanup]" );
+
 			FreeLibrary( hDbhHelp );
 
 			return false;
 		}
+
+        HMODULE hKernel32 = LoadLibraryW( L"Kernel32.dll" );
+
+        if( hKernel32 == NULL )
+        {
+            FreeLibrary( hDbhHelp );
+
+            _message.append( "invalid load Kernel32.dll" );
+
+            return false;
+        }
 
 		// SymInitialize
 		if( pSymInitialize( hProcess, NULL, FALSE ) == FALSE )
 		{
+            _message.append( "invalid SymInitialize" );
+
 			FreeLibrary( hDbhHelp );
+            FreeLibrary( hKernel32 );
 
 			return false;
 		}
 
-		bool successful = GetCallstack( _message, (PCONTEXT)_context, hDbhHelp, hThread, hProcess );
+		bool successful = GetCallstack( _message, (PCONTEXT)_context, hDbhHelp, hKernel32, hThread, hProcess );
 
 		pSymCleanup( hProcess );
 
 		FreeLibrary( hDbhHelp );
+        FreeLibrary( hKernel32 );
 
 		return successful;
 	}
