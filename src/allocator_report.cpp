@@ -3,16 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STDEX_ALLOCATOR_REPORT_DISABLE
-
-#ifndef NDEBUG
-#   ifdef WIN32
-#       ifndef STDEX_ALLOCATOR_REPORT_DISABLE
-#           define STDEX_ALLOCATOR_REPORT_ENABLE
-#       endif
-#   endif
-#endif
-
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
 #include <malloc.h>
 #endif
@@ -147,6 +137,26 @@ extern "C" {
     struct stdex_memory_report_t * stdex_allocator_report_info( uint32_t _index )
     {
         return mm + _index;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    uint32_t stdex_get_allocator_report_count( const char * _name )
+    {
+        if( mm == nullptr )
+        {
+            return 0L;
+        }
+
+        for( uint32_t i = 0; i != STDEX_ALLOCATOR_REPORT_MAX_COUNT; ++i )
+        {
+            stdex_memory_report_t * m = mm + i;
+
+            if( strcmp( m->name, _name ) == 0 )
+            {
+                return m->count;
+            }
+        }
+
+        return 0L;
     }
 #ifdef __cplusplus
 };

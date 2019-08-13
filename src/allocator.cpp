@@ -243,10 +243,10 @@ extern "C" {
 		//////////////////////////////////////////////////////////////////////////
 		allocator_pool_loop( allocator_pool_decl );
 		//////////////////////////////////////////////////////////////////////////
-		static bool s_initialize = false;
-		static void * s_thread_ptr = nullptr;
-		static stdex_allocator_thread_lock_t s_thread_lock_func = nullptr;
-		static stdex_allocator_thread_unlock_t s_thread_unlock_func = nullptr;
+		static volatile bool s_initialize = false;
+		static volatile void * s_thread_ptr = nullptr;
+		static volatile stdex_allocator_thread_lock_t s_thread_lock_func = nullptr;
+		static volatile stdex_allocator_thread_unlock_t s_thread_unlock_func = nullptr;
 		//////////////////////////////////////////////////////////////////////////
 #ifndef NDEBUG
 #	define SDTEX_ALLOCATOR_INITIALIZE_CHECK\
@@ -389,7 +389,7 @@ extern "C" {
 				return;
 			}
 
-			(*s_thread_lock_func)(s_thread_ptr);
+			(*s_thread_lock_func)((void *)s_thread_ptr);
 		}
 		//////////////////////////////////////////////////////////////////////////
 		static void s_thread_unlock()
@@ -399,7 +399,7 @@ extern "C" {
 				return;
 			}
 
-			(*s_thread_unlock_func)(s_thread_ptr);
+			(*s_thread_unlock_func)((void *)s_thread_ptr);
 		}
 		//////////////////////////////////////////////////////////////////////////
 		void stdex_allocator_initialize()

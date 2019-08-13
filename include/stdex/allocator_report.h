@@ -3,6 +3,16 @@
 #include <stddef.h>
 #include <stdint.h>
 
+//#define STDEX_ALLOCATOR_REPORT_DISABLE
+
+#ifndef NDEBUG
+#   ifdef WIN32
+#       ifndef STDEX_ALLOCATOR_REPORT_DISABLE
+#           define STDEX_ALLOCATOR_REPORT_ENABLE
+#       endif
+#   endif
+#endif
+
 #ifndef STDEX_ALLOCATOR_REPORT_MAX_NAME
 #   define STDEX_ALLOCATOR_REPORT_MAX_NAME 128
 #endif
@@ -28,6 +38,7 @@ extern "C" {
 
     uint32_t stdex_allocator_report_count();
     struct stdex_memory_report_t * stdex_allocator_report_info( uint32_t _index );
+    uint32_t stdex_get_allocator_report_count( const char * _name );
 
 #ifdef __cplusplus
 };
