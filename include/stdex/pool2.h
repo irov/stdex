@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include <stdint.h>
 
 namespace stdex
@@ -26,8 +27,8 @@ namespace stdex
             {
                 block_t * free = nullptr;
 
-                for( block_t * it = buffer_block,
-                    *it_end = buffer_block + TBlockCount;
+                for( block_t * it = reinterpret_cast<block_t *>(buffer_block_storage + 0),
+                    *it_end = reinterpret_cast<block_t *>(buffer_block_storage + TBlockCount);
                     it != it_end;
                     ++it )
                 {
@@ -46,7 +47,8 @@ namespace stdex
 
         protected:
             chunk_t * prev;
-            block_t buffer_block[TBlockCount];
+            typedef typename std::aligned_storage<sizeof( block_t ), alignof(block_t)>::type block_storage_t;
+            block_storage_t buffer_block_storage[TBlockCount];
         };
         
     public:
@@ -108,6 +110,7 @@ namespace stdex
         {
             const size_t sizeof_chunk_t = sizeof( chunk_t );
             void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, "pool2" );
+
             new (mem_chunk)chunk_t( m_chunk );
 
             chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);

@@ -3,6 +3,7 @@
 #include "stdex/allocator.h"
 #include "stdex/typename.h"
 
+#include <type_traits>
 #include <stdint.h>
 
 namespace stdex
@@ -22,8 +23,8 @@ namespace stdex
 		{
 			pool_block * free = nullptr;
 
-			for( pool_block * it = buffer_block, 
-				*it_end = buffer_block + TBlockCount; 
+			for( pool_block * it = reinterpret_cast<pool_block *>(buffer_block_storage + 0),
+				*it_end = reinterpret_cast<pool_block *>(buffer_block_storage + TBlockCount);
 				it != it_end; 
 			++it )
 			{
@@ -48,7 +49,8 @@ namespace stdex
         }
 
 		chunk_t * prev;
-        pool_block buffer_block[TBlockCount];        
+        typedef typename std::aligned_storage<sizeof( pool_block ), alignof(pool_block)>::type pool_block_storage;
+        pool_block_storage buffer_block_storage[TBlockCount];
     };
 
 	class stdex_pool_allocator_default
@@ -193,7 +195,8 @@ namespace stdex
     protected:
         void addChunk_()
         {
-			void * mem_chunk = TAllocator::s_malloc( sizeof( chunk_t ), type_name<TBlockType>::value );
+            const size_t sizeof_chunk_t = sizeof( chunk_t );
+			void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, type_name<TBlockType>::value );
 
 			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
