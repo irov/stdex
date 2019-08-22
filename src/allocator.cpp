@@ -8,9 +8,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-#ifndef NDEBUG
-//#   define STDEX_ALLOCATOR_DISABLE
-#endif
+//#define STDEX_ALLOCATOR_DISABLE
 
 #ifndef STDEX_ALLOCATOR_INCLUDE
 #define STDEX_ALLOCATOR_INCLUDE "stdlib.h"
@@ -255,13 +253,19 @@ extern "C" {
 #	define SDTEX_ALLOCATOR_INITIALIZE_CHECK
 #endif		
 		//////////////////////////////////////////////////////////////////////////
+#ifndef NDEBUG
 #define allocator_pool_alloc( i )\
-    if( align_size <= allocator_pool_size(i) )\
-			    {\
+    if( align_size <= allocator_pool_size(i) ){\
         stdex_allocator_report_new( s[i], _doc );\
         mem = allocator_pool(i).alloc_block();\
-        pi = i;\
-			    } else
+        ::memset( mem, 0xCD, allocator_pool_size( i ) );\
+        pi = i;} else
+#else
+#define allocator_pool_alloc( i )\
+    if( align_size <= allocator_pool_size(i) ){\
+        mem = allocator_pool(i).alloc_block();\
+        pi = i;} else
+#endif
 		//////////////////////////////////////////////////////////////////////////
 		static void * s_malloc( uint32_t _size, const char * _doc )
 		{
@@ -296,12 +300,19 @@ extern "C" {
 			return mem_buff;
         }
         //////////////////////////////////////////////////////////////////////////
+#ifndef NDEBUG
 #define allocator_pool_free(i)\
-    if( pi == i )\
-			    {\
+    if( pi == i ){\
     stdex_allocator_report_free_n(s[pi], _doc);\
     allocator_pool(i).free_block(mem_pool);\
-			    } else
+    ::memset( _mem, 0xBD, allocator_pool_size( i ) );\
+    } else
+#else
+#define allocator_pool_free(i)\
+    if( pi == i ){\
+    allocator_pool(i).free_block(mem_pool);\
+	} else
+#endif
 		//////////////////////////////////////////////////////////////////////////
 		static void s_free( void * _mem, const char * _doc )
 		{

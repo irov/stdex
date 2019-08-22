@@ -10,7 +10,7 @@ namespace stdex
     {
     public:
         typedef uint32_t size_type;
-        typedef typename T::linked_type linked_type;
+        typedef typename stdex::intrusive_linked<T>::linked_type linked_type;
         typedef T * value_type;
 
     public:
