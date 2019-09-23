@@ -48,6 +48,7 @@ namespace stdex
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
 		};
 
 		template<class R, class C, class ... Args>
@@ -66,6 +67,7 @@ namespace stdex
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
 		};
 
         template<class R, class C, class ... Args>
@@ -84,6 +86,7 @@ namespace stdex
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
         };
 
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(__ANDROID__) || defined(__ANDROID__) || defined(__APPLE__)
@@ -103,6 +106,7 @@ namespace stdex
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
         };
 
         template<class R, class C, class ... Args>
@@ -121,6 +125,7 @@ namespace stdex
 
             typedef typename function_types_args<arity != 0, param, 0>::type first_param;
             typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
+            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
         };
 #endif
 	}
