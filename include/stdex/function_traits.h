@@ -9,7 +9,7 @@ namespace stdex
 	template<class T>
 	struct external_type_cast
 	{
-		typedef T Type;
+		typedef T type;
 	};
 
 	namespace detail
@@ -41,15 +41,16 @@ namespace stdex
             typedef std::tuple<Args...> params;
 
             template<uint32_t I>
-            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
 			static const bool method = false;
 			static const uint32_t arity = sizeof ... (Args);
 
-            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
-            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
-            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
-            typedef typename function_types_args<arity != 0 && arity != 1 && arity != 2, param, arity - 3> ::type last3_param;
+            template<uint32_t I>
+            using iterator_param = typename function_types_args<(arity > I), param, I>::type;
+
+            template<uint32_t I>
+            using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
 		};
 
 		template<class R, class C, class ... Args>
@@ -61,15 +62,16 @@ namespace stdex
             typedef std::tuple<Args...> params;
 
             template<uint32_t I>
-            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
 			static const bool method = true;
 			static const uint32_t arity = sizeof ... (Args);
 
-            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
-            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
-            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
-            typedef typename function_types_args<arity != 0 && arity != 1 && arity != 2, param, arity - 3> ::type last3_param;
+            template<uint32_t I>
+            using iterator_param = typename function_types_args<(arity > I), param, I>::type;
+
+            template<uint32_t I>
+            using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
 		};
 
         template<class R, class C, class ... Args>
@@ -81,15 +83,16 @@ namespace stdex
             typedef std::tuple<Args...> params;
 
             template<uint32_t I>
-            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
             static const bool method = true;
             static const uint32_t arity = sizeof ... (Args);
 
-            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
-            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
-            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
-            typedef typename function_types_args<arity != 0 && arity != 1 && arity != 2, param, arity - 3> ::type last3_param;
+            template<uint32_t I>
+            using iterator_param = typename function_types_args<(arity > I), param, I>::type;
+
+            template<uint32_t I>
+            using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
         };
 
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(__ANDROID__) || defined(__ANDROID__) || defined(__APPLE__)
@@ -102,15 +105,16 @@ namespace stdex
             typedef std::tuple<Args...> params;
 
             template<uint32_t I>
-            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
             static const bool method = true;
             static const uint32_t arity = sizeof ... (Args);
 
-            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
-            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
-            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
-            typedef typename function_types_args<arity != 0 && arity != 1 && arity != 2, param, arity - 3> ::type last3_param;
+            template<uint32_t I>
+            using iterator_param = typename function_types_args<(arity > I), param, I>::type;
+
+            template<uint32_t I>
+            using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
         };
 
         template<class R, class C, class ... Args>
@@ -122,15 +126,16 @@ namespace stdex
             typedef std::tuple<Args...> params;
 
             template<uint32_t I>
-            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::Type;
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
             static const bool method = true;
             static const uint32_t arity = sizeof ... (Args);
 
-            typedef typename function_types_args<arity != 0, param, 0>::type first_param;
-            typedef typename function_types_args<arity != 0, param, arity - 1>::type last_param;
-            typedef typename function_types_args<arity != 0 && arity != 1, param, arity - 2> ::type last2_param;
-            typedef typename function_types_args<arity != 0 && arity != 1 && arity != 2, param, arity - 3> ::type last3_param;
+            template<uint32_t I>
+            using iterator_param = typename function_types_args<(arity > I), param, I>::type;
+
+            template<uint32_t I>
+            using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
         };
 #endif
 	}
