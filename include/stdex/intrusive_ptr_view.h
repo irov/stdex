@@ -12,12 +12,32 @@ namespace stdex
         typedef intrusive_ptr<T, D> base_type;
         using base_type::value_type;
         using base_type::derived_type;
+        using base_type::pointer_type;
+        using base_type::const_pointer_type;
 
         typedef intrusive_ptr<value_type, derived_type> value_ptr_type;
 
     public:
+        static const intrusive_ptr_view & none()
+        {
+            static intrusive_ptr_view ptr_view_none;
+
+            return ptr_view_none;
+        }
+
+        static intrusive_ptr_view from( const_pointer_type _pointer )
+        {
+            return intrusive_ptr_view( _pointer );
+        }
+
+    public:
         intrusive_ptr_view()
             : base_type()
+        {
+        }
+
+        intrusive_ptr_view( const value_ptr_type & _rhs )
+            : base_type( _rhs.get(), intrusive_borrow_t() )
         {
         }
 
@@ -26,7 +46,7 @@ namespace stdex
         {
         }
 
-        intrusive_ptr_view( std::nullptr_t _ptr )
+        intrusive_ptr_view( std::nullptr_t )
             : base_type()
         {
         }

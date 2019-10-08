@@ -72,9 +72,9 @@ namespace stdex
     {
     public:
         typedef T value_type;
+        typedef D derived_type;
         typedef T * pointer_type;
         typedef const T * const_pointer_type;
-        typedef D derived_type;
         typedef intrusive_ptr<derived_type, void> derived_type_ptr;
 
     public:
