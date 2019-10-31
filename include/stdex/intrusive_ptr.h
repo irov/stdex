@@ -93,13 +93,13 @@ namespace stdex
         template<class U, class UD>
         static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer )
         {
-            return intrusive_ptr( _pointer.getT<pointer_type>() );
+            return intrusive_ptr( _pointer.template getT<pointer_type>() );
         }
 
         template<class U, class UD>
         static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
         {
-            return _pointer.getT<pointer_type>();
+            return _pointer.template getT<pointer_type>();
         }
 
     public:
@@ -513,7 +513,7 @@ namespace stdex
         template<class U, class UD>
         static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
         {
-            return _pointer.getT<pointer_type>();
+            return _pointer.template getT<pointer_type>();
         }
 
     public:
