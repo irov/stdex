@@ -128,7 +128,7 @@ namespace stdex
             inline const_iterator operator ++ ( int )
             {
                 const_iterator tmp = *this;
-                ++*this;
+                ++ * this;
 
                 return tmp;
             }
@@ -143,7 +143,7 @@ namespace stdex
             inline const_iterator operator -- ( int )
             {
                 const_iterator tmp = *this;
-                --*this;
+                -- * this;
 
                 return tmp;
             }
@@ -182,7 +182,7 @@ namespace stdex
             inline iterator operator ++ ( int )
             {
                 iterator tmp = *this;
-                ++*this;
+                ++ * this;
 
                 return tmp;
             }
@@ -197,7 +197,7 @@ namespace stdex
             inline iterator operator -- ( int )
             {
                 iterator tmp = *this;
-                --*this;
+                -- * this;
 
                 return tmp;
             }
@@ -236,7 +236,7 @@ namespace stdex
             inline reverse_iterator operator ++ ( int )
             {
                 reverse_iterator tmp = *this;
-                --*this;
+                -- * this;
 
                 return tmp;
             }
@@ -251,7 +251,7 @@ namespace stdex
             inline reverse_iterator operator -- ( int ) const
             {
                 reverse_iterator tmp = *this;
-                ++*this;
+                ++ * this;
 
                 return tmp;
             }

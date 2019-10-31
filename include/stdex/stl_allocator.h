@@ -13,9 +13,11 @@ namespace stdex
     {
     public:
         typedef T value_type;
-       
-        stl_allocator() = default;              
-        template <class U> stl_allocator( const stl_allocator<U>& ) noexcept {}
+
+        stl_allocator() = default;
+        template <class U> stl_allocator( const stl_allocator<U> & ) noexcept
+        {
+        }
 
         T * allocate( std::size_t n, const void * = nullptr )
         {
@@ -31,13 +33,13 @@ namespace stdex
     };
 
     template <class T>
-    bool operator == ( const stl_allocator<T>&, const stl_allocator<T>& )
+    bool operator == ( const stl_allocator<T> &, const stl_allocator<T> & )
     {
         return true;
     }
 
     template <class T>
-    bool operator != ( const stl_allocator<T>&, const stl_allocator<T>& )
+    bool operator != ( const stl_allocator<T> &, const stl_allocator<T> & )
     {
         return false;
     }

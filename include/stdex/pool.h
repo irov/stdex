@@ -19,60 +19,60 @@ namespace stdex
             pool_block * next;
         };
 
-		pool_block * initialize()
-		{
-			pool_block * free = nullptr;
+        pool_block * initialize()
+        {
+            pool_block * free = nullptr;
 
-			for( pool_block * it = reinterpret_cast<pool_block *>(buffer_block_storage + 0),
-				*it_end = reinterpret_cast<pool_block *>(buffer_block_storage + TBlockCount);
-				it != it_end; 
-			++it )
-			{
-				it->next = free;
-				free = it;
-			}
+            for( pool_block * it = reinterpret_cast<pool_block *>(buffer_block_storage + 0),
+                *it_end = reinterpret_cast<pool_block *>(buffer_block_storage + TBlockCount);
+                it != it_end;
+                ++it )
+            {
+                it->next = free;
+                free = it;
+            }
 
-			return free;
-		}
+            return free;
+        }
 
-		chunk_t * removePrev()
-		{
-			chunk_t * old = prev;
-			prev = nullptr;
+        chunk_t * removePrev()
+        {
+            chunk_t * old = prev;
+            prev = nullptr;
 
-			return old;
-		}
+            return old;
+        }
 
         chunk_t * getPrev() const
         {
             return prev;
         }
 
-		chunk_t * prev;
+        chunk_t * prev;
         typedef typename std::aligned_storage<sizeof( pool_block ), alignof(pool_block)>::type pool_block_storage;
         pool_block_storage buffer_block_storage[TBlockCount];
     };
 
-	class stdex_pool_allocator_default
-	{		
-	public:
-		static void * s_malloc( size_t _size, const char * _doc )
-		{
-			return stdex_malloc( _size, _doc );
-		}
+    class stdex_pool_allocator_default
+    {
+    public:
+        static void * s_malloc( size_t _size, const char * _doc )
+        {
+            return stdex_malloc( _size, _doc );
+        }
 
-		static void * s_realloc( void * _mem, size_t _size, const char * _doc )
-		{
-			return stdex_realloc( _mem, _size, _doc );
-		}
-		
-		static void s_free( void * _ptr, const char * _doc )
-		{
-			return stdex_free( _ptr, _doc );
-		}
-	};
+        static void * s_realloc( void * _mem, size_t _size, const char * _doc )
+        {
+            return stdex_realloc( _mem, _size, _doc );
+        }
 
-	template<class TBlockType, uint32_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
+        static void s_free( void * _ptr, const char * _doc )
+        {
+            return stdex_free( _ptr, _doc );
+        }
+    };
+
+    template<class TBlockType, uint32_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
     class pool
     {
         typedef pool_template_chunk<TBlockType, TBlockCount> chunk_t;
@@ -80,10 +80,10 @@ namespace stdex
 
     public:
         pool()
-            : m_chunk(nullptr)
-            , m_free(nullptr)
-            , m_blockCount(0)
-            , m_chunkCount(0)
+            : m_chunk( nullptr )
+            , m_free( nullptr )
+            , m_blockCount( 0 )
+            , m_chunkCount( 0 )
         {
         }
 
@@ -112,20 +112,20 @@ namespace stdex
 
         void free_block( void * _buff )
         {
-            block_t * block = reinterpret_cast<block_t*>(_buff);
+            block_t * block = reinterpret_cast<block_t *>(_buff);
 
             block->next = m_free;
             m_free = block;
 
-			--m_blockCount;
-			
-			if( m_blockCount == 0 && m_chunkCount > 1 )
-			{
-				this->collapse();
-			}
+            --m_blockCount;
+
+            if( m_blockCount == 0 && m_chunkCount > 1 )
+            {
+                this->collapse();
+            }
         }
 
-	public:
+    public:
         uint32_t getBlockCount() const
         {
             return m_blockCount;
@@ -146,11 +146,11 @@ namespace stdex
             return TBlockCount;
         }
 
-	public:
-		bool empty() const
-		{
-			return m_blockCount == 0;
-		}
+    public:
+        bool empty() const
+        {
+            return m_blockCount == 0;
+        }
 
     public:
         void clear()
@@ -161,7 +161,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-				TAllocator::s_free( chunk, type_name<TBlockType>::value );
+                TAllocator::s_free( chunk, type_name<TBlockType>::value );
 
                 chunk = prev;
             }
@@ -173,36 +173,36 @@ namespace stdex
             m_chunkCount = 0;
         }
 
-		void collapse()
-		{
-			chunk_t * chunk = m_chunk->removePrev();
+        void collapse()
+        {
+            chunk_t * chunk = m_chunk->removePrev();
 
-			while( chunk != nullptr )
-			{
-				chunk_t * prev = chunk->getPrev();
+            while( chunk != nullptr )
+            {
+                chunk_t * prev = chunk->getPrev();
 
-				TAllocator::s_free( chunk, type_name<TBlockType>::value );
+                TAllocator::s_free( chunk, type_name<TBlockType>::value );
 
-				chunk = prev;
-			}
+                chunk = prev;
+            }
 
-			m_free = m_chunk->initialize();
+            m_free = m_chunk->initialize();
 
-			m_blockCount = 0;
-			m_chunkCount = 1;
-		}
+            m_blockCount = 0;
+            m_chunkCount = 1;
+        }
 
     protected:
         void addChunk_()
         {
             const size_t sizeof_chunk_t = sizeof( chunk_t );
-			void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, type_name<TBlockType>::value );
+            void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, type_name<TBlockType>::value );
 
-			chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
+            chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
             chunk->prev = m_chunk;
 
-			m_free = chunk->initialize();
+            m_free = chunk->initialize();
             m_chunk = chunk;
 
             ++m_chunkCount;

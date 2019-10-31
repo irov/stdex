@@ -50,7 +50,7 @@ namespace stdex
             typedef typename std::aligned_storage<sizeof( block_t ), alignof(block_t)>::type block_storage_t;
             block_storage_t buffer_block_storage[TBlockCount];
         };
-        
+
     public:
         pool2()
             : m_chunk( nullptr )
@@ -81,7 +81,7 @@ namespace stdex
 
         void free_block( void * _buff )
         {
-            block_t * block = reinterpret_cast<block_t*>(_buff);
+            block_t * block = reinterpret_cast<block_t *>(_buff);
 
             block->next = m_free;
             m_free = block;

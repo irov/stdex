@@ -7,755 +7,755 @@
 
 namespace stdex
 {
-	namespace helper
-	{
-		//////////////////////////////////////////////////////////////////////////
-		template<class C, class Key, class L>
-		inline size_t binary_vector_binary_lower_bound( const C & _container, const Key & _key, size_t _begin, size_t _count )
-		{
-			while( _count > 0 )
-			{				
-				size_t it = _begin; 
-				size_t step = _count / 2;
-				it += step;
-
-				const typename C::value_type & buffer_it = _container[it];
-
-				const Key & key_it = buffer_it.key;
-
-				if( L()( key_it, _key ) == true )
-				{
-					_begin = ++it;
-					_count -= step + 1;
-				}
-				else 
-				{
-					_count = step;
-				}
-			}
-
-			return _begin;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		template<class C, class Key, class L>
-		inline size_t binary_vector_binary_search( const C & _container, const Key & _key, size_t _begin, size_t _end )
-		{
-			while( _begin < _end )
-			{			
-				size_t middle = (_begin + _end) / 2;
-
-				const typename C::value_type & buffer_middle = _container[middle];
-
-				const Key & middle_key = buffer_middle.key;
-
-				if( L()( middle_key, _key ) == true )
-				{
-					_begin = middle + 1;
-				}
-				else
-				{
-					_end = middle;
-				}
-			}
-
-			if( _begin == _end )
-			{
-				const typename C::value_type & buffer_begin = _container[_begin];
-
-				const Key & begin_key = buffer_begin.key;
-
-				if( L()( _key, begin_key ) == false && L()( begin_key, _key ) == false )
-				{
-					return _begin;
-				}
-			}
-
-			return (size_t)-1;
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class Key, class T, class L = std::less<Key> >
-	class binary_vector
-	{
-	public:
-		typedef stdex::stl_allocator<size_t> free_type_allocator;
-		typedef stdex::stl_allocator<T> strore_type_allocator;
-
-		typedef std::vector<size_t, free_type_allocator> free_type;
-		typedef std::vector<T, strore_type_allocator> strore_type;
-
-	public:
-		struct binary_value_store_type
-		{
-			Key key;
-			size_t index;
-		};
-
-		typedef stdex::stl_allocator<binary_value_store_type> binary_value_store_type_allocator;
-
-		typedef std::vector<binary_value_store_type, binary_value_store_type_allocator> buffer_type;
-
-	public:
-		typedef typename buffer_type::iterator iterator;
-		typedef typename buffer_type::const_iterator const_iterator;
-
-	public:
-		typedef struct
-		{
-			iterator first;
-			bool second;
-		} insert_type;
-
-	protected:
-		iterator binary_vector_binary_search( const Key & _key )
-		{
-			size_t count = m_buffer.size();
-
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
-			
-			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
-
-			if( index == (size_t)-1 )
-			{
-				return m_buffer.end();
-			}
-
-			iterator it = m_buffer.begin();
-			std::advance(it, index);
-
-			return it;
-		}
-
-		const_iterator binary_vector_binary_search( const Key & _key ) const
-		{
-			size_t count = m_buffer.size();
-
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
-
-			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
+    namespace helper
+    {
+        //////////////////////////////////////////////////////////////////////////
+        template<class C, class Key, class L>
+        inline size_t binary_vector_binary_lower_bound( const C & _container, const Key & _key, size_t _begin, size_t _count )
+        {
+            while( _count > 0 )
+            {
+                size_t it = _begin;
+                size_t step = _count / 2;
+                it += step;
+
+                const typename C::value_type & buffer_it = _container[it];
+
+                const Key & key_it = buffer_it.key;
+
+                if( L()(key_it, _key) == true )
+                {
+                    _begin = ++it;
+                    _count -= step + 1;
+                }
+                else
+                {
+                    _count = step;
+                }
+            }
+
+            return _begin;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        template<class C, class Key, class L>
+        inline size_t binary_vector_binary_search( const C & _container, const Key & _key, size_t _begin, size_t _end )
+        {
+            while( _begin < _end )
+            {
+                size_t middle = (_begin + _end) / 2;
+
+                const typename C::value_type & buffer_middle = _container[middle];
+
+                const Key & middle_key = buffer_middle.key;
+
+                if( L()(middle_key, _key) == true )
+                {
+                    _begin = middle + 1;
+                }
+                else
+                {
+                    _end = middle;
+                }
+            }
+
+            if( _begin == _end )
+            {
+                const typename C::value_type & buffer_begin = _container[_begin];
+
+                const Key & begin_key = buffer_begin.key;
+
+                if( L()(_key, begin_key) == false && L()(begin_key, _key) == false )
+                {
+                    return _begin;
+                }
+            }
+
+            return (size_t)-1;
+        }
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class Key, class T, class L = std::less<Key> >
+    class binary_vector
+    {
+    public:
+        typedef stdex::stl_allocator<size_t> free_type_allocator;
+        typedef stdex::stl_allocator<T> strore_type_allocator;
+
+        typedef std::vector<size_t, free_type_allocator> free_type;
+        typedef std::vector<T, strore_type_allocator> strore_type;
+
+    public:
+        struct binary_value_store_type
+        {
+            Key key;
+            size_t index;
+        };
+
+        typedef stdex::stl_allocator<binary_value_store_type> binary_value_store_type_allocator;
+
+        typedef std::vector<binary_value_store_type, binary_value_store_type_allocator> buffer_type;
+
+    public:
+        typedef typename buffer_type::iterator iterator;
+        typedef typename buffer_type::const_iterator const_iterator;
+
+    public:
+        typedef struct
+        {
+            iterator first;
+            bool second;
+        } insert_type;
+
+    protected:
+        iterator binary_vector_binary_search( const Key & _key )
+        {
+            size_t count = m_buffer.size();
 
-			if( index == (size_t)-1 )
-			{
-				return m_buffer.end();
-			}
-
-			const_iterator it = m_buffer.begin();
-			std::advance(it, index);
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-			return it;
-		}
+            size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
 
-	protected:
-		iterator binary_vector_binary_lower_bound( const Key & _key )
-		{
-			size_t count = m_buffer.size();
+            if( index == (size_t)-1 )
+            {
+                return m_buffer.end();
+            }
 
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
+            iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
+            return it;
+        }
 
-			iterator it = m_buffer.begin();
-			std::advance(it, index);
+        const_iterator binary_vector_binary_search( const Key & _key ) const
+        {
+            size_t count = m_buffer.size();
 
-			return it;
-		}
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-		const_iterator binary_vector_binary_lower_bound( const Key & _key ) const
-		{
-			size_t count = m_buffer.size();
+            size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
 
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
+            if( index == (size_t)-1 )
+            {
+                return m_buffer.end();
+            }
 
-			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
+            const_iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			const_iterator it = m_buffer.begin();
-			std::advance(it, index);
+            return it;
+        }
 
-			return it;
-		}
+    protected:
+        iterator binary_vector_binary_lower_bound( const Key & _key )
+        {
+            size_t count = m_buffer.size();
 
-	public:
-		binary_vector()
-		{
-		}
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-	public:
-		void reserve( size_t _size )
-		{
-			m_store.reserve( _size );
-			m_buffer.reserve( _size );
-		}
+            size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
 
-		size_t size() const
-		{
-			size_t size = m_buffer.size();
+            iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			return size;
-		}
-
-		void clear()
-		{
-			m_store.clear();
-			m_buffer.clear();
-			m_free.clear();
-		}
-
-		bool empty() const
-		{
-			bool empty = m_buffer.empty();
-
-			return empty;
-		}
+            return it;
+        }
 
-	public:
-		iterator begin()
-		{
-			iterator it = m_buffer.begin();
+        const_iterator binary_vector_binary_lower_bound( const Key & _key ) const
+        {
+            size_t count = m_buffer.size();
 
-			return it;
-		}
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-		iterator end()
-		{
-			iterator it = m_buffer.end();
+            size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
 
-			return it;
-		}
+            const_iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-		const_iterator begin() const
-		{
-			const_iterator it = m_buffer.begin();
+            return it;
+        }
 
-			return it;
-		}
+    public:
+        binary_vector()
+        {
+        }
 
-		const_iterator end() const
-		{
-			const_iterator it = m_buffer.end();
+    public:
+        void reserve( size_t _size )
+        {
+            m_store.reserve( _size );
+            m_buffer.reserve( _size );
+        }
 
-			return it;
-		}
+        size_t size() const
+        {
+            size_t size = m_buffer.size();
 
-	public:
-		void set_value( iterator _it, const T & _value )
-		{
-			size_t index = _it->index;
+            return size;
+        }
 
-			m_store[index] = _value;
-		}
+        void clear()
+        {
+            m_store.clear();
+            m_buffer.clear();
+            m_free.clear();
+        }
 
-		T & get_value( iterator _it ) const
-		{
-			size_t index = _it->index;
+        bool empty() const
+        {
+            bool empty = m_buffer.empty();
 
-			T & value = m_store[index];
+            return empty;
+        }
 
-			return value;
-		}
+    public:
+        iterator begin()
+        {
+            iterator it = m_buffer.begin();
 
-		T & get_value( const_iterator _it ) const
-		{
-			size_t index = _it->index;
+            return it;
+        }
 
-			T & value = m_store[index];
+        iterator end()
+        {
+            iterator it = m_buffer.end();
 
-			return value;
-		}
+            return it;
+        }
 
-		const Key & get_key( const_iterator _it ) const
-		{
-			return _it->key;
-		}
+        const_iterator begin() const
+        {
+            const_iterator it = m_buffer.begin();
 
-	protected:
-		size_t story_value_( const T & _value )
-		{
-			size_t index;
+            return it;
+        }
 
-			if( m_free.empty() == true )
-			{
-				index = m_store.size();
-				m_store.push_back( _value );
-			}
-			else
-			{
-				index = m_free.back();
-				m_free.pop_back();
+        const_iterator end() const
+        {
+            const_iterator it = m_buffer.end();
 
-				m_store[index] = _value;
-			}
+            return it;
+        }
 
-			return index;
-		}
+    public:
+        void set_value( iterator _it, const T & _value )
+        {
+            size_t index = _it->index;
 
-	public:
-		insert_type insert( const Key & _key, const T & _value )
-		{
-			iterator it_lower_bound = this->binary_vector_binary_lower_bound( _key );
+            m_store[index] = _value;
+        }
 
-			if( it_lower_bound != m_buffer.end() )
-			{
-				const Key & lower_bound_key = it_lower_bound->key;
-				if( L()( _key, lower_bound_key ) == false )
-				{
-					insert_type ret = {it_lower_bound, false};
+        T & get_value( iterator _it ) const
+        {
+            size_t index = _it->index;
 
-					return ret;
-				}
-			}
+            T & value = m_store[index];
 
-			size_t index = this->story_value_( _value );
+            return value;
+        }
 
-			binary_value_store_type bvst = {_key, index};
-			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
+        T & get_value( const_iterator _it ) const
+        {
+            size_t index = _it->index;
 
-			insert_type ret = {it_insert, true};
+            T & value = m_store[index];
 
-			return ret;
-		}
+            return value;
+        }
 
-		iterator erase( iterator _it )
-		{
-			size_t index = _it->index;
-			m_free.push_back( index );
-			m_store[index] = T();
+        const Key & get_key( const_iterator _it ) const
+        {
+            return _it->key;
+        }
 
-			iterator new_it = m_buffer.erase( _it );
+    protected:
+        size_t story_value_( const T & _value )
+        {
+            size_t index;
 
-			return new_it;
-		}
+            if( m_free.empty() == true )
+            {
+                index = m_store.size();
+                m_store.push_back( _value );
+            }
+            else
+            {
+                index = m_free.back();
+                m_free.pop_back();
 
-		bool erase( const Key & _key )
-		{
-			iterator it_found = this->find( _key );
+                m_store[index] = _value;
+            }
 
-			if( it_found == this->end() )
-			{
-				return false;
-			}
+            return index;
+        }
 
-			this->erase( it_found );
+    public:
+        insert_type insert( const Key & _key, const T & _value )
+        {
+            iterator it_lower_bound = this->binary_vector_binary_lower_bound( _key );
 
-			return true;
-		}
+            if( it_lower_bound != m_buffer.end() )
+            {
+                const Key & lower_bound_key = it_lower_bound->key;
+                if( L()(_key, lower_bound_key) == false )
+                {
+                    insert_type ret = {it_lower_bound, false};
 
-	public:
-		bool exist( const Key & _key ) const
-		{
-			const_iterator it_found = this->find( _key );
+                    return ret;
+                }
+            }
 
-			bool result = (it_found != this->end());
+            size_t index = this->story_value_( _value );
 
-			return result;
-		}
-
-		bool has( const Key & _key, T ** _value ) const
-		{
-			const_iterator it_found = this->find( _key );
-
-			if( it_found == this->end() )
-			{
-				return false;
-			}
+            binary_value_store_type bvst = {_key, index};
+            iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
 
-			if( _value != nullptr )
-			{
-				T & value = this->get_value( it_found );
+            insert_type ret = {it_insert, true};
 
-				*_value = &value;
-			}
-
-			return true;
-		}
-			
-		bool has( const Key & _key, const T ** _value ) const
-		{
-			const_iterator it_found = this->find( _key );
+            return ret;
+        }
 
-			if( it_found == this->end() )
-			{
-				return false;
-			}
-
-			if( _value != nullptr )
-			{
-				const T & value = this->get_value( it_found );
-
-				*_value = &value;
-			}
+        iterator erase( iterator _it )
+        {
+            size_t index = _it->index;
+            m_free.push_back( index );
+            m_store[index] = T();
 
-			return true;
-		}
+            iterator new_it = m_buffer.erase( _it );
 
-		bool has_copy( const Key & _key, T & _value ) const
-		{
-			const_iterator it_found = this->find( _key );
+            return new_it;
+        }
 
-			if( it_found == this->end() )
-			{
-				return false;
-			}
+        bool erase( const Key & _key )
+        {
+            iterator it_found = this->find( _key );
 
-			const T & value = this->get_value( it_found );
-
-			_value = value;
-	
-			return true;
-		}
+            if( it_found == this->end() )
+            {
+                return false;
+            }
 
-	public:
-		iterator find( const Key & _key )
-		{
-			iterator it_lower_bound = this->binary_vector_binary_search( _key );
+            this->erase( it_found );
 
-			iterator it_end = this->end();
-			
-			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
+            return true;
+        }
 
-			return it_lower_bound;
-		}
+    public:
+        bool exist( const Key & _key ) const
+        {
+            const_iterator it_found = this->find( _key );
 
-		const_iterator find( const Key & _key ) const
-		{
-			const_iterator it_lower_bound = this->binary_vector_binary_search( _key );
+            bool result = (it_found != this->end());
 
-			const_iterator it_end = this->end();
+            return result;
+        }
 
-			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
+        bool has( const Key & _key, T ** _value ) const
+        {
+            const_iterator it_found = this->find( _key );
 
-			return it_lower_bound;
-		}
+            if( it_found == this->end() )
+            {
+                return false;
+            }
 
-		const buffer_type & get_buffer_() const
-		{
-			return m_buffer;
-		}
+            if( _value != nullptr )
+            {
+                T & value = this->get_value( it_found );
 
-	protected:		
-		buffer_type m_buffer;
-		mutable strore_type m_store;
-		free_type m_free;
-	};
+                *_value = &value;
+            }
 
-	template<class Key, class T, class L>
-	class binary_vector<Key, T *, L>
-	{
-	public:
-		struct binary_value_store_type
-		{
-			Key key;
-			T * value;
-		};
+            return true;
+        }
 
-		typedef stdex::stl_allocator<binary_value_store_type> binary_value_store_type_allocator;
+        bool has( const Key & _key, const T ** _value ) const
+        {
+            const_iterator it_found = this->find( _key );
 
-		typedef std::vector<binary_value_store_type, binary_value_store_type_allocator> buffer_type;
-
-		typedef typename buffer_type::iterator iterator;
-		typedef typename buffer_type::const_iterator const_iterator;
+            if( it_found == this->end() )
+            {
+                return false;
+            }
 
-		typedef struct
-		{
-			iterator first;
-			bool second;
-		} insert_type;
+            if( _value != nullptr )
+            {
+                const T & value = this->get_value( it_found );
 
-	protected:
-		iterator binary_vector_binary_search( const Key & _key )
-		{
-			size_t count = m_buffer.size();
+                *_value = &value;
+            }
 
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
+            return true;
+        }
 
-			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
+        bool has_copy( const Key & _key, T & _value ) const
+        {
+            const_iterator it_found = this->find( _key );
 
-			if( index == (size_t)-1 )
-			{
-				return m_buffer.end();
-			}
+            if( it_found == this->end() )
+            {
+                return false;
+            }
 
-			iterator it = m_buffer.begin();
-			std::advance(it, index);
-
-			return it;
-		}
-
-		const_iterator binary_vector_binary_search( const Key & _key ) const
-		{
-			size_t count = m_buffer.size();
-
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
-
-			size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
-
-			if( index == (size_t)-1 )
-			{
-				return m_buffer.end();
-			}
-
-			const_iterator it = m_buffer.begin();
-			std::advance(it, index);
-
-			return it;
-		}
-
-	protected:
-		iterator binary_vector_binary_lower_bound( const Key & _key )
-		{
-			size_t count = m_buffer.size();
-
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
-
-			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
-
-			iterator it = m_buffer.begin();
-			std::advance(it, index);
-
-			return it;
-		}
-
-		const_iterator binary_vector_binary_lower_bound( const Key & _key ) const
-		{
-			size_t count = m_buffer.size();
-
-			if( count == 0 )
-			{
-				return m_buffer.end();
-			}
-
-			size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
-
-			const_iterator it = m_buffer.begin();
-			std::advance(it, index);
-
-			return it;
-		}
-
-	public:
-		binary_vector()
-		{
-		}
-		
-	public:
-		void reserve( size_t _size )
-		{
-			m_buffer.reserve( _size );
-		}
+            const T & value = this->get_value( it_found );
 
-		size_t size() const
-		{
-			size_t size = m_buffer.size();
+            _value = value;
 
-			return size;
-		}
+            return true;
+        }
 
-		bool empty() const
-		{
-			bool empty = m_buffer.empty();
+    public:
+        iterator find( const Key & _key )
+        {
+            iterator it_lower_bound = this->binary_vector_binary_search( _key );
 
-			return empty;
-		}
+            iterator it_end = this->end();
 
-		void clear()
-		{
-			m_buffer.clear();
-		}
+            if( it_lower_bound == it_end )
+            {
+                return it_end;
+            }
 
-	public:
-		T * get_value( iterator _it ) const
-		{
-			return _it->value;
-		}
+            return it_lower_bound;
+        }
 
-		T * get_value( const_iterator _it ) const
-		{
-			return _it->value;
-		}
+        const_iterator find( const Key & _key ) const
+        {
+            const_iterator it_lower_bound = this->binary_vector_binary_search( _key );
 
-		void set_value( iterator _it, T * _value )
-		{
-			_it->value = _value;
-		}
+            const_iterator it_end = this->end();
 
-		const Key & get_key( const_iterator it ) const
-		{
-			return it->key;
-		}
+            if( it_lower_bound == it_end )
+            {
+                return it_end;
+            }
 
-	public:
-		iterator begin()
-		{
-			iterator it = m_buffer.begin();
+            return it_lower_bound;
+        }
 
-			return it;
-		}
+        const buffer_type & get_buffer_() const
+        {
+            return m_buffer;
+        }
 
-		iterator end()
-		{
-			iterator it = m_buffer.end();
+    protected:
+        buffer_type m_buffer;
+        mutable strore_type m_store;
+        free_type m_free;
+    };
 
-			return it;
-		}
+    template<class Key, class T, class L>
+    class binary_vector<Key, T *, L>
+    {
+    public:
+        struct binary_value_store_type
+        {
+            Key key;
+            T * value;
+        };
 
-		const_iterator begin() const
-		{
-			const_iterator it = m_buffer.begin();
+        typedef stdex::stl_allocator<binary_value_store_type> binary_value_store_type_allocator;
 
-			return it;
-		}
+        typedef std::vector<binary_value_store_type, binary_value_store_type_allocator> buffer_type;
 
-		const_iterator end() const
-		{
-			const_iterator it = m_buffer.end();
+        typedef typename buffer_type::iterator iterator;
+        typedef typename buffer_type::const_iterator const_iterator;
 
-			return it;
-		}
+        typedef struct
+        {
+            iterator first;
+            bool second;
+        } insert_type;
 
-	public:
-		insert_type insert( const Key & _key, T * _value )
-		{
-			iterator it_lower_bound = this->binary_vector_binary_lower_bound( _key );
+    protected:
+        iterator binary_vector_binary_search( const Key & _key )
+        {
+            size_t count = m_buffer.size();
 
-			if( it_lower_bound != m_buffer.end() )
-			{
-				if( L()( _key, it_lower_bound->key ) == false )
-				{
-					insert_type ret = {it_lower_bound, false};
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-					return ret;
-				}
-			}
+            size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
 
-			binary_value_store_type bvst = {_key, _value};
-			iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
+            if( index == (size_t)-1 )
+            {
+                return m_buffer.end();
+            }
 
-			insert_type ret = {it_insert, true};
+            iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			return ret;
-		}
+            return it;
+        }
 
-		iterator erase( iterator _erase )
-		{
-			iterator new_it = m_buffer.erase( _erase );
+        const_iterator binary_vector_binary_search( const Key & _key ) const
+        {
+            size_t count = m_buffer.size();
 
-			return new_it;
-		}
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-		bool erase( const Key & _key )
-		{
-			iterator it_found = this->find( _key );
+            size_t index = helper::binary_vector_binary_search<buffer_type, Key, L>( m_buffer, _key, 0, count - 1 );
 
-			if( it_found == this->end() )
-			{
-				return false;
-			}
+            if( index == (size_t)-1 )
+            {
+                return m_buffer.end();
+            }
 
-			this->erase( it_found );
+            const_iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			return true;
-		}
+            return it;
+        }
 
-	public:
-		bool exist( const Key & _key ) const
-		{
-			const_iterator it_found = this->find( _key );
+    protected:
+        iterator binary_vector_binary_lower_bound( const Key & _key )
+        {
+            size_t count = m_buffer.size();
 
-			bool result = (it_found != this->end());
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-			return result;
-		}
+            size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
 
-		bool has( const Key & _key, T ** _it ) const
-		{
-			const_iterator it_found = this->find( _key );
+            iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			if( it_found == this->end() )
-			{
-				return false;
-			}
+            return it;
+        }
 
-			if( _it != nullptr )
-			{
-				*_it = it_found->value;
-			}
+        const_iterator binary_vector_binary_lower_bound( const Key & _key ) const
+        {
+            size_t count = m_buffer.size();
 
-			return true;
-		}
+            if( count == 0 )
+            {
+                return m_buffer.end();
+            }
 
-		bool has( const Key & _key, const T ** _it ) const
-		{
-			const_iterator it_found = this->find( _key );
+            size_t index = helper::binary_vector_binary_lower_bound<buffer_type, Key, L>( m_buffer, _key, 0, count );
 
-			if( it_found == this->end() )
-			{
-				return false;
-			}
+            const_iterator it = m_buffer.begin();
+            std::advance( it, index );
 
-			if( _it != nullptr )
-			{
-				*_it = it_found->value;
-			}
+            return it;
+        }
 
-			return true;
-		}
+    public:
+        binary_vector()
+        {
+        }
 
-	public:
-		iterator find( const Key & _key )
-		{
-			iterator it_lower_bound = this->binary_vector_binary_search( _key );
+    public:
+        void reserve( size_t _size )
+        {
+            m_buffer.reserve( _size );
+        }
 
-			iterator it_end = this->end();
+        size_t size() const
+        {
+            size_t size = m_buffer.size();
 
-			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
+            return size;
+        }
 
-			return it_lower_bound;
-		}
+        bool empty() const
+        {
+            bool empty = m_buffer.empty();
 
-		const_iterator find( const Key & _key ) const
-		{
-			const_iterator it_lower_bound = this->binary_vector_binary_search( _key );
+            return empty;
+        }
 
-			const_iterator it_end = this->end();
+        void clear()
+        {
+            m_buffer.clear();
+        }
 
-			if( it_lower_bound == it_end )
-			{
-				return it_end;
-			}
+    public:
+        T * get_value( iterator _it ) const
+        {
+            return _it->value;
+        }
 
-			return it_lower_bound;
-		}
+        T * get_value( const_iterator _it ) const
+        {
+            return _it->value;
+        }
 
-	protected:
-		buffer_type m_buffer;
-	};
+        void set_value( iterator _it, T * _value )
+        {
+            _it->value = _value;
+        }
+
+        const Key & get_key( const_iterator it ) const
+        {
+            return it->key;
+        }
+
+    public:
+        iterator begin()
+        {
+            iterator it = m_buffer.begin();
+
+            return it;
+        }
+
+        iterator end()
+        {
+            iterator it = m_buffer.end();
+
+            return it;
+        }
+
+        const_iterator begin() const
+        {
+            const_iterator it = m_buffer.begin();
+
+            return it;
+        }
+
+        const_iterator end() const
+        {
+            const_iterator it = m_buffer.end();
+
+            return it;
+        }
+
+    public:
+        insert_type insert( const Key & _key, T * _value )
+        {
+            iterator it_lower_bound = this->binary_vector_binary_lower_bound( _key );
+
+            if( it_lower_bound != m_buffer.end() )
+            {
+                if( L()(_key, it_lower_bound->key) == false )
+                {
+                    insert_type ret = {it_lower_bound, false};
+
+                    return ret;
+                }
+            }
+
+            binary_value_store_type bvst = {_key, _value};
+            iterator it_insert = m_buffer.insert( it_lower_bound, bvst );
+
+            insert_type ret = {it_insert, true};
+
+            return ret;
+        }
+
+        iterator erase( iterator _erase )
+        {
+            iterator new_it = m_buffer.erase( _erase );
+
+            return new_it;
+        }
+
+        bool erase( const Key & _key )
+        {
+            iterator it_found = this->find( _key );
+
+            if( it_found == this->end() )
+            {
+                return false;
+            }
+
+            this->erase( it_found );
+
+            return true;
+        }
+
+    public:
+        bool exist( const Key & _key ) const
+        {
+            const_iterator it_found = this->find( _key );
+
+            bool result = (it_found != this->end());
+
+            return result;
+        }
+
+        bool has( const Key & _key, T ** _it ) const
+        {
+            const_iterator it_found = this->find( _key );
+
+            if( it_found == this->end() )
+            {
+                return false;
+            }
+
+            if( _it != nullptr )
+            {
+                *_it = it_found->value;
+            }
+
+            return true;
+        }
+
+        bool has( const Key & _key, const T ** _it ) const
+        {
+            const_iterator it_found = this->find( _key );
+
+            if( it_found == this->end() )
+            {
+                return false;
+            }
+
+            if( _it != nullptr )
+            {
+                *_it = it_found->value;
+            }
+
+            return true;
+        }
+
+    public:
+        iterator find( const Key & _key )
+        {
+            iterator it_lower_bound = this->binary_vector_binary_search( _key );
+
+            iterator it_end = this->end();
+
+            if( it_lower_bound == it_end )
+            {
+                return it_end;
+            }
+
+            return it_lower_bound;
+        }
+
+        const_iterator find( const Key & _key ) const
+        {
+            const_iterator it_lower_bound = this->binary_vector_binary_search( _key );
+
+            const_iterator it_end = this->end();
+
+            if( it_lower_bound == it_end )
+            {
+                return it_end;
+            }
+
+            return it_lower_bound;
+        }
+
+    protected:
+        buffer_type m_buffer;
+    };
 }

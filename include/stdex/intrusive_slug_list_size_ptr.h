@@ -59,7 +59,7 @@ namespace stdex
             inline base_slug_iterator & operator = ( const base_slug_iterator & _it )
             {
                 m_node = _it.m_node;
-                
+
                 return *this;
             }
 
@@ -233,7 +233,7 @@ namespace stdex
             inline base_iterator operator ++ ( int )
             {
                 base_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
 
@@ -247,7 +247,7 @@ namespace stdex
             inline base_iterator operator -- ( int )
             {
                 base_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
         };
@@ -304,7 +304,7 @@ namespace stdex
             inline base_const_iterator operator ++ ( int )
             {
                 base_const_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
 
@@ -318,7 +318,7 @@ namespace stdex
             inline base_const_iterator operator -- ( int )
             {
                 base_const_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
         };
@@ -365,7 +365,7 @@ namespace stdex
             inline base_reverse_iterator operator ++ ( int )
             {
                 base_reverse_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
 
@@ -379,7 +379,7 @@ namespace stdex
             inline base_reverse_iterator operator -- ( int ) const
             {
                 base_reverse_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
         };
@@ -426,7 +426,7 @@ namespace stdex
             inline base_const_reverse_iterator operator ++ ( int )
             {
                 base_const_reverse_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
 
@@ -440,7 +440,7 @@ namespace stdex
             inline base_const_reverse_iterator operator -- ( int ) const
             {
                 base_const_reverse_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
         };

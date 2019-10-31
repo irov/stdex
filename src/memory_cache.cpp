@@ -4,120 +4,120 @@
 
 namespace stdex
 {
-	//////////////////////////////////////////////////////////////////////////
-	memory_cache::memory_cache()
-	{
-	}
-	//////////////////////////////////////////////////////////////////////////
-	memory_cache::~memory_cache()
-	{
-		this->clear();
-	}
-	//////////////////////////////////////////////////////////////////////////
-	void * memory_cache::lock_memory( size_t _size )
-	{
-		size_t minSize = (size_t)(0);
-		size_t maxSize = (size_t)(-1);
+    //////////////////////////////////////////////////////////////////////////
+    memory_cache::memory_cache()
+    {
+    }
+    //////////////////////////////////////////////////////////////////////////
+    memory_cache::~memory_cache()
+    {
+        this->clear();
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void * memory_cache::lock_memory( size_t _size )
+    {
+        size_t minSize = (size_t)(0);
+        size_t maxSize = (size_t)(-1);
 
-		memory_buffer * minBuffer = nullptr;
-		memory_buffer * maxBuffer = nullptr;
-		
-		for( t_list_memory_buffers::iterator
-			it = m_buffers.begin(),
-			it_end = m_buffers.end();
-		it != it_end;
-		++it )
-		{
-			memory_buffer * buffer = *it;
+        memory_buffer * minBuffer = nullptr;
+        memory_buffer * maxBuffer = nullptr;
 
-			if( buffer->isLock() == true )
-			{
-				continue;
-			}
+        for( t_list_memory_buffers::iterator
+            it = m_buffers.begin(),
+            it_end = m_buffers.end();
+            it != it_end;
+            ++it )
+        {
+            memory_buffer * buffer = *it;
 
-			size_t buffer_size = buffer->getSize();
+            if( buffer->isLock() == true )
+            {
+                continue;
+            }
 
-			if( buffer_size > minSize && buffer_size <= _size )
-			{
-				minSize = buffer_size;
-				minBuffer = buffer;
-			}
+            size_t buffer_size = buffer->getSize();
 
-			if( buffer_size < maxSize && buffer_size >= _size )
-			{
-				maxSize = buffer_size;
-				maxBuffer = buffer;
-			}
-		}
-		
-		memory_buffer * currentBuffer = nullptr;
+            if( buffer_size > minSize && buffer_size <= _size )
+            {
+                minSize = buffer_size;
+                minBuffer = buffer;
+            }
 
-		if( maxBuffer != nullptr )
-		{
-			currentBuffer = maxBuffer;
-		}
-		else if( minBuffer != nullptr )
-		{
-			currentBuffer = minBuffer;
+            if( buffer_size < maxSize && buffer_size >= _size )
+            {
+                maxSize = buffer_size;
+                maxBuffer = buffer;
+            }
+        }
 
-			void * memory = minBuffer->getMemory();
-			void * realloc_memory = stdex_realloc( memory, _size, "memory_cache" );
+        memory_buffer * currentBuffer = nullptr;
 
-			minBuffer->setMemory( realloc_memory, _size );
-		}
-		else
-		{
-			currentBuffer = m_factoryBuffer.createT();
+        if( maxBuffer != nullptr )
+        {
+            currentBuffer = maxBuffer;
+        }
+        else if( minBuffer != nullptr )
+        {
+            currentBuffer = minBuffer;
 
-			void * memory = stdex_malloc( _size, "memory_cache" );
-			currentBuffer->setMemory( memory, _size );
+            void * memory = minBuffer->getMemory();
+            void * realloc_memory = stdex_realloc( memory, _size, "memory_cache" );
 
-			m_buffers.push_back( currentBuffer );
-		}
+            minBuffer->setMemory( realloc_memory, _size );
+        }
+        else
+        {
+            currentBuffer = m_factoryBuffer.createT();
 
-		currentBuffer->setLock( true );
+            void * memory = stdex_malloc( _size, "memory_cache" );
+            currentBuffer->setMemory( memory, _size );
 
-		void * memory = currentBuffer->getMemory();
+            m_buffers.push_back( currentBuffer );
+        }
 
-		return memory;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	void memory_cache::unlock_memory( void * _memory )
-	{
-		for( t_list_memory_buffers::iterator
-			it = m_buffers.begin(),
-			it_end = m_buffers.end();
-		it != it_end;
-		++it )
-		{
-			memory_buffer * buffer = *it;
+        currentBuffer->setLock( true );
 
-			void * memory = buffer->getMemory();
+        void * memory = currentBuffer->getMemory();
 
-			if( memory != _memory )
-			{
-				continue;
-			}
-			
-			buffer->setLock( false );
-			break;
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-	void memory_cache::clear()
-	{
-		for( t_list_memory_buffers::iterator
-			it = m_buffers.begin(),
-			it_end = m_buffers.end();
-		it != it_end;
-		++it )
-		{
-			memory_buffer * buffer = *it;
+        return memory;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void memory_cache::unlock_memory( void * _memory )
+    {
+        for( t_list_memory_buffers::iterator
+            it = m_buffers.begin(),
+            it_end = m_buffers.end();
+            it != it_end;
+            ++it )
+        {
+            memory_buffer * buffer = *it;
 
-			void * memory = buffer->getMemory();
-			stdex_free( memory, "memory_cache" );
-		}
+            void * memory = buffer->getMemory();
 
-		m_buffers.clear();
-	}
+            if( memory != _memory )
+            {
+                continue;
+            }
+
+            buffer->setLock( false );
+            break;
+        }
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void memory_cache::clear()
+    {
+        for( t_list_memory_buffers::iterator
+            it = m_buffers.begin(),
+            it_end = m_buffers.end();
+            it != it_end;
+            ++it )
+        {
+            memory_buffer * buffer = *it;
+
+            void * memory = buffer->getMemory();
+            stdex_free( memory, "memory_cache" );
+        }
+
+        m_buffers.clear();
+    }
 }

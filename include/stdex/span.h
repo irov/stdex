@@ -13,7 +13,8 @@ namespace stdex
             range_iterator_t( It _begin, It _end )
                 : m_begin( _begin )
                 , m_end( _end )
-            {}
+            {
+            }
 
         public:
             inline It begin() const

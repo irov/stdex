@@ -36,75 +36,75 @@
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {
-	//////////////////////////////////////////////////////////////////////////
-	thread_guard::thread_guard()
-		: m_lock(false)
-	{
-		m_id = STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID();
-	}
-	//////////////////////////////////////////////////////////////////////////
-	thread_guard::~thread_guard()
-	{
-	}
-	//////////////////////////////////////////////////////////////////////////
-	void thread_guard::reset()
-	{
-		m_id = 0;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	void thread_guard::check( const char * _file, uint32_t _line, const char * _doc ) const
-	{
-		uint32_t id = STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID();
+    //////////////////////////////////////////////////////////////////////////
+    thread_guard::thread_guard()
+        : m_lock( false )
+    {
+        m_id = STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID();
+    }
+    //////////////////////////////////////////////////////////////////////////
+    thread_guard::~thread_guard()
+    {
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void thread_guard::reset()
+    {
+        m_id = 0;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void thread_guard::check( const char * _file, uint32_t _line, const char * _doc ) const
+    {
+        uint32_t id = STDEX_THREAD_GUARD_GET_CURRENT_THREAD_ID();
 
-		if( m_id == id || m_id == 0 )
-		{
-			return;
-		}
+        if( m_id == id || m_id == 0 )
+        {
+            return;
+        }
 
 #if defined(WIN32) && !defined(NDEBUG)
-		unsigned int *p = nullptr;
-		*p = 0xBADF00D;
+        unsigned int * p = nullptr;
+        *p = 0xBADF00D;
 #endif
 
-		stdex::helper::throw_exception( _file, _line )(_doc);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	bool thread_guard::lock( bool _value ) const
-	{
-		bool lock = m_lock;
+        stdex::helper::throw_exception( _file, _line )(_doc);
+    }
+    //////////////////////////////////////////////////////////////////////////
+    bool thread_guard::lock( bool _value ) const
+    {
+        bool lock = m_lock;
 
-		m_lock = _value;
+        m_lock = _value;
 
-		return lock;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	thread_guard_scope::thread_guard_scope( const thread_guard & _guard, const char * _file, uint32_t _line, const char * _doc )
-		: m_guard( _guard )
-		, m_file( _file )
-		, m_line( _line )
-		, m_doc( _doc )
-	{
-		if( m_guard.lock( true ) == true )
-		{
+        return lock;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    thread_guard_scope::thread_guard_scope( const thread_guard & _guard, const char * _file, uint32_t _line, const char * _doc )
+        : m_guard( _guard )
+        , m_file( _file )
+        , m_line( _line )
+        , m_doc( _doc )
+    {
+        if( m_guard.lock( true ) == true )
+        {
 #if defined(WIN32) && !defined(NDEBUG)
-			unsigned int *p = nullptr;
-			*p = 0xBADF00D;
+            unsigned int * p = nullptr;
+            *p = 0xBADF00D;
 #endif
 
-			stdex::helper::throw_exception( m_file, m_line )(m_doc);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-	thread_guard_scope::~thread_guard_scope()
-	{
-		if( m_guard.lock( false ) == false )
-		{
+            stdex::helper::throw_exception( m_file, m_line )(m_doc);
+        }
+    }
+    //////////////////////////////////////////////////////////////////////////
+    thread_guard_scope::~thread_guard_scope()
+    {
+        if( m_guard.lock( false ) == false )
+        {
 #if defined(WIN32) && !defined(NDEBUG)
-			unsigned int *p = nullptr;
-			*p = 0xBADF00D;
+            unsigned int * p = nullptr;
+            *p = 0xBADF00D;
 #endif
 
-			stdex::helper::throw_exception( m_file, m_line )(m_doc);
-		}
-	}
+            stdex::helper::throw_exception( m_file, m_line )(m_doc);
+        }
+    }
 }

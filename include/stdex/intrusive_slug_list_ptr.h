@@ -6,7 +6,7 @@
 namespace stdex
 {
     template<class T, class D, template <class, class> class IntrusivePtr, class IntrusivePtrBase, template <class, class> class IntrusiveSlugHead>
-    class intrusive_slug_list_ptr        
+    class intrusive_slug_list_ptr
     {
     public:
         typedef T value_type;
@@ -231,7 +231,7 @@ namespace stdex
             inline base_iterator operator ++ ( int )
             {
                 base_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
 
@@ -245,7 +245,7 @@ namespace stdex
             inline base_iterator operator -- ( int )
             {
                 base_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
         };
@@ -302,7 +302,7 @@ namespace stdex
             inline base_const_iterator operator ++ ( int )
             {
                 base_const_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
 
@@ -316,7 +316,7 @@ namespace stdex
             inline base_const_iterator operator -- ( int )
             {
                 base_const_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
         };
@@ -363,7 +363,7 @@ namespace stdex
             inline base_reverse_iterator operator ++ ( int )
             {
                 base_reverse_iterator tmp = *this;
-                --*this;
+                -- * this;
                 return tmp;
             }
 
@@ -377,7 +377,7 @@ namespace stdex
             inline base_reverse_iterator operator -- ( int ) const
             {
                 base_reverse_iterator tmp = *this;
-                ++*this;
+                ++ * this;
                 return tmp;
             }
         };

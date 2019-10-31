@@ -22,7 +22,7 @@ namespace stdex
         inline static void intrusive_ptr_add_ref( intrusive_ptr_base * _ptr ) noexcept;
         inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr );
         inline static uint32_t intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept;
-        
+
 #	ifdef STDEX_INTRUSIVE_PTR_DEBUG
     public:
         inline static bool intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept;

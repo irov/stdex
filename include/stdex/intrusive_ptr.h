@@ -18,7 +18,7 @@
 
 inline void stdex_critical_crash_error()
 {
-    volatile unsigned int* p = nullptr; *p = 0xBADF00D;
+    volatile unsigned int * p = nullptr; *p = 0xBADF00D;
 }
 
 #pragma warning(default:6011)
@@ -33,19 +33,19 @@ template<class V, class T>
 void stdex_intrusive_ptr_check_typecast_ptr( T _ptr )
 {
     if( _ptr != nullptr && dynamic_cast<V>(_ptr) == nullptr )
-    { 
-        STDEX_CRITICAL_CRASH_ERROR; 
-        STDEX_THROW_EXCEPTION( "ptr invalid cast" ); 
+    {
+        STDEX_CRITICAL_CRASH_ERROR;
+        STDEX_THROW_EXCEPTION( "ptr invalid cast" );
     }
 }
 
 template<class T>
 void stdex_intrusive_ptr_check_debug_mask( T _ptr )
 {
-    if( _ptr->m_debug_ptr_mask__ != 0xABCDEF01 ) 
-    { 
+    if( _ptr->m_debug_ptr_mask__ != 0xABCDEF01 )
+    {
         STDEX_CRITICAL_CRASH_ERROR;
-        STDEX_THROW_EXCEPTION( "mask != 0xABCDEF01" ); 
+        STDEX_THROW_EXCEPTION( "mask != 0xABCDEF01" );
     }
 }
 
@@ -559,7 +559,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
-        }        
+        }
 
         template<class U>
         intrusive_ptr( const intrusive_ptr<U, void> & _rhs )

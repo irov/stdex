@@ -122,7 +122,7 @@ namespace stdex
     intrusive_ptr_view<T, D> make_intrusive_ptr_view( const U * _iptr )
     {
         return intrusive_ptr_view<T, D>( _iptr );
-    }    
+    }
     //////////////////////////////////////////////////////////////////////////
     template<class U, class T, class D>
     U intrusive_ptr_view_get( const intrusive_ptr_view<T, D> & _iptr )
@@ -271,5 +271,5 @@ namespace stdex
         const T * ptr = _left.get();
 
         return ptr == nullptr;
-    }    
+    }
 }

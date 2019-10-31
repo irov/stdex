@@ -75,11 +75,11 @@ namespace stdex
         result[4] += e;
     }
     //////////////////////////////////////////////////////////////////////////
-    void sha1_calc( const void* src, const int bytelength, unsigned char* hash )
+    void sha1_calc( const void * src, const int bytelength, unsigned char * hash )
     {
-        unsigned int result[5] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 };
+        unsigned int result[5] = {0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0};
 
-        const unsigned char* sarray = (const unsigned char*)src;
+        const unsigned char * sarray = (const unsigned char *)src;
 
         unsigned int w[80];
 
@@ -130,9 +130,9 @@ namespace stdex
         }
     }
 
-    void sha1_hex( const unsigned char* hash, char* hexstring )
+    void sha1_hex( const unsigned char * hash, char * hexstring )
     {
-        const char hexDigits[] = { "0123456789abcdef" };
+        const char hexDigits[] = {"0123456789abcdef"};
 
         for( int hashByte = 20; --hashByte >= 0; )
         {

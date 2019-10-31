@@ -7,11 +7,11 @@ namespace stdex
     template<class T, class Equal, uint32_t Size, uint32_t ProbeStep>
     class static_hash_array
     {
-	public:
+    public:
         typedef uint32_t hash_type;
-		typedef uint32_t size_type;
+        typedef uint32_t size_type;
         typedef K key_type;
-		typedef T value_type;
+        typedef T value_type;
 
     public:
         static_hash_array()
@@ -28,7 +28,7 @@ namespace stdex
         {
             m_dummy = _dummy;
         }
-        
+
     public:
         void clear()
         {
@@ -55,10 +55,10 @@ namespace stdex
             return m_count;
         }
 
-		size_type capacity() const
-		{
-			return Size;
-		}
+        size_type capacity() const
+        {
+            return Size;
+        }
 
     public:
         void insert( hash_type _hash, const T & _t )

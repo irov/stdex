@@ -15,25 +15,25 @@ namespace stdex
 
     public:
         auto_array()
-            : m_begin(nullptr)
-            , m_end(nullptr)
-			, m_capacity(nullptr)
+            : m_begin( nullptr )
+            , m_end( nullptr )
+            , m_capacity( nullptr )
         {
         }
 
         auto_array( const auto_array & _array )
-            : m_begin(_array.m_begin)
-            , m_end(_array.m_end)
-			, m_capacity(_array.m_capacity)
+            : m_begin( _array.m_begin )
+            , m_end( _array.m_end )
+            , m_capacity( _array.m_capacity )
         {
             _array.m_begin = nullptr;
             _array.m_end = nullptr;
-			_array.m_capacity = nullptr;
+            _array.m_capacity = nullptr;
         }
 
         ~auto_array()
         {
-			delete [] m_begin;
+            delete[] m_begin;
         }
 
     public:
@@ -84,11 +84,11 @@ namespace stdex
                 return;
             }
 
-			T * memory = new T[_size];
+            T * memory = new T[_size];
 
-            m_begin = reinterpret_cast<T*>(memory);
+            m_begin = reinterpret_cast<T *>(memory);
             m_end = m_begin;
-			m_capacity = m_begin + _size;			
+            m_capacity = m_begin + _size;
         }
 
     public:
@@ -110,6 +110,6 @@ namespace stdex
     protected:
         T * m_begin;
         T * m_end;
-		T * m_capacity;
+        T * m_capacity;
     };
 }

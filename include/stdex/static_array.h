@@ -7,9 +7,9 @@ namespace stdex
     template<class T, uint32_t Size>
     class static_array
     {
-	public:
-		typedef uint32_t size_type;
-		typedef T value_type;
+    public:
+        typedef uint32_t size_type;
+        typedef T value_type;
 
     public:
         static_array()
@@ -33,10 +33,10 @@ namespace stdex
             return *(m_current - 1);
         }
 
-		const T & back() const
-		{
-			return *(m_current - 1);
-		}
+        const T & back() const
+        {
+            return *(m_current - 1);
+        }
 
     public:
         typedef T * iterator;
@@ -82,13 +82,13 @@ namespace stdex
             return *element;
         }
 
-		T * emplace_count( uint32_t _count )
-		{
-			T * element = m_current;
-			m_current += _count;
+        T * emplace_count( uint32_t _count )
+        {
+            T * element = m_current;
+            m_current += _count;
 
-			return element;
-		}
+            return element;
+        }
 
         void clear()
         {
@@ -110,14 +110,14 @@ namespace stdex
         size_type size() const
         {
             size_type countElement = m_current - m_buff;
-			
+
             return countElement;
         }
 
         size_type capacity() const
-		{
-			return Size;
-		}
+        {
+            return Size;
+        }
 
     public:
         T & operator [] ( size_type _index )

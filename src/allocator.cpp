@@ -27,15 +27,15 @@
 #endif
 
 #ifndef STDEX_ALLOCATOR_NOTHREADSAFE
-#	define STDEX_ALLOCATOR_THREADSAFE
+#   define STDEX_ALLOCATOR_THREADSAFE
 #endif
 
 #ifdef STDEX_ALLOCATOR_THREADSAFE
-#	define STDEX_ALLOCATOR_LOCK() stdex::s_thread_lock()
-#	define STDEX_ALLOCATOR_UNLOCK() stdex::s_thread_unlock()
+#   define STDEX_ALLOCATOR_LOCK() stdex::s_thread_lock()
+#   define STDEX_ALLOCATOR_UNLOCK() stdex::s_thread_unlock()
 #else
-#	define STDEX_ALLOCATOR_LOCK()
-#	define STDEX_ALLOCATOR_UNLOCK()
+#   define STDEX_ALLOCATOR_LOCK()
+#   define STDEX_ALLOCATOR_UNLOCK()
 #endif
 
 #include STDEX_ALLOCATOR_INCLUDE
@@ -43,11 +43,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	namespace stdex
-	{
-		//////////////////////////////////////////////////////////////////////////
-		namespace detail
-		{
+    namespace stdex
+    {
+        //////////////////////////////////////////////////////////////////////////
+        namespace detail
+        {
             //////////////////////////////////////////////////////////////////////////
             class malloc_pool_allocator
             {
@@ -76,54 +76,54 @@ extern "C" {
                 }
             };
             //////////////////////////////////////////////////////////////////////////
-			class stdex_pool_allocator
-			{
-			public:
-				inline static void * s_malloc( size_t _size, const char * _doc )
-				{
+            class stdex_pool_allocator
+            {
+            public:
+                inline static void * s_malloc( size_t _size, const char * _doc )
+                {
                     (void)_doc;
-                    
+
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_new( (uint32_t)_size, _doc );
 #endif
 
-					return STDEX_ALLOCATOR_MALLOC( _size );
-				}
+                    return STDEX_ALLOCATOR_MALLOC( _size );
+                }
 
                 inline static void s_free( void * _ptr, const char * _doc )
-				{
+                {
                     (void)_doc;
-                    
+
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_free( _ptr, _doc );
 #endif
 
-					STDEX_ALLOCATOR_FREE( _ptr );
-				}
+                    STDEX_ALLOCATOR_FREE( _ptr );
+                }
 
                 inline static void * s_realloc( void * _ptr, size_t _size, const char * _doc )
                 {
                     (void)_doc;
-                    
+
 #ifdef STDEX_ALLOCATOR_REPORT_ENABLE
                     stdex_allocator_report_realoc( _ptr, (uint32_t)_size, _doc );
 #endif
 
                     return STDEX_ALLOCATOR_REALLOC( _ptr, _size );
                 }
-			};
-		}
+            };
+        }
         //////////////////////////////////////////////////////////////////////////
         typedef uint32_t allocator_size_t;
         //////////////////////////////////////////////////////////////////////////
 #define __STDEX_GET_BYTE(I) value |= ((allocator_size_t)bytes[I]) << (8 * I)
 #define __STDEX_SET_BYTE(I) bytes[I] = (_value >> (8 * I)) & 0xFF;
-		//////////////////////////////////////////////////////////////////////////
-		inline static allocator_size_t mem_get_value( const void * _mem )
-		{
-			const allocator_size_t * value = static_cast<const allocator_size_t *>(_mem);
+        //////////////////////////////////////////////////////////////////////////
+        inline static allocator_size_t mem_get_value( const void * _mem )
+        {
+            const allocator_size_t * value = static_cast<const allocator_size_t *>(_mem);
 
-			return *value;
+            return *value;
 
             //const uint8_t * bytes = static_cast<const uint8_t *>(_mem);
 
@@ -134,10 +134,10 @@ extern "C" {
             //__STDEX_GET_BYTE( 3 );
 
             //return value;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		inline void mem_set_value( void * _mem, allocator_size_t _value )
-		{
+        }
+        //////////////////////////////////////////////////////////////////////////
+        inline void mem_set_value( void * _mem, allocator_size_t _value )
+        {
             allocator_size_t * value = static_cast<allocator_size_t *>(_mem);
 
             *value = _value;
@@ -148,7 +148,7 @@ extern "C" {
             //__STDEX_SET_BYTE( 1 );
             //__STDEX_SET_BYTE( 2 );
             //__STDEX_SET_BYTE( 3 );
-		}
+        }
         //////////////////////////////////////////////////////////////////////////
 #undef __STDEX_GET_BYTE
 #undef __STDEX_SET_BYTE
@@ -167,7 +167,7 @@ extern "C" {
     const static allocator_size_t allocator_pool_size(i) = memory_buf_align(f);\
     typedef pool2<memory_buf_total(f), c, detail::malloc_pool_allocator> t_pool_type_p##i;
 
-		//////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
 #define allocator_pool_loop( function )\
         function(0) \
         function(1) \
@@ -190,69 +190,69 @@ extern "C" {
         function(18) \
         function(19)
 
-		allocator_pool_def( 0, 4, 128 );
-		allocator_pool_def( 1, 8, 2048 );
-		allocator_pool_def( 2, 16, 1024 );
-		allocator_pool_def( 3, 24, 512 );
-		allocator_pool_def( 4, 32, 512 );
-		allocator_pool_def( 5, 48, 256 );
-		allocator_pool_def( 6, 64, 256 );
-		allocator_pool_def( 7, 92, 256 );
-		allocator_pool_def( 8, 128, 256 );
-		allocator_pool_def( 9, 192, 256 );
-		allocator_pool_def( 10, 256, 256 );
-		allocator_pool_def( 11, 384, 256 );
-		allocator_pool_def( 12, 512, 32 );
-		allocator_pool_def( 13, 768, 32 );
-		allocator_pool_def( 14, 1024, 16 );
-		allocator_pool_def( 15, 2048, 16 );
-		allocator_pool_def( 16, 4096, 4 );
-		allocator_pool_def( 17, 8192, 2 );
-		allocator_pool_def( 18, 16384, 2 );
-		allocator_pool_def( 19, 32768, 2 );
-		//////////////////////////////////////////////////////////////////////////
-		const static allocator_size_t si_count = 20;
-		//////////////////////////////////////////////////////////////////////////
-		const static allocator_size_t s[] =
-		{allocator_pool_size( 0 )
-		, allocator_pool_size( 1 )
-		, allocator_pool_size( 2 )
-		, allocator_pool_size( 3 )
-		, allocator_pool_size( 4 )
-		, allocator_pool_size( 5 )
-		, allocator_pool_size( 6 )
-		, allocator_pool_size( 7 )
-		, allocator_pool_size( 8 )
-		, allocator_pool_size( 9 )
-		, allocator_pool_size( 10 )
-		, allocator_pool_size( 11 )
-		, allocator_pool_size( 12 )
-		, allocator_pool_size( 13 )
-		, allocator_pool_size( 14 )
-		, allocator_pool_size( 15 )
-		, allocator_pool_size( 16 )
-		, allocator_pool_size( 17 )
-		, allocator_pool_size( 18 )
-		, allocator_pool_size( 19 )
-		};
-		//////////////////////////////////////////////////////////////////////////
+        allocator_pool_def( 0, 4, 128 );
+        allocator_pool_def( 1, 8, 2048 );
+        allocator_pool_def( 2, 16, 1024 );
+        allocator_pool_def( 3, 24, 512 );
+        allocator_pool_def( 4, 32, 512 );
+        allocator_pool_def( 5, 48, 256 );
+        allocator_pool_def( 6, 64, 256 );
+        allocator_pool_def( 7, 92, 256 );
+        allocator_pool_def( 8, 128, 256 );
+        allocator_pool_def( 9, 192, 256 );
+        allocator_pool_def( 10, 256, 256 );
+        allocator_pool_def( 11, 384, 256 );
+        allocator_pool_def( 12, 512, 32 );
+        allocator_pool_def( 13, 768, 32 );
+        allocator_pool_def( 14, 1024, 16 );
+        allocator_pool_def( 15, 2048, 16 );
+        allocator_pool_def( 16, 4096, 4 );
+        allocator_pool_def( 17, 8192, 2 );
+        allocator_pool_def( 18, 16384, 2 );
+        allocator_pool_def( 19, 32768, 2 );
+        //////////////////////////////////////////////////////////////////////////
+        const static allocator_size_t si_count = 20;
+        //////////////////////////////////////////////////////////////////////////
+        const static allocator_size_t s[] =
+        {allocator_pool_size( 0 )
+            , allocator_pool_size( 1 )
+            , allocator_pool_size( 2 )
+            , allocator_pool_size( 3 )
+            , allocator_pool_size( 4 )
+            , allocator_pool_size( 5 )
+            , allocator_pool_size( 6 )
+            , allocator_pool_size( 7 )
+            , allocator_pool_size( 8 )
+            , allocator_pool_size( 9 )
+            , allocator_pool_size( 10 )
+            , allocator_pool_size( 11 )
+            , allocator_pool_size( 12 )
+            , allocator_pool_size( 13 )
+            , allocator_pool_size( 14 )
+            , allocator_pool_size( 15 )
+            , allocator_pool_size( 16 )
+            , allocator_pool_size( 17 )
+            , allocator_pool_size( 18 )
+            , allocator_pool_size( 19 )
+        };
+        //////////////////////////////////////////////////////////////////////////
 #define allocator_pool_decl( i )\
     static t_pool_type_p##i allocator_pool( i );
-		//////////////////////////////////////////////////////////////////////////
-		allocator_pool_loop( allocator_pool_decl );
-		//////////////////////////////////////////////////////////////////////////
-		static volatile bool s_initialize = false;
-		static volatile void * s_thread_ptr = nullptr;
-		static volatile stdex_allocator_thread_lock_t s_thread_lock_func = nullptr;
-		static volatile stdex_allocator_thread_unlock_t s_thread_unlock_func = nullptr;
-		//////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+        allocator_pool_loop( allocator_pool_decl );
+        //////////////////////////////////////////////////////////////////////////
+        static volatile bool s_initialize = false;
+        static volatile void * s_thread_ptr = nullptr;
+        static volatile stdex_allocator_thread_lock_t s_thread_lock_func = nullptr;
+        static volatile stdex_allocator_thread_unlock_t s_thread_unlock_func = nullptr;
+        //////////////////////////////////////////////////////////////////////////
 #ifndef NDEBUG
-#	define SDTEX_ALLOCATOR_INITIALIZE_CHECK\
-		if( s_initialize == false ){STDEX_THROW_EXCEPTION("stdex allocator not initialize");}
+#   define SDTEX_ALLOCATOR_INITIALIZE_CHECK\
+        if( s_initialize == false ){STDEX_THROW_EXCEPTION("stdex allocator not initialize");}
 #else
-#	define SDTEX_ALLOCATOR_INITIALIZE_CHECK
-#endif		
-		//////////////////////////////////////////////////////////////////////////
+#   define SDTEX_ALLOCATOR_INITIALIZE_CHECK
+#endif
+        //////////////////////////////////////////////////////////////////////////
 #ifndef NDEBUG
 #define allocator_pool_alloc( i )\
     if( align_size <= allocator_pool_size(i) ){\
@@ -266,38 +266,38 @@ extern "C" {
         mem = allocator_pool(i).alloc_block();\
         pi = i;} else
 #endif
-		//////////////////////////////////////////////////////////////////////////
-		static void * s_malloc( uint32_t _size, const char * _doc )
-		{
-			if( _size == 0 )
-			{
-				_size = 1;
-			}
+        //////////////////////////////////////////////////////////////////////////
+        static void * s_malloc( uint32_t _size, const char * _doc )
+        {
+            if( _size == 0 )
+            {
+                _size = 1;
+            }
 
             void * mem = nullptr;
-			allocator_size_t pi = 0;
+            allocator_size_t pi = 0;
 
             allocator_size_t align_size = memory_buf_align( _size );
 
-			allocator_pool_loop( allocator_pool_alloc )
-			{
+            allocator_pool_loop( allocator_pool_alloc )
+            {
                 allocator_size_t total_size = memory_buf_total( _size );
 
-				mem = detail::stdex_pool_allocator::s_malloc( total_size, _doc );
+                mem = detail::stdex_pool_allocator::s_malloc( total_size, _doc );
 
-				if( mem == nullptr )
-				{
-					return nullptr;
-				}
+                if( mem == nullptr )
+                {
+                    return nullptr;
+                }
 
-				pi = total_size;
-			}
+                pi = total_size;
+            }
 
-			pool_setup_index( mem, pi );
+            pool_setup_index( mem, pi );
 
-			void * mem_buff = pool_to_memory( mem );
+            void * mem_buff = pool_to_memory( mem );
 
-			return mem_buff;
+            return mem_buff;
         }
         //////////////////////////////////////////////////////////////////////////
 #ifndef NDEBUG
@@ -313,245 +313,244 @@ extern "C" {
     allocator_pool(i).free_block(mem_pool);\
 	} else
 #endif
-		//////////////////////////////////////////////////////////////////////////
-		static void s_free( void * _mem, const char * _doc )
-		{
-			if( _mem == nullptr )
-			{
-				return;
-			}
+        //////////////////////////////////////////////////////////////////////////
+        static void s_free( void * _mem, const char * _doc )
+        {
+            if( _mem == nullptr )
+            {
+                return;
+            }
 
-			allocator_size_t pi = memory_to_index( _mem );
-			void * mem_pool = memory_to_pool( _mem );
+            allocator_size_t pi = memory_to_index( _mem );
+            void * mem_pool = memory_to_pool( _mem );
 
-			allocator_pool_loop( allocator_pool_free )
-			{
-				void * global_mem_pool = memory_to_pool( _mem );
-				detail::stdex_pool_allocator::s_free( global_mem_pool, _doc );
-			}
-		}
-		//////////////////////////////////////////////////////////////////////////
-		static void * s_realloc( void * _mem, uint32_t _size, const char * _doc )
-		{
-			if( _mem == nullptr )
-			{
-				void * mem = s_malloc( _size, _doc );
+            allocator_pool_loop( allocator_pool_free )
+            {
+                void * global_mem_pool = memory_to_pool( _mem );
+                detail::stdex_pool_allocator::s_free( global_mem_pool, _doc );
+            }
+        }
+        //////////////////////////////////////////////////////////////////////////
+        static void * s_realloc( void * _mem, uint32_t _size, const char * _doc )
+        {
+            if( _mem == nullptr )
+            {
+                void * mem = s_malloc( _size, _doc );
 
-				return mem;
-			}
+                return mem;
+            }
 
-			if( _size == 0 )
-			{
-				s_free( _mem, _doc );
+            if( _size == 0 )
+            {
+                s_free( _mem, _doc );
 
-				return nullptr;
-			}
+                return nullptr;
+            }
 
-			allocator_size_t pi = memory_to_index( _mem );
+            allocator_size_t pi = memory_to_index( _mem );
 
-			if( pi >= si_count )
-			{
-				void * mem_pool = memory_to_pool( _mem );
-				allocator_size_t total_size = memory_buf_total( _size );
-				void * realloc_mem = detail::stdex_pool_allocator::s_realloc( mem_pool, total_size, _doc );
+            if( pi >= si_count )
+            {
+                void * mem_pool = memory_to_pool( _mem );
+                allocator_size_t total_size = memory_buf_total( _size );
+                void * realloc_mem = detail::stdex_pool_allocator::s_realloc( mem_pool, total_size, _doc );
 
-				if( realloc_mem == nullptr )
-				{
-					return nullptr;
-				}
+                if( realloc_mem == nullptr )
+                {
+                    return nullptr;
+                }
 
-				pool_setup_index( realloc_mem, total_size );
+                pool_setup_index( realloc_mem, total_size );
 
-				void * realloc_mem_buff = pool_to_memory( realloc_mem );
+                void * realloc_mem_buff = pool_to_memory( realloc_mem );
 
-				return realloc_mem_buff;
-			}
+                return realloc_mem_buff;
+            }
 
             allocator_size_t pool_size = s[pi];
 
-			if( pool_size >= _size )
-			{
-				return _mem;
-			}
+            if( pool_size >= _size )
+            {
+                return _mem;
+            }
 
-			void * new_mem = s_malloc( _size, _doc );
+            void * new_mem = s_malloc( _size, _doc );
 
-			stdex::memorycopy( new_mem, 0, _mem, pool_size );
+            stdex::memorycopy( new_mem, 0, _mem, pool_size );
 
-			s_free( _mem, _doc );
+            s_free( _mem, _doc );
 
-			return new_mem;
-		}
-		//////////////////////////////////////////////////////////////////////////
-#define allocator_pool_clear(i) \
-					{ \
-	allocator_pool(i).clear(); \
-					}
-		//////////////////////////////////////////////////////////////////////////
-		static void s_finalize()
-		{
-			allocator_pool_loop( allocator_pool_clear );
-		}
-		//////////////////////////////////////////////////////////////////////////
-		static void s_thread_lock()
-		{
-			if( s_thread_lock_func == nullptr )
-			{
-				return;
-			}
+            return new_mem;
+        }
+        //////////////////////////////////////////////////////////////////////////
+#define allocator_pool_clear(i)\
+        {\
+            allocator_pool(i).clear();\
+        }
+        //////////////////////////////////////////////////////////////////////////
+        static void s_finalize()
+        {
+            allocator_pool_loop( allocator_pool_clear );
+        }
+        //////////////////////////////////////////////////////////////////////////
+        static void s_thread_lock()
+        {
+            if( s_thread_lock_func == nullptr )
+            {
+                return;
+            }
 
-			(*s_thread_lock_func)((void *)s_thread_ptr);
-		}
-		//////////////////////////////////////////////////////////////////////////
-		static void s_thread_unlock()
-		{
-			if( s_thread_unlock_func == nullptr )
-			{
-				return;
-			}
+            (*s_thread_lock_func)((void *)s_thread_ptr);
+        }
+        //////////////////////////////////////////////////////////////////////////
+        static void s_thread_unlock()
+        {
+            if( s_thread_unlock_func == nullptr )
+            {
+                return;
+            }
 
-			(*s_thread_unlock_func)((void *)s_thread_ptr);
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void stdex_allocator_initialize()
-		{
-			s_initialize = true;
-		}
-		//////////////////////////////////////////////////////////////////////////
+            (*s_thread_unlock_func)((void *)s_thread_ptr);
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_allocator_initialize()
+        {
+            s_initialize = true;
+        }
+        //////////////////////////////////////////////////////////////////////////
 #   ifdef STDEX_ALLOCATOR_DISABLE
-
-		//////////////////////////////////////////////////////////////////////////
-		void * stdex_malloc( size_t _size, const char * _doc )
-		{
+        //////////////////////////////////////////////////////////////////////////
+        void * stdex_malloc( size_t _size, const char * _doc )
+        {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
             void * mem = detail::stdex_pool_allocator::s_malloc( _size, _doc );
 
             return mem;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void stdex_free( void * _mem, const char * _doc )
-		{
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_free( void * _mem, const char * _doc )
+        {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			detail::stdex_pool_allocator::s_free( _mem, _doc );
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void * stdex_calloc( size_t _num, size_t _size, const char * _doc )
-		{
+            detail::stdex_pool_allocator::s_free( _mem, _doc );
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void * stdex_calloc( size_t _num, size_t _size, const char * _doc )
+        {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
             size_t full_size = _num * _size;
-			
-			void * mem = detail::stdex_pool_allocator::s_malloc( full_size, _doc );
-			::memset( mem, 0, full_size );
 
-			return mem;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void * stdex_realloc( void * _mem, size_t _size, const char * _doc )
-		{
+            void * mem = detail::stdex_pool_allocator::s_malloc( full_size, _doc );
+            ::memset( mem, 0, full_size );
+
+            return mem;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void * stdex_realloc( void * _mem, size_t _size, const char * _doc )
+        {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			return detail::stdex_pool_allocator::s_realloc( _mem, _size, _doc );
-		}
-		//////////////////////////////////////////////////////////////////////////
+            return detail::stdex_pool_allocator::s_realloc( _mem, _size, _doc );
+        }
+        //////////////////////////////////////////////////////////////////////////
 #else
-		//////////////////////////////////////////////////////////////////////////
-		void * stdex_malloc( size_t _size, const char * _doc )
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+        //////////////////////////////////////////////////////////////////////////
+        void * stdex_malloc( size_t _size, const char * _doc )
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			STDEX_ALLOCATOR_LOCK();
-			void * memory = stdex::s_malloc( (uint32_t)_size, _doc );
-			STDEX_ALLOCATOR_UNLOCK();
+            STDEX_ALLOCATOR_LOCK();
+            void * memory = stdex::s_malloc( (uint32_t)_size, _doc );
+            STDEX_ALLOCATOR_UNLOCK();
 
-			return memory;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void stdex_free( void * _mem, const char * _doc )
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+            return memory;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_free( void * _mem, const char * _doc )
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			STDEX_ALLOCATOR_LOCK();
-			stdex::s_free( _mem, _doc );
-			STDEX_ALLOCATOR_UNLOCK();
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void * stdex_calloc( size_t _num, size_t _size, const char * _doc )
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+            STDEX_ALLOCATOR_LOCK();
+            stdex::s_free( _mem, _doc );
+            STDEX_ALLOCATOR_UNLOCK();
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void * stdex_calloc( size_t _num, size_t _size, const char * _doc )
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			size_t full_size = _num * _size;
+            size_t full_size = _num * _size;
 
-			STDEX_ALLOCATOR_LOCK();
-			void * mem = stdex::s_malloc( (uint32_t)full_size, _doc );
-			STDEX_ALLOCATOR_UNLOCK();
+            STDEX_ALLOCATOR_LOCK();
+            void * mem = stdex::s_malloc( (uint32_t)full_size, _doc );
+            STDEX_ALLOCATOR_UNLOCK();
 
-			::memset( mem, 0, full_size );
+            ::memset( mem, 0, full_size );
 
-			return mem;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void * stdex_realloc( void * _mem, size_t _size, const char * _doc )
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+            return mem;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void * stdex_realloc( void * _mem, size_t _size, const char * _doc )
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			STDEX_ALLOCATOR_LOCK();
-			void * memory = stdex::s_realloc( _mem, (uint32_t)_size, _doc );
-			STDEX_ALLOCATOR_UNLOCK();
+            STDEX_ALLOCATOR_LOCK();
+            void * memory = stdex::s_realloc( _mem, (uint32_t)_size, _doc );
+            STDEX_ALLOCATOR_UNLOCK();
 
-			return memory;
-		}
-		//////////////////////////////////////////////////////////////////////////
+            return memory;
+        }
+        //////////////////////////////////////////////////////////////////////////
 #endif
-		//////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
 #define allocator_pool_bound( i )\
-	if( _size < stdex::allocator_pool_size(i) )\
-			{\
-	bound = stdex::allocator_pool_size(i);\
-			} else
-		//////////////////////////////////////////////////////////////////////////
+        if( _size < stdex::allocator_pool_size(i) )\
+        {\
+            bound = stdex::allocator_pool_size(i);\
+        } else
+        //////////////////////////////////////////////////////////////////////////
         allocator_size_t stdex_allocator_bound( allocator_size_t _size )
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			allocator_size_t bound = 0;
-			allocator_pool_loop( allocator_pool_bound )
-			{
-				return _size + 4;
-			}
+            allocator_size_t bound = 0;
+            allocator_pool_loop( allocator_pool_bound )
+            {
+                return _size + 4;
+            }
 
-			return bound;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void stdex_allocator_finalize()
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+            return bound;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_allocator_finalize()
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			stdex::s_finalize();
+            stdex::s_finalize();
 
-			s_initialize = false;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void stdex_allocator_initialize_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock )
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+            s_initialize = false;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_allocator_initialize_threadsafe( void * _ptr, stdex_allocator_thread_lock_t _lock, stdex_allocator_thread_unlock_t _unlock )
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			s_thread_ptr = _ptr;
-			s_thread_lock_func = _lock;
-			s_thread_unlock_func = _unlock;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		void stdex_allocator_finalize_threadsafe()
-		{
-			SDTEX_ALLOCATOR_INITIALIZE_CHECK;
+            s_thread_ptr = _ptr;
+            s_thread_lock_func = _lock;
+            s_thread_unlock_func = _unlock;
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_allocator_finalize_threadsafe()
+        {
+            SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-			s_thread_ptr = nullptr;
-			s_thread_lock_func = nullptr;
-			s_thread_unlock_func = nullptr;
-		}
-	}
+            s_thread_ptr = nullptr;
+            s_thread_lock_func = nullptr;
+            s_thread_unlock_func = nullptr;
+        }
+    }
 #ifdef __cplusplus
 };
 #endif
