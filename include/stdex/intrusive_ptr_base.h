@@ -23,10 +23,10 @@ namespace stdex
         inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr );
         inline static uint32_t intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept;
 
-#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+#ifdef STDEX_INTRUSIVE_PTR_DEBUG
     public:
         inline static bool intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept;
-#	endif
+#endif
 
     protected:
         virtual void destroy() = 0;
@@ -92,7 +92,7 @@ namespace stdex
         return _ptr->m_reference;
     }
     //////////////////////////////////////////////////////////////////////////
-#	ifdef STDEX_INTRUSIVE_PTR_DEBUG
+#ifdef STDEX_INTRUSIVE_PTR_DEBUG
     //////////////////////////////////////////////////////////////////////////
     inline bool intrusive_ptr_base::intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept
     {
@@ -103,5 +103,5 @@ namespace stdex
 
         return true;
     }
-#	endif
+#endif
 }
