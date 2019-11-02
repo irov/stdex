@@ -10,10 +10,10 @@ namespace stdex
     {
     public:
         typedef intrusive_ptr<T, D> base_type;
-        using base_type::value_type;
-        using base_type::derived_type;
-        using base_type::pointer_type;
-        using base_type::const_pointer_type;
+        using typename base_type::value_type;
+        using typename base_type::derived_type;
+        using typename base_type::pointer_type;
+        using typename base_type::const_pointer_type;
 
         typedef intrusive_ptr<value_type, derived_type> value_ptr_type;
 
@@ -85,29 +85,29 @@ namespace stdex
     public:
         value_type * get() const
         {
-            return m_ptr;
+            return base_type::m_ptr;
         }
 
         template<class U>
         U getT() const
         {
-            return static_cast<U>(m_ptr);
+            return static_cast<U>(base_type::m_ptr);
         }
 
         value_type * operator -> () const
         {
-            return m_ptr;
+            return base_type::m_ptr;
         }
 
         void reset()
         {
-            m_ptr = nullptr;
+            base_type::m_ptr = nullptr;
         }
 
         void swap( intrusive_ptr_view & _rhs )
         {
-            value_type * tmp = m_ptr;
-            m_ptr = _rhs.m_ptr;
+            value_type * tmp = base_type::m_ptr;
+            base_type::m_ptr = _rhs.m_ptr;
             _rhs.m_ptr = tmp;
         }
     };
@@ -127,7 +127,7 @@ namespace stdex
     template<class U, class T, class D>
     U intrusive_ptr_view_get( const intrusive_ptr_view<T, D> & _iptr )
     {
-        U * u_ptr = _iptr.getT<U>();
+        U * u_ptr = _iptr.template getT<U *>();
 
         return u_ptr;
     }
