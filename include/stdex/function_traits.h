@@ -95,7 +95,7 @@ namespace stdex
             using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
         };
 
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__ANDROID__) || defined(__ANDROID__) || defined(__APPLE__)
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__ANDROID__) || defined(__ANDROID__) || defined(__APPLE__) || defined(__linux__)
         template<class R, class C, class ... Args>
         struct function_types< R( C:: * )(Args ...) noexcept >
         {
