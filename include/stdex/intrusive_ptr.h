@@ -272,6 +272,23 @@ namespace stdex
             return ptr_t;
         }
 
+        value_type * move()
+        {
+            derived_type * ptr = intrusive_ptr<derived_type>::move();
+
+            return static_cast<value_type *>(ptr);
+        }
+
+        template<class U, class D>
+        intrusive_ptr<U, D> && moveT()
+        {            
+            value_type * ptr = this->move();
+
+            U * ptr_t = static_cast<U *>(ptr);
+
+            return std::move( intrusive_ptr<U, D>( ptr_t, intrusive_borrow_t() ) );
+        }
+
         value_type * operator -> () const
         {
             derived_type * ptr = intrusive_ptr<derived_type>::operator ->();
@@ -717,6 +734,25 @@ namespace stdex
 
             return ptr_t;
         }
+
+        value_type * move()
+        {
+            value_type * ptr = m_ptr;
+            m_ptr = nullptr;
+
+            return ptr;
+        }
+
+        template<class U, class D>
+        intrusive_ptr<U, D> moveT()
+        {
+            value_type * ptr = this->move();
+
+            U * ptr_t = static_cast<U *>(ptr);
+
+            return intrusive_ptr<U, D>( ptr_t, intrusive_borrow_t() );
+        }
+
 
         value_type * operator -> () const
         {
