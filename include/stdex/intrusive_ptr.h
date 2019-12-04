@@ -279,14 +279,14 @@ namespace stdex
             return static_cast<value_type *>(ptr);
         }
 
-        template<class U, class D>
-        intrusive_ptr<U, D> && moveT()
+        template<class U, class UD>
+        intrusive_ptr<U, UD> && moveT()
         {            
             value_type * ptr = this->move();
 
             U * ptr_t = static_cast<U *>(ptr);
 
-            return std::move( intrusive_ptr<U, D>( ptr_t, intrusive_borrow_t() ) );
+            return std::move( intrusive_ptr<U, UD>( ptr_t, intrusive_borrow_t() ) );
         }
 
         value_type * operator -> () const
