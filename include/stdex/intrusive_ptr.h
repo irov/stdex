@@ -281,7 +281,7 @@ namespace stdex
 
         template<class U, class UD>
         intrusive_ptr<U, UD> && moveT()
-        {            
+        {
             value_type * ptr = this->move();
 
             U * ptr_t = static_cast<U *>(ptr);
