@@ -2,7 +2,7 @@
 
 #ifdef WIN32
 
-#ifdef _WIN32_WINNT	
+#ifdef _WIN32_WINNT
 #   undef _WIN32_WINNT
 #   define _WIN32_WINNT 0x0500
 #endif
@@ -15,7 +15,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #ifndef NOMINMAX
-#	define NOMINMAX
+#define NOMINMAX
 #endif
 
 #pragma warning(push, 0) 
