@@ -355,6 +355,17 @@ namespace stdex
         T * t_ptr = _iptr.get();
         U u_ptr = static_cast<U>(t_ptr);
 
+        STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( t_ptr, U );
+
+        return u_ptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T, class D>
+    U intrusive_dynamic_get( const intrusive_ptr<T, D> & _iptr )
+    {
+        T * t_ptr = _iptr.get();
+        U u_ptr = dynamic_cast<U>(t_ptr);
+
         return u_ptr;
     }
     //////////////////////////////////////////////////////////////////////////
@@ -871,6 +882,15 @@ namespace stdex
         U u_ptr = static_cast<U>(t_ptr);
 
         STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( t_ptr, U );
+
+        return u_ptr;
+    }
+    //////////////////////////////////////////////////////////////////////////
+    template<class U, class T>
+    U intrusive_dynamic_get( const intrusive_ptr<T, void> & _iptr )
+    {
+        T * t_ptr = _iptr.get();
+        U u_ptr = dynamic_cast<U>(t_ptr);
 
         return u_ptr;
     }
