@@ -727,6 +727,13 @@ namespace stdex
             m_ptr = _ptr;
         }
 
+        value_type * get_base() const
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+
+            return m_ptr;
+        }
+
         value_type * get() const
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
