@@ -24,10 +24,9 @@ namespace stdex
             return m_msg.c_str();
         }
         //////////////////////////////////////////////////////////////////////////
-        void throw_exception::operator () ( const char * _format, ... ) const
+        static void throw_exception_log_callstack( void * _ud, const char * _format, ... )
         {
             va_list argList;
-
             va_start( argList, _format );
 
             char format_msg[4096] = {0};
@@ -35,8 +34,22 @@ namespace stdex
 
             va_end( argList );
 
+            ((std::string *)_ud)->append( format_msg );
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void throw_exception::operator () ( const char * _format, ... ) const
+        {
+            va_list argList;
+            va_start( argList, _format );
+
+            char format_msg[4096] = {0};
+            vsprintf( format_msg, _format, argList );
+
+            va_end( argList );
+
+            std::string log;
             std::string stack;
-            stdex::get_callstack( stack );
+            stdex::get_callstack( stack, &throw_exception_log_callstack, &log );
 
             std::string message;
             message += "message: ";

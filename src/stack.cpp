@@ -3,12 +3,12 @@
 #if defined _DEBUG
 #   if (defined _M_IX86 || defined _M_X64 || defined _M_IA64) && defined WIN32
 
-#	include <windows.h>
-#	include <stdio.h>
+#   include <windows.h>
+#   include <stdio.h>
 
-#	include <DbgHelp.h>
-#	include <TlHelp32.h>
-#	include <Psapi.h>
+#   include <DbgHelp.h>
+#   include <TlHelp32.h>
+#   include <Psapi.h>
 
 //////////////////////////////////////////////////////////////////////////
 // dbghelp.dll
@@ -50,12 +50,14 @@ typedef DWORD( __stdcall * TGetModuleFileNameEx )(HANDLE hProcess, HMODULE hModu
 typedef DWORD( __stdcall * TGetModuleBaseName )(HANDLE hProcess, HMODULE hModule, LPSTR lpFilename, DWORD nSize);
 typedef BOOL( __stdcall * TGetModuleInformation )(HANDLE hProcess, HMODULE hModule, LPMODULEINFO pmi, DWORD nSize);
 //////////////////////////////////////////////////////////////////////////
-static BOOL GetModuleListPSAPI( TSymLoadModule64 pSymLoadModule64, HANDLE hProcess )
+static BOOL GetModuleListPSAPI( TSymLoadModule64 pSymLoadModule64, HANDLE hProcess, stdex::log_callstack_t _log, void * _ud )
 {
     HINSTANCE hPsapi = LoadLibraryW( L"psapi.dll" );
 
     if( hPsapi == NULL )
     {
+        (*_log)(_ud, "invalid open psapi.dll");
+
         return FALSE;
     }
 
@@ -66,23 +68,29 @@ static BOOL GetModuleListPSAPI( TSymLoadModule64 pSymLoadModule64, HANDLE hProce
 
     if( (pEnumProcessModules == NULL) || (pGetModuleFileNameExA == NULL) || (pGetModuleBaseNameA == NULL) || (pGetModuleInformation == NULL) )
     {
+        (*_log)(_ud, "invalid load function psapi.dll");
+
         FreeLibrary( hPsapi );
 
         return FALSE;
     }
 
-    HMODULE hMods[256];
+    HMODULE hMods[2048];
 
     DWORD cbNeeded;
     if( pEnumProcessModules( hProcess, hMods, sizeof( hMods ), &cbNeeded ) == FALSE )
     {
+        (*_log)(_ud, "invalid enum process modules psapi.dll");
+
         FreeLibrary( hPsapi );
 
         return FALSE;
     }
 
-    if( cbNeeded > 256 )
+    if( cbNeeded > 1024 )
     {
+        (*_log)(_ud, "invalid needed > 1024 psapi.dll");
+
         FreeLibrary( hPsapi );
 
         return FALSE;
@@ -90,20 +98,31 @@ static BOOL GetModuleListPSAPI( TSymLoadModule64 pSymLoadModule64, HANDLE hProce
 
     for( DWORD i = 0; i < cbNeeded / sizeof( HMODULE ); i++ )
     {
-        // base address, size
         MODULEINFO mi;
-        pGetModuleInformation( hProcess, hMods[i], &mi, sizeof mi );
+        if( pGetModuleInformation( hProcess, hMods[i], &mi, sizeof mi ) == FALSE )
+        {
+            (*_log)(_ud, "invalid get module information psapi.dll");
 
-        // image file name
+            return FALSE;
+        }
+
         char mFileName[MAX_PATH] = {};
-        pGetModuleFileNameExA( hProcess, hMods[i], mFileName, MAX_PATH );
+        DWORD FileNameLen = pGetModuleFileNameExA( hProcess, hMods[i], mFileName, MAX_PATH );
 
-        // module name		
         char mBaseName[MAX_PATH] = {};
-        pGetModuleBaseNameA( hProcess, hMods[i], mBaseName, MAX_PATH );
+        DWORD BaseNameLen = pGetModuleBaseNameA( hProcess, hMods[i], mBaseName, MAX_PATH );
+
+        if( FileNameLen <= 0 || BaseNameLen <= 0 )
+        {
+            (*_log)(_ud, "invalid file base name len psapi.dll");
+
+            return FALSE;
+        }
 
         if( pSymLoadModule64( hProcess, 0, mFileName, mBaseName, (DWORD64)mi.lpBaseOfDll, mi.SizeOfImage ) == FALSE )
         {
+            (*_log)(_ud, "invalid load module file '%s' base '%s' psapi.dll", mFileName, mBaseName);
+
             return FALSE;
         }
     }
@@ -111,7 +130,7 @@ static BOOL GetModuleListPSAPI( TSymLoadModule64 pSymLoadModule64, HANDLE hProce
     FreeLibrary( hPsapi );
 
     return TRUE;
-}  // GetModuleListPSAPI
+}
 //////////////////////////////////////////////////////////////////////////
 static BOOL GetModuleInfo( TSymGetModuleInfo64 pSymGetModuleInfo64, HANDLE hProcess, DWORD64 baseAddr, PIMAGEHLP_MODULE64 pModuleInfo )
 {
@@ -151,12 +170,11 @@ static BOOL __stdcall ReadMemoryRoutine(
     return bRet;
 }
 //////////////////////////////////////////////////////////////////////////
-#	define STACKWALK_MAX_NAMELEN 1024
+#define STACKWALK_MAX_NAMELEN 1024
 //////////////////////////////////////////////////////////////////////////
-// Entry for each Callstack-Entry
 typedef struct _CallstackEntry
 {
-    DWORD64 offset;  // if 0, we have no valid entry
+    DWORD64 offset;
     CHAR name[STACKWALK_MAX_NAMELEN];
     CHAR undName[STACKWALK_MAX_NAMELEN];
     CHAR undFullName[STACKWALK_MAX_NAMELEN];
@@ -170,7 +188,7 @@ enum CallstackEntryType
     firstEntry, nextEntry, lastEntry
 };
 //////////////////////////////////////////////////////////////////////////
-static void OnCallstackEntry( std::string & _message, CallstackEntry & entry )
+static void OnCallstackEntry( std::string & _stack, CallstackEntry & entry )
 {
     CHAR buffer[STACKWALK_MAX_NAMELEN];
     if( entry.offset != 0 )
@@ -199,18 +217,18 @@ static void OnCallstackEntry( std::string & _message, CallstackEntry & entry )
                 strcpy( entry.moduleName, "(module-name not available)" );
             }
 
-            sprintf( buffer, "%p (%s): %s: %s\n", (LPVOID)entry.offset, entry.moduleName, entry.lineFileName, entry.name );
+            sprintf( buffer, "%p (%s): %s (%d): %s\n", (LPVOID)entry.offset, entry.moduleName, entry.lineFileName, entry.lineNumber, entry.name );
         }
         else
         {
             sprintf( buffer, "%s (%d): %s\n", entry.lineFileName, entry.lineNumber, entry.name );
         }
 
-        _message.append( buffer );
+        _stack.append( buffer );
     }
 }
 //////////////////////////////////////////////////////////////////////////
-static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDbhHelp, HMODULE hKernel32, HANDLE hThread, HANDLE hProcess )
+static bool GetCallstack( std::string & _stack, stdex::log_callstack_t _log, void * _ud, PCONTEXT _context, HMODULE hDbhHelp, HMODULE hKernel32, HANDLE hThread, HANDLE hProcess )
 {
     TRtlCaptureContext pRtlCaptureContext = (TRtlCaptureContext)GetProcAddress( hKernel32, "RtlCaptureContext" );
     TStackWalk64 pStackWalk64 = (TStackWalk64)GetProcAddress( hDbhHelp, "StackWalk64" );
@@ -231,20 +249,20 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
         pSymGetModuleInfo64 == NULL || pSymGetSymFromAddr64 == NULL || pUnDecorateSymbolName == NULL || pSymLoadModule64 == NULL ||
         pSymGetSearchPath == NULL )
     {
-        _message.append( "invalid get function" );
+        (*_log)(_ud, "invalid get function");
 
         return false;
     }
 
-    DWORD symOptions = pSymGetOptions();  // SymGetOptions
+    DWORD symOptions = pSymGetOptions();
     symOptions |= SYMOPT_LOAD_LINES;
     symOptions |= SYMOPT_FAIL_CRITICAL_ERRORS;
 
     symOptions = pSymSetOptions( symOptions );
 
-    if( GetModuleListPSAPI( pSymLoadModule64, hProcess ) == FALSE )
+    if( GetModuleListPSAPI( pSymLoadModule64, hProcess, _log, _ud ) == FALSE )
     {
-        _message.append( "invalid GetModuleListPSAPI" );
+        (*_log)(_ud, "invalid GetModuleListPSAPI");
 
         return false;
     }
@@ -262,14 +280,12 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
         contex = *_context;
     }
 
-    // init STACKFRAME for first call
-    STACKFRAME64 frame; // in/out stackframe
+    STACKFRAME64 frame;
     memset( &frame, 0, sizeof( frame ) );
 
     DWORD imageType = IMAGE_FILE_MACHINE_I386;
 
 #ifdef _M_IX86
-    // normally, call ImageNtHeader() and use machine info from PE header
     imageType = IMAGE_FILE_MACHINE_I386;
     frame.AddrPC.Offset = contex.Eip;
     frame.AddrPC.Mode = AddrModeFlat;
@@ -316,21 +332,16 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 
     for( int frameNum = 0;; ++frameNum )
     {
-        // get next stack frame (StackWalk64(), SymFunctionTableAccess64(), SymGetModuleBase64())
-        // if this returns ERROR_INVALID_ADDRESS (487) or ERROR_NOACCESS (998), you can
-        // assume that either you are done, or that the stack is so hosed that the next
-        // deeper frame could not be found.
-        // CONTEXT need not to be suplied if imageTyp is IMAGE_FILE_MACHINE_I386!
         if( pStackWalk64( imageType, hProcess, hThread, &frame, &contex, &ReadMemoryRoutine, pSymFunctionTableAccess64, pSymGetModuleBase64, NULL ) == FALSE )
         {
-            _message.append( "invalid pStackWalk64" );
+            (*_log)(_ud, "invalid pStackWalk64");
 
             return false;
         }
 
         if( frame.AddrPC.Offset == frame.AddrReturn.Offset )
         {
-            _message.append( "invalid frame.AddrPC.Offset == frame.AddrReturn.Offset" );
+            (*_log)(_ud, "invalid frame.AddrPC.Offset == frame.AddrReturn.Offset");
 
             return false;
         }
@@ -341,39 +352,31 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 
         if( frame.AddrPC.Offset != 0 )
         {
-            // we seem to have a valid PC
-            // show procedure info (SymGetSymFromAddr64())
             DWORD64 offsetFromSmybol;
             if( pSymGetSymFromAddr64( hProcess, frame.AddrPC.Offset, &offsetFromSmybol, pSym ) == TRUE )
             {
-                // TODO: Mache dies sicher...!
                 strcpy( csEntry.name, pSym->Name );
-                // UnDecorateSymbolName()
                 pUnDecorateSymbolName( pSym->Name, csEntry.undName, STACKWALK_MAX_NAMELEN, UNDNAME_NAME_ONLY );
                 pUnDecorateSymbolName( pSym->Name, csEntry.undFullName, STACKWALK_MAX_NAMELEN, UNDNAME_COMPLETE );
             }
 
-            // show line number info, NT5.0-method (SymGetLineFromAddr64())
             if( pSymGetLineFromAddr64 != NULL )
-            { // yes, we have SymGetLineFromAddr64()
+            {
                 DWORD offsetFromLine;
                 if( pSymGetLineFromAddr64( hProcess, frame.AddrPC.Offset, &offsetFromLine, &Line ) == TRUE )
                 {
                     csEntry.lineNumber = Line.LineNumber;
-                    // TODO: Mache dies sicher...!
                     strcpy( csEntry.lineFileName, Line.FileName );
                 }
-            } // yes, we have SymGetLineFromAddr64()
+            }
 
-            // show module info (SymGetModuleInfo64())
             if( GetModuleInfo( pSymGetModuleInfo64, hProcess, frame.AddrPC.Offset, &Module ) == TRUE )
-            { // got module info OK
-                // TODO: Mache dies sicher...!
+            {
                 strcpy( csEntry.moduleName, Module.ModuleName );
-            } // got module info OK
-        } // we seem to have a valid PC
+            }
+        }
 
-        OnCallstackEntry( _message, csEntry );
+        OnCallstackEntry( _stack, csEntry );
 
         if( frame.AddrReturn.Offset == 0 )
         {
@@ -386,7 +389,7 @@ static bool GetCallstack( std::string & _message, PCONTEXT _context, HMODULE hDb
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {
-    bool get_callstack( std::string & _message, void * _context )
+    bool get_callstack( std::string & _stack, log_callstack_t _log, void * _ud, void * _context )
     {
         HANDLE hThread = GetCurrentThread();
         HANDLE hProcess = GetCurrentProcess();
@@ -395,7 +398,7 @@ namespace stdex
 
         if( hDbhHelp == NULL )
         {
-            _message.append( "invalid load dbghelp.dll" );
+            (*_log)(_ud, "invalid load dbghelp.dll");
 
             return false;
         }
@@ -405,7 +408,7 @@ namespace stdex
 
         if( pSymInitialize == NULL || pSymCleanup == NULL )
         {
-            _message.append( "invalid get dbghelp.dll [SymInitialize||SymCleanup]" );
+            (*_log)(_ud, "invalid get dbghelp.dll [SymInitialize||SymCleanup]");
 
             FreeLibrary( hDbhHelp );
 
@@ -418,15 +421,14 @@ namespace stdex
         {
             FreeLibrary( hDbhHelp );
 
-            _message.append( "invalid load Kernel32.dll" );
+            (*_log)(_ud, "invalid load Kernel32.dll");
 
             return false;
         }
 
-        // SymInitialize
         if( pSymInitialize( hProcess, NULL, FALSE ) == FALSE )
         {
-            _message.append( "invalid SymInitialize" );
+            (*_log)(_ud, "invalid SymInitialize");
 
             FreeLibrary( hDbhHelp );
             FreeLibrary( hKernel32 );
@@ -434,7 +436,7 @@ namespace stdex
             return false;
         }
 
-        bool successful = GetCallstack( _message, (PCONTEXT)_context, hDbhHelp, hKernel32, hThread, hProcess );
+        bool successful = GetCallstack( _stack, _log, _ud, (PCONTEXT)_context, hDbhHelp, hKernel32, hThread, hProcess );
 
         pSymCleanup( hProcess );
 
@@ -445,28 +447,35 @@ namespace stdex
     }
 }
 //////////////////////////////////////////////////////////////////////////
-#	else
+#else
 //////////////////////////////////////////////////////////////////////////
 namespace stdex
 {
-    bool get_callstack( std::string & _message, void * _context )
+    bool get_callstack( std::string & _stack, log_callstack_t _log, void * _ud, void * _context )
     {
-        _message.append( "this platform not support callstack" );
-
-        return true;
-    }
-}
-#	endif
-#	else
-//////////////////////////////////////////////////////////////////////////
-namespace stdex
-{
-    bool get_callstack( std::string & _message, void * _context )
-    {
-        (void)_message;
+        (void)_stack;
         (void)_context;
 
-        return true;
+        (*_log)(_ud, "this platform not support callstack");
+
+        return false;
     }
 }
-#	endif
+#endif
+#else
+//////////////////////////////////////////////////////////////////////////
+namespace stdex
+{
+    bool get_callstack( std::string & _stack, log_callstack_t _log, void * _ud, void * _context )
+    {
+        (void)_stack;
+        (void)_log;
+        (void)_ud;
+        (void)_context;
+
+        (*_log)(_ud, "this platform not support callstack");
+
+        return false;
+    }
+}
+#endif
