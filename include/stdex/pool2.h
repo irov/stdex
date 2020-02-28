@@ -3,6 +3,8 @@
 #include <type_traits>
 #include <stdint.h>
 
+#include <assert.h>
+
 namespace stdex
 {
     template<size_t TBlockSize, size_t TBlockCount, class TAllocator>
@@ -12,6 +14,10 @@ namespace stdex
         {
             uint8_t buff[TBlockSize];
             block_t * next;
+
+#ifndef NDEBUG
+            uint32_t uid;
+#endif
         };
 
         class chunk_t
@@ -19,7 +25,16 @@ namespace stdex
         public:
             chunk_t( chunk_t * _prev )
                 : prev( _prev )
+#ifndef NDEBUG
+                , uid( 0 )
+#endif
             {
+            }
+
+        public:
+            void setUID( uint32_t _uid )
+            {
+                uid = _uid;
             }
 
         public:
@@ -34,6 +49,10 @@ namespace stdex
                 {
                     it->next = free;
                     free = it;
+
+#ifndef NDEBUG
+                    it->uid = uid;
+#endif
                 }
 
                 return free;
@@ -49,12 +68,19 @@ namespace stdex
             chunk_t * prev;
             typedef typename std::aligned_storage<sizeof( block_t ), alignof(block_t)>::type block_storage_t;
             block_storage_t buffer_block_storage[TBlockCount];
+
+#ifndef NDEBUG
+            uint32_t uid;
+#endif
         };
 
     public:
         pool2()
             : m_chunk( nullptr )
             , m_free( nullptr )
+#ifndef NDEBUG
+            , m_uid( 0 )
+#endif
         {
         }
 
@@ -62,6 +88,14 @@ namespace stdex
         {
             this->clear();
         }
+
+#ifndef NDEBUG
+    public:
+        void setUID( uint32_t _uid )
+        {
+            m_uid = _uid;
+        }
+#endif
 
     public:
         void * alloc_block()
@@ -82,6 +116,10 @@ namespace stdex
         void free_block( void * _buff )
         {
             block_t * block = reinterpret_cast<block_t *>(_buff);
+
+#ifndef NDEBUG
+            assert( m_uid == block->uid );
+#endif
 
             block->next = m_free;
             m_free = block;
@@ -115,6 +153,10 @@ namespace stdex
 
             chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
+#ifndef NDEBUG
+            chunk->setUID( m_uid );
+#endif
+
             m_free = chunk->initialize();
             m_chunk = chunk;
         }
@@ -122,5 +164,9 @@ namespace stdex
     protected:
         chunk_t * m_chunk;
         block_t * m_free;
+
+#ifndef NDEBUG
+        uint32_t m_uid;
+#endif
     };
 }

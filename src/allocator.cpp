@@ -210,10 +210,12 @@ extern "C" {
         allocator_pool_def( 17, 8192, 2 );
         allocator_pool_def( 18, 16384, 2 );
         allocator_pool_def( 19, 32768, 2 );
+        //////////////////////////////////////////////////////////////////////////        
+        static uint32_t uid = 0;
         //////////////////////////////////////////////////////////////////////////
-        const static allocator_size_t si_count = 20;
+        static const allocator_size_t si_count = 20;
         //////////////////////////////////////////////////////////////////////////
-        const static allocator_size_t s[] =
+        static const allocator_size_t s[] =
         {allocator_pool_size( 0 )
             , allocator_pool_size( 1 )
             , allocator_pool_size( 2 )
@@ -411,6 +413,23 @@ extern "C" {
             }
 
             (*s_thread_unlock_func)((void *)s_thread_ptr);
+        }
+        //////////////////////////////////////////////////////////////////////////
+#define allocator_pool_uid(i)\
+        {\
+            allocator_pool(i).setUID(_uid);\
+        }
+        //////////////////////////////////////////////////////////////////////////
+        void stdex_allocator_set_uid( uint32_t _uid )
+        {
+            uid = _uid;
+
+            allocator_pool_loop( allocator_pool_uid );
+        }
+        //////////////////////////////////////////////////////////////////////////
+        uint32_t stdex_allocator_get_uid()
+        {
+            return uid;
         }
         //////////////////////////////////////////////////////////////////////////
         void stdex_allocator_initialize()
