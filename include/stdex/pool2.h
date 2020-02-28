@@ -31,11 +31,13 @@ namespace stdex
             {
             }
 
+#ifndef NDEBUG
         public:
             void setUID( uint32_t _uid )
             {
                 uid = _uid;
             }
+#endif
 
         public:
             block_t * initialize()

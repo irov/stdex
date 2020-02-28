@@ -424,7 +424,9 @@ extern "C" {
         {
             uid = _uid;
 
+#ifndef NDEBUG
             allocator_pool_loop( allocator_pool_uid );
+#endif
         }
         //////////////////////////////////////////////////////////////////////////
         uint32_t stdex_allocator_get_uid()
