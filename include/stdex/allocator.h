@@ -15,7 +15,7 @@ extern "C" {
     void * stdex_realloc( void * _mem, size_t _size, const char * _doc );
 
     void stdex_allocator_set_uid( uint32_t _uid );
-    void stdex_allocator_get_uid( uint32_t _uid );
+    uint32_t stdex_allocator_get_uid();
 
     typedef void(*stdex_allocator_thread_lock_t)(void * _ptr);
     typedef void(*stdex_allocator_thread_unlock_t)(void * _ptr);
