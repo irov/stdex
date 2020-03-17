@@ -1,42 +1,35 @@
 #pragma once
 
-#include <stdint.h>
-
-#include "stdex/intrusive_ptr.h"
+#include "stdex/intrusive_ptr_config.h"
 
 namespace stdex
 {
     class intrusive_ptr_base
     {
     public:
-        intrusive_ptr_base() noexcept
-            : m_reference( 0 )
-        {
-        }
-
-        virtual ~intrusive_ptr_base() noexcept
-        {
-        }
+        virtual uint32_t incref() = 0;
+        virtual void decref() = 0;
+        virtual uint32_t getrefcount() const = 0;
 
     public:
         inline static void intrusive_ptr_add_ref( intrusive_ptr_base * _ptr ) noexcept;
-        inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr );
+        inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr ) noexcept;
         inline static uint32_t intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept;
+
+        template<class T>
+        static void intrusive_ptr_setup( T *& _ptr, T * _other );
+
+        template<class T>
+        static void intrusive_ptr_release( T *& _ptr );
 
 #ifdef STDEX_INTRUSIVE_PTR_DEBUG
     public:
         inline static bool intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept;
 #endif
-
-    protected:
-        virtual void destroy() = 0;
-
-    protected:
-        uint32_t m_reference;
     };
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline void intrusive_ptr_setup( T *& _ptr, T * _other )
+    void intrusive_ptr_base::intrusive_ptr_setup( T *& _ptr, T * _other )
     {
         _ptr = _other;
 
@@ -47,15 +40,7 @@ namespace stdex
     }
     //////////////////////////////////////////////////////////////////////////
     template<class T>
-    inline void intrusive_ptr_setup( T *& _ptr, const stdex::intrusive_ptr<T, void> & _other )
-    {
-        T * other_ptr = _other.get();
-
-        stdex::intrusive_ptr_setup( _ptr, other_ptr );
-    }
-    //////////////////////////////////////////////////////////////////////////
-    template<class T>
-    inline void intrusive_ptr_release( T *& _ptr )
+    void intrusive_ptr_base::intrusive_ptr_release( T *& _ptr )
     {
         if( _ptr != nullptr )
         {
@@ -76,32 +61,39 @@ namespace stdex
     //////////////////////////////////////////////////////////////////////////
     inline void intrusive_ptr_base::intrusive_ptr_add_ref( intrusive_ptr_base * _ptr ) noexcept
     {
-        ++_ptr->m_reference;
+        _ptr->incref();
     }
     //////////////////////////////////////////////////////////////////////////
-    inline void intrusive_ptr_base::intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr )
+    inline void intrusive_ptr_base::intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr ) noexcept
     {
-        if( --_ptr->m_reference == 0 )
-        {
-            _ptr->destroy();
-        }
+        _ptr->decref();
     }
     //////////////////////////////////////////////////////////////////////////
     inline uint32_t intrusive_ptr_base::intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept
     {
-        return _ptr->m_reference;
+        uint32_t refcount = _ptr->getrefcount();
+
+        return refcount;
     }
     //////////////////////////////////////////////////////////////////////////
 #ifdef STDEX_INTRUSIVE_PTR_DEBUG
     //////////////////////////////////////////////////////////////////////////
     inline bool intrusive_ptr_base::intrusive_ptr_check_ref( const intrusive_ptr_base * _ptr ) noexcept
     {
-        if( _ptr->m_reference == 0 )
+        if( _ptr == nullptr )
+        {
+            return false;
+        }
+
+        uint32_t refcount = _ptr->getrefcount();
+
+        if( refcount == 0 )
         {
             return false;
         }
 
         return true;
     }
+    //////////////////////////////////////////////////////////////////////////
 #endif
 }

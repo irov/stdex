@@ -1,15 +1,17 @@
 #pragma once
 
 #include "stdex/allocator.h"
+#include "stdex/stl_allocator.h"
 
 namespace stdex
 {
-    template<class T>
+    template<class T, class A = stdex::stl_allocator<T>>
     class dynamic_array
     {
     public:
         typedef uint32_t size_type;
         typedef T value_type;
+        typedef A allocator_type;
 
     public:
         dynamic_array()
@@ -22,7 +24,7 @@ namespace stdex
 
         ~dynamic_array()
         {
-            stdex_free( m_buff, typeid(T).name() );
+            allocator_type().deallocate( m_buff, static_cast<std::size_t>(m_last - m_buff) * sizeof( T ) );
         }
 
     public:
@@ -46,7 +48,7 @@ namespace stdex
         void allocate_buff_( size_type _size )
         {
             size_type memory_size = sizeof( T ) * _size;
-            void * memory = stdex_malloc( memory_size, typeid(T).name() );
+            void * memory = allocator_type().allocate( memory_size );
             m_buff = static_cast<T *>(memory);
         }
 

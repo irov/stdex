@@ -56,17 +56,17 @@ namespace stdex
     class stdex_pool_allocator_default
     {
     public:
-        static void * s_malloc( size_t _size, const char * _doc )
+        static void * malloc( size_t _size, const char * _doc )
         {
             return stdex_malloc( _size, _doc );
         }
 
-        static void * s_realloc( void * _mem, size_t _size, const char * _doc )
+        static void * realloc( void * _mem, size_t _size, const char * _doc )
         {
             return stdex_realloc( _mem, _size, _doc );
         }
 
-        static void s_free( void * _ptr, const char * _doc )
+        static void free( void * _ptr, const char * _doc )
         {
             return stdex_free( _ptr, _doc );
         }
@@ -161,7 +161,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-                TAllocator::s_free( chunk, type_name<TBlockType>::value );
+                TAllocator::free( chunk, type_name<TBlockType>::value );
 
                 chunk = prev;
             }
@@ -181,7 +181,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-                TAllocator::s_free( chunk, type_name<TBlockType>::value );
+                TAllocator::free( chunk, type_name<TBlockType>::value );
 
                 chunk = prev;
             }
@@ -196,7 +196,7 @@ namespace stdex
         void addChunk_()
         {
             const size_t sizeof_chunk_t = sizeof( chunk_t );
-            void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, type_name<TBlockType>::value );
+            void * mem_chunk = TAllocator::malloc( sizeof_chunk_t, type_name<TBlockType>::value );
 
             chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
 
