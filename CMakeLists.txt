@@ -25,7 +25,7 @@ IF(NOT STDEX_EXTERNAL_BUILD)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 ENDIF()
 
-SET(STDEX_DBGHELP_INCLUDE )
+SET(STDEX_DBGHELP_INCLUDE)
 
 MACRO(ADD_FILTER group_name)
 	SOURCE_GROUP( ${group_name} FILES ${ARGN} )
@@ -139,6 +139,8 @@ ADD_FILTER(
 thread_guard
 	${INCLUDE_DIR}/thread_guard.h
     ${SOURCE_DIR}/thread_guard.cpp
+    ${INCLUDE_DIR}/thread_guard_scope.h
+    ${SOURCE_DIR}/thread_guard_scope.cpp
 )
 
 ADD_FILTER(
