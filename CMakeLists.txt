@@ -28,8 +28,8 @@ ENDIF()
 SET(STDEX_DBGHELP_INCLUDE)
 
 MACRO(ADD_FILTER group_name)
-	SOURCE_GROUP( ${group_name} FILES ${ARGN} )
-	SET( SRC_FILES ${SRC_FILES} ${ARGN} )
+    SOURCE_GROUP( ${group_name} FILES ${ARGN} )
+    SET( SRC_FILES ${SRC_FILES} ${ARGN} )
 ENDMACRO()
 
 SET(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/stdex)
@@ -37,13 +37,13 @@ SET(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 ADD_FILTER(
 utils
-	${INCLUDE_DIR}/typename.h
+    ${INCLUDE_DIR}/typename.h
     ${INCLUDE_DIR}/span.h
 )
 
 ADD_FILTER(
 allocator
-	${INCLUDE_DIR}/allocator.h
+    ${INCLUDE_DIR}/allocator.h
     ${INCLUDE_DIR}/allocator_report.h
     ${SOURCE_DIR}/allocator.cpp
     ${SOURCE_DIR}/allocator_report.cpp
@@ -55,7 +55,7 @@ container
     ${INCLUDE_DIR}/auto_array.h
     ${INCLUDE_DIR}/binary_set.h
     ${INCLUDE_DIR}/binary_vector.h
-	${INCLUDE_DIR}/static_array.h
+    ${INCLUDE_DIR}/static_array.h
     ${INCLUDE_DIR}/dynamic_array.h
     ${INCLUDE_DIR}/static_hash_array.h
     ${INCLUDE_DIR}/queue.h
@@ -125,19 +125,19 @@ stl
 
 ADD_FILTER(
 sha1
-	${INCLUDE_DIR}/sha1.h
+    ${INCLUDE_DIR}/sha1.h
     ${SOURCE_DIR}/sha1.cpp
 )
 
 ADD_FILTER(
 stack
     ${INCLUDE_DIR}/stack.h
-	${SOURCE_DIR}/stack.cpp
+    ${SOURCE_DIR}/stack.cpp
 )
 
 ADD_FILTER(
 thread_guard
-	${INCLUDE_DIR}/thread_guard.h
+    ${INCLUDE_DIR}/thread_guard.h
     ${SOURCE_DIR}/thread_guard.cpp
     ${INCLUDE_DIR}/thread_guard_scope.h
     ${SOURCE_DIR}/thread_guard_scope.cpp
@@ -149,7 +149,7 @@ xml_sax_parser
     ${SOURCE_DIR}/xml_sax_parser.cpp
 )
 
-INCLUDE_DIRECTORIES(${PROJECT_NAME} ${STDEX_DBGHELP_INCLUDE} include) 
+INCLUDE_DIRECTORIES(${PROJECT_NAME} ${STDEX_DBGHELP_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/include) 
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${SRC_FILES})
 
