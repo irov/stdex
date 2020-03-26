@@ -56,21 +56,21 @@ extern "C" {
                 {
                     (void)_doc;
 
-                    return ::malloc( _size );
+                    return STDEX_ALLOCATOR_MALLOC( _size );
                 }
 
                 inline static void s_free( void * _ptr, const char * _doc )
                 {
                     (void)_doc;
 
-                    ::free( _ptr );
+                    STDEX_ALLOCATOR_FREE( _ptr );
                 }
 
                 inline static void * s_realloc( void * _ptr, size_t _size, const char * _doc )
                 {
                     (void)_doc;
 
-                    void * newptr = ::realloc( _ptr, _size );
+                    void * newptr = STDEX_ALLOCATOR_REALLOC( _ptr, _size );
 
                     return newptr;
                 }
@@ -415,25 +415,6 @@ extern "C" {
             (*s_thread_unlock_func)((void *)s_thread_ptr);
         }
         //////////////////////////////////////////////////////////////////////////
-#define allocator_pool_uid(i)\
-        {\
-            allocator_pool(i).setUID(_uid);\
-        }
-        //////////////////////////////////////////////////////////////////////////
-        void stdex_allocator_set_uid( uint32_t _uid )
-        {
-            uid = _uid;
-
-#ifndef NDEBUG
-            allocator_pool_loop( allocator_pool_uid );
-#endif
-        }
-        //////////////////////////////////////////////////////////////////////////
-        uint32_t stdex_allocator_get_uid()
-        {
-            return uid;
-        }
-        //////////////////////////////////////////////////////////////////////////
         void stdex_allocator_initialize()
         {
             s_initialize = true;
@@ -508,7 +489,12 @@ extern "C" {
             void * mem = stdex::s_malloc( (uint32_t)full_size, _doc );
             STDEX_ALLOCATOR_UNLOCK();
 
-            ::memset( mem, 0, full_size );
+            if( mem == nullptr )
+            {
+                return nullptr;
+            }
+
+            ::memset( mem, 0x00, full_size );
 
             return mem;
         }
