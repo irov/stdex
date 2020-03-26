@@ -333,6 +333,10 @@ extern "C" {
             }
         }
         //////////////////////////////////////////////////////////////////////////
+#define allocator_find_pi( i )\
+    if( align_size <= allocator_pool_size(i) ){\
+        pi = i;} else
+        //////////////////////////////////////////////////////////////////////////
         static void * s_realloc( void * _mem, uint32_t _size, const char * _doc )
         {
             if( _mem == nullptr )
@@ -349,9 +353,9 @@ extern "C" {
                 return nullptr;
             }
 
-            allocator_size_t pi = memory_to_index( _mem );
+            allocator_size_t mem_pi = memory_to_index( _mem );
 
-            if( pi >= si_count )
+            if( mem_pi >= si_count )
             {
                 void * mem_pool = memory_to_pool( _mem );
                 allocator_size_t total_size = memory_buf_total( _size );
@@ -369,16 +373,27 @@ extern "C" {
                 return realloc_mem_buff;
             }
 
-            allocator_size_t pool_size = s[pi];
+            allocator_size_t align_size = memory_buf_align( _size );
 
-            if( pool_size >= _size )
+            allocator_size_t pi = 0;
+
+            allocator_pool_loop( allocator_find_pi )
+            {
+                pi = _size;
+            }
+
+            if( mem_pi == pi )
             {
                 return _mem;
             }
 
-            void * new_mem = s_malloc( _size, _doc );
+            allocator_size_t pool_size = s[mem_pi];
 
-            stdex::memorycopy( new_mem, 0, _mem, pool_size );
+            uint32_t min_size = pool_size < align_size ? pool_size : align_size;
+
+            void * new_mem = s_malloc( align_size, _doc );
+
+            stdex::memorycopy( new_mem, 0, _mem, min_size );
 
             s_free( _mem, _doc );
 
