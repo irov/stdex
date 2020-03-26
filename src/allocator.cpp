@@ -435,7 +435,7 @@ extern "C" {
             s_initialize = true;
         }
         //////////////////////////////////////////////////////////////////////////
-#   ifdef STDEX_ALLOCATOR_DISABLE
+#ifdef STDEX_ALLOCATOR_DISABLE
         //////////////////////////////////////////////////////////////////////////
         void * stdex_malloc( size_t _size, const char * _doc )
         {
@@ -460,7 +460,8 @@ extern "C" {
             size_t full_size = _num * _size;
 
             void * mem = detail::stdex_pool_allocator::s_malloc( full_size, _doc );
-            ::memset( mem, 0, full_size );
+
+            ::memset( mem, 0x00, full_size );
 
             return mem;
         }
@@ -469,7 +470,9 @@ extern "C" {
         {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
-            return detail::stdex_pool_allocator::s_realloc( _mem, _size, _doc );
+            void * mem = detail::stdex_pool_allocator::s_realloc( _mem, _size, _doc );
+
+            return mem;
         }
         //////////////////////////////////////////////////////////////////////////
 #else
@@ -479,10 +482,10 @@ extern "C" {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
             STDEX_ALLOCATOR_LOCK();
-            void * memory = stdex::s_malloc( (uint32_t)_size, _doc );
+            void * mem = stdex::s_malloc( (uint32_t)_size, _doc );
             STDEX_ALLOCATOR_UNLOCK();
 
-            return memory;
+            return mem;
         }
         //////////////////////////////////////////////////////////////////////////
         void stdex_free( void * _mem, const char * _doc )
@@ -519,10 +522,10 @@ extern "C" {
             SDTEX_ALLOCATOR_INITIALIZE_CHECK;
 
             STDEX_ALLOCATOR_LOCK();
-            void * memory = stdex::s_realloc( _mem, (uint32_t)_size, _doc );
+            void * mem = stdex::s_realloc( _mem, (uint32_t)_size, _doc );
             STDEX_ALLOCATOR_UNLOCK();
 
-            return memory;
+            return mem;
         }
         //////////////////////////////////////////////////////////////////////////
 #endif
