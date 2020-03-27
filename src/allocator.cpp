@@ -213,9 +213,9 @@ extern "C" {
         //////////////////////////////////////////////////////////////////////////        
         static uint32_t uid = 0;
         //////////////////////////////////////////////////////////////////////////
-        static const allocator_size_t si_count = 20;
+        static constexpr allocator_size_t si_count = 20;
         //////////////////////////////////////////////////////////////////////////
-        static const allocator_size_t s[] =
+        static constexpr allocator_size_t s[] =
         {allocator_pool_size( 0 )
             , allocator_pool_size( 1 )
             , allocator_pool_size( 2 )

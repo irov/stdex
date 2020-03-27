@@ -43,8 +43,8 @@ namespace stdex
             template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
-            static const bool method = false;
-            static const uint32_t arity = sizeof ... (Args);
+            static constexpr bool method = false;
+            static constexpr uint32_t arity = sizeof ... (Args);
 
             template<uint32_t I>
             using iterator_param = typename function_types_args<(arity > I), param, I>::type;
@@ -64,8 +64,8 @@ namespace stdex
             template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
-            static const bool method = true;
-            static const uint32_t arity = sizeof ... (Args);
+            static constexpr bool method = true;
+            static constexpr uint32_t arity = sizeof ... (Args);
 
             template<uint32_t I>
             using iterator_param = typename function_types_args<(arity > I), param, I>::type;
@@ -85,8 +85,30 @@ namespace stdex
             template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
-            static const bool method = true;
-            static const uint32_t arity = sizeof ... (Args);
+            static constexpr bool method = true;
+            static constexpr uint32_t arity = sizeof ... (Args);
+
+            template<uint32_t I>
+            using iterator_param = typename function_types_args<(arity > I), param, I>::type;
+
+            template<uint32_t I>
+            using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;            
+        };
+
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__ANDROID__) || defined(__ANDROID__) || defined(__APPLE__) || defined(__linux__)
+        template<class R, class ... Args>
+        struct function_types< R( * )(Args ...) noexcept>
+        {
+            typedef R ret_type;
+            typedef void class_type;
+
+            typedef std::tuple<Args...> params;
+
+            template<uint32_t I>
+            using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
+
+            static constexpr bool method = false;
+            static constexpr uint32_t arity = sizeof ... (Args);
 
             template<uint32_t I>
             using iterator_param = typename function_types_args<(arity > I), param, I>::type;
@@ -95,7 +117,6 @@ namespace stdex
             using reverse_iterator_param = typename function_types_args<(arity > I), param, arity - I - 1>::type;
         };
 
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__ANDROID__) || defined(__ANDROID__) || defined(__APPLE__) || defined(__linux__)
         template<class R, class C, class ... Args>
         struct function_types< R( C:: * )(Args ...) noexcept >
         {
@@ -107,8 +128,8 @@ namespace stdex
             template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
-            static const bool method = true;
-            static const uint32_t arity = sizeof ... (Args);
+            static constexpr bool method = true;
+            static constexpr uint32_t arity = sizeof ... (Args);
 
             template<uint32_t I>
             using iterator_param = typename function_types_args<(arity > I), param, I>::type;
@@ -128,8 +149,8 @@ namespace stdex
             template<uint32_t I>
             using param = typename external_type_cast<typename std::tuple_element<I, std::tuple<Args...> >::type>::type;
 
-            static const bool method = true;
-            static const uint32_t arity = sizeof ... (Args);
+            static constexpr bool method = true;
+            static constexpr uint32_t arity = sizeof ... (Args);
 
             template<uint32_t I>
             using iterator_param = typename function_types_args<(arity > I), param, I>::type;
