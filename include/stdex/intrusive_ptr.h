@@ -123,6 +123,10 @@ namespace stdex
         {
         }
 
+    private:
+        intrusive_ptr( bool ) = delete;
+
+    public:
         intrusive_ptr & operator = ( const intrusive_ptr & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
@@ -588,6 +592,10 @@ namespace stdex
             this->decref();
         }
 
+    private:
+        intrusive_ptr( bool ) = delete;
+
+    public:
         intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
