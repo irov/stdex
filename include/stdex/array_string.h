@@ -20,6 +20,10 @@ namespace stdex
         {
         }
 
+        ~array_string()
+        {
+        }
+
     public:
         const char * c_str() const
         {
@@ -42,6 +46,7 @@ namespace stdex
             m_pos = 0;
         }
 
+    public:
         void append( const char * _value, size_type _size )
         {
             if( m_pos + _size >= Size )
@@ -52,7 +57,7 @@ namespace stdex
             memorycopy( m_buffer, (size_t)m_pos, _value, (size_t)_size );
 
             m_pos += _size;
-            m_buffer[m_pos] = 0;
+            m_buffer[m_pos] = '\0';
         }
 
         void append( char * _value )
@@ -78,7 +83,7 @@ namespace stdex
 
             m_buffer[m_pos] = _ch;
             m_pos += 1;
-            m_buffer[m_pos] = 0;
+            m_buffer[m_pos] = '\0';
         }
 
         template<class T>
@@ -88,6 +93,55 @@ namespace stdex
             typename T::size_type value_size = _value.size();
 
             this->append( value_str, (size_type)value_size );
+        }
+
+    public:
+        void assign( const char * _value, size_type _size )
+        {
+            if( _size >= Size )
+            {
+                return;
+            }
+
+            memorycopy( m_buffer, (size_t)0, _value, (size_t)_size );
+
+            m_pos = _size;
+            m_buffer[m_pos] = 0;
+        }
+
+        void assign( char * _value )
+        {
+            size_type size = (size_type)strlen( _value );
+
+            this->assign( _value, size );
+        }
+
+        void assign( const char * _value )
+        {
+            size_type size = (size_type)strlen( _value );
+
+            this->assign( _value, size );
+        }
+
+        void assign( char _ch )
+        {
+            if( 1 >= Size )
+            {
+                return;
+            }
+
+            m_buffer[0] = _ch;
+            m_pos += 1;
+            m_buffer[m_pos] = '\0';
+        }
+
+        template<class T>
+        void assign( const T & _value )
+        {
+            const char * value_str = _value.c_str();
+            typename T::size_type value_size = _value.size();
+
+            this->assign( value_str, (size_type)value_size );
         }
 
     public:
@@ -114,7 +168,7 @@ namespace stdex
 
             ptrdiff_t d = ch_pos - m_buffer;
 
-            m_pos = (uint32_t)d;
+            m_pos = (size_type)d;
         }
 
     public:
