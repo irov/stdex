@@ -1,7 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-#include <new>
+#include <cstdint>
 
 namespace stdex
 {

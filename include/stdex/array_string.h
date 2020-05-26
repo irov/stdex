@@ -3,8 +3,7 @@
 #include "stdex/memorycopy.h"
 #include "stdex/stl_string.h"
 
-#include <memory.h>
-#include <string.h>
+#include <cstring>
 
 namespace stdex
 {

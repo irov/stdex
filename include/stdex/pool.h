@@ -4,7 +4,7 @@
 #include "stdex/typename.h"
 
 #include <type_traits>
-#include <stdint.h>
+#include <cstdint>
 
 namespace stdex
 {

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <type_traits>
-#include <stdint.h>
 
-#include <assert.h>
+#include <cstdint>
+#include <cassert>
 
 namespace stdex
 {

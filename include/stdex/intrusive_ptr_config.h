@@ -2,8 +2,8 @@
 
 #include "stdex/exception.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 #ifndef STDEX_INTRUSIVE_PTR_DEBUG_ENABLE
 #   ifndef NDEBUG

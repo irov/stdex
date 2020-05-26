@@ -65,12 +65,12 @@ namespace stdex
 
             inline value_type_ptr operator -> () const
             {
-                return intrusive_reinterpret_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
             inline value_type_ptr operator * () const
             {
-                return intrusive_reinterpret_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
         public:
@@ -142,12 +142,12 @@ namespace stdex
 
             inline value_type_ptr operator -> () const
             {
-                return intrusive_reinterpret_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
             inline value_type_ptr operator * () const
             {
-                return intrusive_reinterpret_cast<value_type_ptr>(m_node);
+                return stdex::intrusive_reinterpret_cast<value_type_ptr>(m_node);
             }
 
         public:
@@ -171,10 +171,6 @@ namespace stdex
             inline void shuffle_prev()
             {
                 m_node = m_node->left();
-            }
-
-            inline void adapt_node() const
-            {
             }
 
         protected:

@@ -3,8 +3,7 @@
 #include "stdex/exception.h"
 
 #include <atomic>
-
-#include <stdint.h>
+#include <cstdint>
 
 #ifndef STDEX_THREAD_GUARD_ENABLE
 #   ifndef NDEBUG

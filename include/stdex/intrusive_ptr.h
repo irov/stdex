@@ -27,23 +27,6 @@ namespace stdex
             return ptr_none;
         }
 
-        static intrusive_ptr from( const_pointer_type _pointer )
-        {
-            return intrusive_ptr( _pointer );
-        }
-
-        template<class U, class UD>
-        static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer )
-        {
-            return intrusive_ptr( _pointer.template getT<pointer_type>() );
-        }
-
-        template<class U, class UD>
-        static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
-        {
-            return _pointer.template getT<pointer_type>();
-        }
-
     public:
         intrusive_ptr()
             : intrusive_ptr<derived_type>( nullptr )
@@ -125,6 +108,30 @@ namespace stdex
 
     private:
         intrusive_ptr( bool ) = delete;
+
+    public:
+        static intrusive_ptr from( const_pointer_type _pointer )
+        {
+            return intrusive_ptr( _pointer );
+        }
+
+        template<class U>
+        static intrusive_ptr from( U _pointer )
+        {
+            return intrusive_ptr( static_cast<const value_type *>(_pointer) );
+        }
+
+        template<class U, class UD>
+        static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer )
+        {
+            return intrusive_ptr( _pointer.template getT<pointer_type>() );
+        }
+
+        template<class U, class UD>
+        static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
+        {
+            return _pointer.template getT<pointer_type>();
+        }
 
     public:
         intrusive_ptr & operator = ( const intrusive_ptr & _rhs ) noexcept
@@ -473,23 +480,6 @@ namespace stdex
             return ptr_none;
         }
 
-        static intrusive_ptr from( const_pointer_type _pointer )
-        {
-            return intrusive_ptr( _pointer );
-        }
-
-        template<class U, class UD>
-        static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer )
-        {
-            return intrusive_ptr( _pointer.get() );
-        }
-
-        template<class U, class UD>
-        static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
-        {
-            return _pointer.template getT<pointer_type>();
-        }
-
     public:
         intrusive_ptr() noexcept
             : m_ptr( nullptr )
@@ -594,6 +584,30 @@ namespace stdex
 
     private:
         intrusive_ptr( bool ) = delete;
+
+    public:
+        static intrusive_ptr from( const_pointer_type _pointer )
+        {
+            return intrusive_ptr( _pointer );
+        }
+
+        template<class U>
+        static intrusive_ptr from( U _pointer )
+        {
+            return intrusive_ptr( static_cast<const value_type *>(_pointer) );
+        }
+
+        template<class U, class UD>
+        static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer )
+        {
+            return intrusive_ptr( _pointer.get() );
+        }
+
+        template<class U, class UD>
+        static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
+        {
+            return _pointer.template getT<pointer_type>();
+        }
 
     public:
         intrusive_ptr & operator = ( const intrusive_ptr & _rhs )

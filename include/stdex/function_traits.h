@@ -2,7 +2,7 @@
 
 #include <tuple>
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace stdex
 {
