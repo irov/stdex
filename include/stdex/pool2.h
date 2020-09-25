@@ -98,7 +98,7 @@ namespace stdex
             {
                 chunk_t * prev = chunk->getPrev();
 
-                TAllocator::s_free( chunk, "pool2" );
+                TAllocator::s_free( chunk );
 
                 chunk = prev;
             }
@@ -111,7 +111,7 @@ namespace stdex
         void addChunk_()
         {
             const size_t sizeof_chunk_t = sizeof( chunk_t );
-            void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t, "pool2" );
+            void * mem_chunk = TAllocator::s_malloc( sizeof_chunk_t );
 
             new (mem_chunk)chunk_t( m_chunk );
 

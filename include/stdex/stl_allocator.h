@@ -23,13 +23,13 @@ namespace stdex
         {
             const std::size_t element_size = sizeof( T );
             const std::size_t total_size = element_size * n;
-            void * p = stdex_malloc( total_size, "stl_allocator" );
+            void * p = stdex_malloc( total_size );
             return static_cast<T *>(p);
         }
 
         void deallocate( T * p, std::size_t )
         {
-            stdex_free( p, "stl_allocator" );
+            stdex_free( p );
         }
     };
 

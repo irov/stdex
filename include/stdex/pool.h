@@ -58,17 +58,23 @@ namespace stdex
     public:
         static void * malloc( size_t _size, const char * _doc )
         {
-            return stdex_malloc( _size, _doc );
+            (void)_doc;
+
+            return stdex_malloc( _size );
         }
 
         static void * realloc( void * _mem, size_t _size, const char * _doc )
         {
-            return stdex_realloc( _mem, _size, _doc );
+            (void)_doc;
+
+            return stdex_realloc( _mem, _size );
         }
 
         static void free( void * _ptr, const char * _doc )
         {
-            return stdex_free( _ptr, _doc );
+            (void)_doc;
+
+            return stdex_free( _ptr );
         }
     };
 
