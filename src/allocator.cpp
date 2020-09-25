@@ -1,5 +1,4 @@
 #include "stdex/allocator.h"
-#include "stdex/allocator_report.h"
 #include "stdex/pool2.h"
 #include "stdex/memorycopy.h"
 #include "stdex/exception.h"
@@ -83,10 +82,6 @@ extern "C" {
                 {
                     (void)_doc;
 
-#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
-                    stdex_allocator_report_new( (uint32_t)_size, _doc );
-#endif
-
                     return STDEX_ALLOCATOR_MALLOC( _size );
                 }
 
@@ -94,20 +89,12 @@ extern "C" {
                 {
                     (void)_doc;
 
-#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
-                    stdex_allocator_report_free( _ptr, _doc );
-#endif
-
                     STDEX_ALLOCATOR_FREE( _ptr );
                 }
 
                 inline static void * s_realloc( void * _ptr, size_t _size, const char * _doc )
                 {
                     (void)_doc;
-
-#ifdef STDEX_ALLOCATOR_REPORT_ENABLE
-                    stdex_allocator_report_realoc( _ptr, (uint32_t)_size, _doc );
-#endif
 
                     return STDEX_ALLOCATOR_REALLOC( _ptr, _size );
                 }
@@ -258,7 +245,6 @@ extern "C" {
 #ifndef NDEBUG
 #define allocator_pool_alloc( i )\
     if( align_size <= allocator_pool_size(i) ){\
-        stdex_allocator_report_new( s[i], _doc );\
         mem = allocator_pool(i).alloc_block();\
         ::memset( mem, 0xCD, allocator_pool_size( i ) );\
         pi = i;} else
@@ -305,7 +291,6 @@ extern "C" {
 #ifndef NDEBUG
 #define allocator_pool_free(i)\
     if( pi == i ){\
-    stdex_allocator_report_free_n(s[pi], _doc);\
     allocator_pool(i).free_block(mem_pool);\
     ::memset( _mem, 0xBD, allocator_pool_size( i ) );\
     } else
