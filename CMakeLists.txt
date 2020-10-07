@@ -128,12 +128,6 @@ sha1
 )
 
 ADD_FILTER(
-stack
-    ${INCLUDE_DIR}/stack.h
-    ${SOURCE_DIR}/stack.cpp
-)
-
-ADD_FILTER(
 thread_guard
     ${INCLUDE_DIR}/thread_guard.h
     ${SOURCE_DIR}/thread_guard.cpp
