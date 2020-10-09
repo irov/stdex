@@ -2,6 +2,8 @@
 
 #include "stdex/intrusive_ptr_config.h"
 
+#include <stdexcept>
+
 namespace stdex
 {
     struct intrusive_borrow_t
@@ -742,13 +744,13 @@ namespace stdex
             if( m_ptr == nullptr )
             {
                 STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-                STDEX_THROW_EXCEPTION( "m_ptr == nullptr" );
+                throw std::runtime_error( "m_ptr == nullptr" );
             }
 
             if( T::intrusive_ptr_check_ref( m_ptr ) == false )
             {
                 STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-                STDEX_THROW_EXCEPTION( "ptr check == false" );
+                throw std::runtime_error( "ptr check == false" );
             }
 #   endif
 

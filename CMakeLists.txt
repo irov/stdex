@@ -67,12 +67,6 @@ pool
 )
 
 ADD_FILTER(
-exception
-    ${INCLUDE_DIR}/exception.h
-    ${SOURCE_DIR}/exception.cpp
-)
-
-ADD_FILTER(
 intrusive
     ${INCLUDE_DIR}/intrusive_algorithm.h
     ${INCLUDE_DIR}/intrusive_duplex_tree.h
@@ -125,14 +119,6 @@ ADD_FILTER(
 sha1
     ${INCLUDE_DIR}/sha1.h
     ${SOURCE_DIR}/sha1.cpp
-)
-
-ADD_FILTER(
-thread_guard
-    ${INCLUDE_DIR}/thread_guard.h
-    ${SOURCE_DIR}/thread_guard.cpp
-    ${INCLUDE_DIR}/thread_guard_scope.h
-    ${SOURCE_DIR}/thread_guard_scope.cpp
 )
 
 ADD_FILTER(

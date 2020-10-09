@@ -1,7 +1,6 @@
 #pragma once
 
-#include "stdex/exception.h"
-
+#include <stdexcept>
 #include <cstddef>
 #include <cstdint>
 
@@ -13,14 +12,14 @@
 #   define STDEX_INTRUSIVE_PTR_DEBUG
 #endif
 
-#if defined(WIN32) && !defined(NDEBUG)
+#if defined(_WIN32) && !defined(NDEBUG)
 
 #pragma warning(disable:6011)
 
 inline void stdex_intrusive_ptr_critical_crash_error()
 {
     volatile unsigned int * p = nullptr;
-    *p = 0xBADF00D;
+    *p = 0x7BADF00D;
 }
 
 #pragma warning(default:6011)
@@ -37,7 +36,7 @@ void stdex_intrusive_ptr_check_typecast_ptr( T _ptr )
     if( _ptr != nullptr && dynamic_cast<V>(_ptr) == nullptr )
     {
         STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-        STDEX_THROW_EXCEPTION( "ptr invalid cast" );
+        throw std::runtime_error( "ptr invalid cast" );
     }
 }
 
@@ -47,7 +46,7 @@ void stdex_intrusive_ptr_check_debug_mask( T _ptr )
     if( _ptr->m_debug_ptr_mask__ != 0xABCDEF01 )
     {
         STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-        STDEX_THROW_EXCEPTION( "mask != 0xABCDEF01" );
+        throw std::runtime_error( "mask != 0xABCDEF01" );
     }
 }
 
