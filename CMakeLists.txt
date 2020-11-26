@@ -42,12 +42,6 @@ utils
 )
 
 ADD_FILTER(
-allocator
-    ${INCLUDE_DIR}/allocator.h
-    ${SOURCE_DIR}/allocator.cpp
-)
-
-ADD_FILTER(
 container
     ${INCLUDE_DIR}/array_string.h
     ${INCLUDE_DIR}/auto_array.h
@@ -95,24 +89,12 @@ intrusive
 
 ADD_FILTER(
 memory
-	${INCLUDE_DIR}/memory_cache.h
     ${INCLUDE_DIR}/memory_ptr.h
-    ${INCLUDE_DIR}/memory_cache.h
     ${INCLUDE_DIR}/memory_reader.h
     ${INCLUDE_DIR}/memory_writer.h
     ${INCLUDE_DIR}/container_writer.h
     ${INCLUDE_DIR}/memorycopy.h
-    ${SOURCE_DIR}/memory_cache.cpp
     ${SOURCE_DIR}/memorycopy.cpp
-)
-
-ADD_FILTER(
-stl
-    ${INCLUDE_DIR}/stl_allocator.h
-    ${INCLUDE_DIR}/stl_list.h
-    ${INCLUDE_DIR}/stl_map.h
-    ${INCLUDE_DIR}/stl_string.h
-    ${INCLUDE_DIR}/stl_vector.h
 )
 
 ADD_FILTER(

@@ -77,7 +77,7 @@ namespace stdex
             block_t * free = m_free;
             m_free = m_free->next;
 
-            void * impl = reinterpret_cast<void *>(free);
+            void * impl = std::launder( free );
 
             return impl;
         }
@@ -116,7 +116,7 @@ namespace stdex
 
             new (mem_chunk)chunk_t( m_chunk );
 
-            chunk_t * chunk = static_cast<chunk_t *>(mem_chunk);
+            chunk_t * chunk = std::launder( reinterpret_cast<chunk_t *>(mem_chunk) );
 
             m_free = chunk->initialize();
             m_chunk = chunk;

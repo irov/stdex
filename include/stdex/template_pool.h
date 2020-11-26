@@ -6,7 +6,7 @@
 
 namespace stdex
 {
-    template<class TBlockType, uint32_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
+    template<class TBlockType, uint32_t TBlockCount, class TAllocator>
     class template_pool
     {
     public:
@@ -25,7 +25,7 @@ namespace stdex
 
             TBlockType * t = new (impl) TBlockType();
 
-            return t;
+            return std::launder( t );
         }
 
         void destroyT( TBlockType * _t )

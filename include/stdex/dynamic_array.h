@@ -1,11 +1,8 @@
 #pragma once
 
-#include "stdex/allocator.h"
-#include "stdex/stl_allocator.h"
-
 namespace stdex
 {
-    template<class T, class A = stdex::stl_allocator<T>>
+    template<class T, class A>
     class dynamic_array
     {
     public:

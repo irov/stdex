@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stdex/memorycopy.h"
-#include "stdex/stl_string.h"
 
 #include <cstring>
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "stdex/allocator.h"
 #include "stdex/typename.h"
 
 #include <type_traits>
@@ -53,32 +52,7 @@ namespace stdex
         pool_block_storage buffer_block_storage[TBlockCount];
     };
 
-    class stdex_pool_allocator_default
-    {
-    public:
-        static void * malloc( size_t _size, const char * _doc )
-        {
-            (void)_doc;
-
-            return stdex_malloc( _size );
-        }
-
-        static void * realloc( void * _mem, size_t _size, const char * _doc )
-        {
-            (void)_doc;
-
-            return stdex_realloc( _mem, _size );
-        }
-
-        static void free( void * _ptr, const char * _doc )
-        {
-            (void)_doc;
-
-            return stdex_free( _ptr );
-        }
-    };
-
-    template<class TBlockType, uint32_t TBlockCount, class TAllocator = stdex_pool_allocator_default>
+    template<class TBlockType, uint32_t TBlockCount, class TAllocator>
     class pool
     {
         typedef pool_template_chunk<TBlockType, TBlockCount> chunk_t;
