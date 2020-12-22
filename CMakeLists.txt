@@ -103,12 +103,6 @@ sha1
     ${SOURCE_DIR}/sha1.cpp
 )
 
-ADD_FILTER(
-xml_sax_parser
-    ${INCLUDE_DIR}/xml_sax_parser.h
-    ${SOURCE_DIR}/xml_sax_parser.cpp
-)
-
 INCLUDE_DIRECTORIES(${PROJECT_NAME} ${STDEX_DBGHELP_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${SRC_FILES})

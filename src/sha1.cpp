@@ -129,7 +129,7 @@ namespace stdex
             hash[hashByte] = (result[hashByte >> 2] >> (((3 - hashByte) & 0x3) << 3)) & 0xff;
         }
     }
-
+    //////////////////////////////////////////////////////////////////////////
     void sha1_hex( const unsigned char * hash, char * hexstring )
     {
         const char hexDigits[] = {"0123456789abcdef"};
@@ -141,4 +141,5 @@ namespace stdex
         }
         hexstring[40] = 0;
     }
+    //////////////////////////////////////////////////////////////////////////
 }
