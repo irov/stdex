@@ -25,7 +25,7 @@ namespace stdex
 
             TBlockType * t = new (impl) TBlockType();
 
-            return std::launder( t );
+            return t;
         }
 
         void destroyT( TBlockType * _t )
