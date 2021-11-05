@@ -93,6 +93,7 @@ memory
     ${INCLUDE_DIR}/memory_reader.h
     ${INCLUDE_DIR}/memory_writer.h
     ${INCLUDE_DIR}/container_writer.h
+    ${INCLUDE_DIR}/container_reader.h
     ${INCLUDE_DIR}/memorycopy.h
     ${SOURCE_DIR}/memorycopy.cpp
 )

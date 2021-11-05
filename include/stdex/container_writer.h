@@ -45,9 +45,9 @@ namespace stdex
             this->writeBuffer( buff, _count * sizeof( T ) );
         }
 
-        inline void writeBuffer( const value_type * _begin, size_t _size )
+        inline void writeBuffer( const void * _begin, size_t _size )
         {
-            m_container.insert( m_container.end(), _begin, _begin + _size );
+            m_container.insert( m_container.end(), reinterpret_cast<const value_type *>(_begin), reinterpret_cast<const value_type *>(_begin) + _size );
         }
 
     protected:
