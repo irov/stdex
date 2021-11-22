@@ -59,7 +59,7 @@ namespace stdex
 
     protected:
         const C & m_container;
-        uint32_t m_carriage;
+        size_t m_carriage;
     };
 
     template<class C>
