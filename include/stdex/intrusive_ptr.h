@@ -129,6 +129,25 @@ namespace stdex
             return intrusive_ptr( _pointer.template getT<pointer_type>() );
         }
 
+    public:
+        static intrusive_ptr dynamic_from( const_pointer_type _pointer )
+        {
+            return intrusive_ptr( _pointer );
+        }
+
+        template<class U>
+        static intrusive_ptr dynamic_from( U _pointer )
+        {
+            return intrusive_ptr( dynamic_cast<const value_type *>(_pointer) );
+        }
+
+        template<class U, class UD>
+        static intrusive_ptr dynamic_from( const intrusive_ptr<U, UD> & _pointer )
+        {
+            return intrusive_ptr( _pointer.template getDynamicT<pointer_type>() );
+        }
+
+    public:
         template<class U, class UD>
         static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
         {
@@ -223,6 +242,16 @@ namespace stdex
             value_type * ptr = this->get();
 
             K ptr_t = static_cast<K>(ptr);
+
+            return ptr_t;
+        }
+
+        template<class K>
+        K getDynamicT() const
+        {
+            value_type * ptr = this->get();
+
+            K ptr_t = dynamic_cast<K>(ptr);
 
             return ptr_t;
         }
@@ -605,6 +634,25 @@ namespace stdex
             return intrusive_ptr( _pointer.get() );
         }
 
+    public:
+        static intrusive_ptr dynamic_from( const_pointer_type _pointer )
+        {
+            return intrusive_ptr( _pointer );
+        }
+
+        template<class U>
+        static intrusive_ptr dynamic_from( U _pointer )
+        {
+            return intrusive_ptr( dynamic_cast<const value_type *>(_pointer) );
+        }
+
+        template<class U, class UD>
+        static intrusive_ptr dynamic_from( const intrusive_ptr<U, UD> & _pointer )
+        {
+            return intrusive_ptr( _pointer.getDynamicT<pointer_type>() );
+        }
+
+    public:
         template<class U, class UD>
         static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
         {
@@ -715,6 +763,18 @@ namespace stdex
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( ptr, K );
 
             K ptr_t = static_cast<K>(ptr);
+
+            return ptr_t;
+        }
+
+        template<class K>
+        K getDynamicT() const
+        {
+            value_type * ptr = this->get();
+
+            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( ptr, K );
+
+            K ptr_t = dynamic_cast<K>(ptr);
 
             return ptr_t;
         }
