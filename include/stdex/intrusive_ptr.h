@@ -649,7 +649,7 @@ namespace stdex
         template<class U, class UD>
         static intrusive_ptr dynamic_from( const intrusive_ptr<U, UD> & _pointer )
         {
-            return intrusive_ptr( _pointer.getDynamicT<pointer_type>() );
+            return intrusive_ptr( _pointer.template getDynamicT<pointer_type>() );
         }
 
     public:
