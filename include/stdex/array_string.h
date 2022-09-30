@@ -129,7 +129,7 @@ namespace stdex
             }
 
             m_buffer[0] = _ch;
-            m_pos += 1;
+            m_pos = 1;
             m_buffer[m_pos] = '\0';
         }
 
