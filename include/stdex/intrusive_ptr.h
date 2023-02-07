@@ -772,8 +772,6 @@ namespace stdex
         {
             value_type * ptr = this->get();
 
-            STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( ptr, K );
-
             K ptr_t = dynamic_cast<K>(ptr);
 
             return ptr_t;
