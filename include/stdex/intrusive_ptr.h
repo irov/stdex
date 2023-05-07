@@ -270,7 +270,7 @@ namespace stdex
 
             U * ptr_t = static_cast<U *>(ptr);
 
-            return std::move( intrusive_ptr<U, UD>( ptr_t, intrusive_borrow_t() ) );
+            return intrusive_ptr<U, UD>( ptr_t, intrusive_borrow_t() );
         }
 
         value_type * operator -> () const
