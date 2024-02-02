@@ -98,6 +98,10 @@ namespace stdex
             : public base_iterator<const_iterator>
         {
         public:
+            using base_iterator<const_iterator>::operator==;
+            using base_iterator<const_iterator>::operator!=;
+
+        public:
             inline explicit const_iterator( linked_type * _node )
                 : base_iterator<const_iterator>( _node )
             {
@@ -152,6 +156,10 @@ namespace stdex
             : public base_iterator<iterator>
         {
         public:
+            using base_iterator<iterator>::operator==;
+            using base_iterator<iterator>::operator!=;
+
+        public:
             inline explicit iterator( linked_type * _node )
                 : base_iterator<iterator>( _node )
             {
@@ -204,6 +212,10 @@ namespace stdex
         class reverse_iterator
             : public base_iterator<reverse_iterator>
         {
+        public:
+            using base_iterator<reverse_iterator>::operator==;
+            using base_iterator<reverse_iterator>::operator!=;
+
         public:
             inline explicit reverse_iterator( linked_type * _node )
                 : base_iterator<reverse_iterator>( _node )
@@ -313,6 +325,7 @@ namespace stdex
         inline void push_back( linked_type * _node )
         {
             iterator it = this->end();
+
             this->insert_( it, _node );
         }
 
