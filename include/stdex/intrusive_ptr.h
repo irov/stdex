@@ -41,7 +41,7 @@ namespace stdex
         }
 
         intrusive_ptr( intrusive_ptr && _rhs ) noexcept
-            : intrusive_ptr<derived_type>( std::forward<intrusive_ptr &&>( _rhs ) )
+            : intrusive_ptr<derived_type>( std::forward<intrusive_ptr>( _rhs ) )
         {
         }
 
@@ -57,7 +57,7 @@ namespace stdex
         }
 
         intrusive_ptr( derived_type_ptr && _rhs )
-            : derived_type_ptr( std::forward<derived_type_ptr &&>( _rhs ) )
+            : derived_type_ptr( std::forward<derived_type_ptr>( _rhs ) )
         {
         }
 
@@ -80,7 +80,7 @@ namespace stdex
 
         template<class U>
         intrusive_ptr( intrusive_ptr<U> && _rhs )
-            : intrusive_ptr<derived_type>( std::forward<intrusive_ptr<U> &&>( _rhs ) )
+            : intrusive_ptr<derived_type>( std::forward<intrusive_ptr<U>>( _rhs ) )
         {
         }
 
@@ -93,7 +93,7 @@ namespace stdex
 
         template<class U, class UD>
         intrusive_ptr( intrusive_ptr<U, UD> && _rhs )
-            : intrusive_ptr<derived_type>( std::forward<intrusive_ptr<U, UD> &&>( _rhs ) )
+            : intrusive_ptr<derived_type>( std::forward<intrusive_ptr<U, UD>>( _rhs ) )
         {
         }
 
@@ -169,7 +169,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            intrusive_ptr swap_ptr( _rhs );
+            intrusive_ptr swap_ptr( std::forward<intrusive_ptr>(_rhs) );
             swap_ptr.swap( *this );
 
             return *this;
@@ -201,7 +201,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            intrusive_ptr swap_ptr( _rhs );
+            intrusive_ptr swap_ptr( std::forward<intrusive_ptr<U, UD>>(_rhs) );
             swap_ptr.swap( *this );
 
             return *this;
@@ -674,7 +674,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            intrusive_ptr swap_ptr( _rhs );
+            intrusive_ptr swap_ptr( std::forward<intrusive_ptr>(_rhs) );
             swap_ptr.swap( *this );
 
             return *this;
@@ -706,7 +706,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            intrusive_ptr swap_ptr( _rhs );
+            intrusive_ptr swap_ptr( std::forward<intrusive_ptr<U, void>>(_rhs) );
             swap_ptr.swap( *this );
 
             return *this;
