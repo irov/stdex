@@ -48,7 +48,13 @@ namespace stdex
         }
 
         chunk_t * prev;
-        typedef typename std::aligned_storage<sizeof( pool_block ), alignof(pool_block)>::type pool_block_storage;
+        
+        static constexpr size_t pool_block_size = sizeof( pool_block );
+        static constexpr size_t pool_block_alignment = alignof(pool_block) > alignof(std::max_align_t)
+            ? alignof(std::max_align_t)
+            : alignof(pool_block);
+
+        typedef typename std::aligned_storage<pool_block_size, pool_block_alignment> ::type pool_block_storage;
         pool_block_storage buffer_block_storage[TBlockCount];
     };
 

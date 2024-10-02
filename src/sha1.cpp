@@ -130,7 +130,7 @@ namespace stdex
         }
     }
     //////////////////////////////////////////////////////////////////////////
-    void sha1_hex( const unsigned char * hash, char * hexstring )
+    void sha1_hex( const unsigned char * hash, char * const hexstring )
     {
         const char hexDigits[] = {"0123456789abcdef"};
 
@@ -139,7 +139,21 @@ namespace stdex
             hexstring[hashByte << 1] = hexDigits[(hash[hashByte] >> 4) & 0xf];
             hexstring[(hashByte << 1) + 1] = hexDigits[hash[hashByte] & 0xf];
         }
-        hexstring[40] = 0;
+
+        hexstring[40] = '\0';
+    }
+    //////////////////////////////////////////////////////////////////////////
+    void sha1_hexw( const unsigned char * hash, wchar_t * const hexstring )
+    {
+        const wchar_t hexDigits[] = {L"0123456789abcdef"};
+
+        for( int hashByte = 20; --hashByte >= 0; )
+        {
+            hexstring[hashByte << 1] = hexDigits[(hash[hashByte] >> 4) & 0xf];
+            hexstring[(hashByte << 1) + 1] = hexDigits[hash[hashByte] & 0xf];
+        }
+
+        hexstring[40] = L'\0';
     }
     //////////////////////////////////////////////////////////////////////////
 }
