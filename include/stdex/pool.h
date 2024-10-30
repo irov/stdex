@@ -2,7 +2,6 @@
 
 #include "stdex/typename.h"
 
-#include <type_traits>
 #include <cstdint>
 
 namespace stdex
@@ -12,7 +11,7 @@ namespace stdex
     {
         typedef pool_template_chunk<TBlockType, TBlockCount> chunk_t;
 
-        struct pool_block
+        struct alignas(alignof(TBlockType)) pool_block
         {
             TBlockType buff;
             pool_block * next;
@@ -22,8 +21,8 @@ namespace stdex
         {
             pool_block * free = nullptr;
 
-            for( pool_block * it = reinterpret_cast<pool_block *>(buffer_block_storage + 0),
-                *it_end = reinterpret_cast<pool_block *>(buffer_block_storage + TBlockCount);
+            for( pool_block * it = buffer_block_storage + 0,
+                *it_end = buffer_block_storage + TBlockCount;
                 it != it_end;
                 ++it )
             {
@@ -48,14 +47,8 @@ namespace stdex
         }
 
         chunk_t * prev;
-        
-        static constexpr size_t pool_block_size = sizeof( pool_block );
-        static constexpr size_t pool_block_alignment = alignof(pool_block) > alignof(std::max_align_t)
-            ? alignof(std::max_align_t)
-            : alignof(pool_block);
 
-        typedef typename std::aligned_storage<pool_block_size, pool_block_alignment> ::type pool_block_storage;
-        pool_block_storage buffer_block_storage[TBlockCount];
+        pool_block buffer_block_storage[TBlockCount];
     };
 
     template<class TBlockType, uint32_t TBlockCount, class TAllocator>
