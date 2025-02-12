@@ -280,13 +280,22 @@ namespace stdex
             return static_cast<value_type *>(ptr);
         }
 
-        void reset()
+    public:
+        value_type * acquire() const
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            intrusive_ptr<derived_type>::m_ptr = nullptr;
+            T::intrusive_ptr_add_ref( intrusive_ptr<derived_type>::m_ptr );
+
+            return m_ptr;
         }
 
+        static void release( value_type * _ptr )
+        {
+            T::intrusive_ptr_dec_ref( _ptr );
+        }
+
+    public:
         void swap( intrusive_ptr & _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
@@ -815,13 +824,28 @@ namespace stdex
             return m_ptr;
         }
 
+    public:
+        value_type * acquire() const
+        {
+            STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
+            
+            T::intrusive_ptr_add_ref( m_ptr );
+
+            return m_ptr;
+        }
+
+        static void release( value_type * _ptr )
+        {
+            T::intrusive_ptr_dec_ref( _ptr );
+        }
+
+    public:
         void reset()
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
             m_ptr = nullptr;
         }
-
 
         void swap( intrusive_ptr & _rhs )
         {
