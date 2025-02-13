@@ -287,7 +287,7 @@ namespace stdex
 
             T::intrusive_ptr_add_ref( intrusive_ptr<derived_type>::m_ptr );
 
-            return m_ptr;
+            return intrusive_ptr<derived_type>::m_ptr;
         }
 
         static void release( value_type * _ptr )
