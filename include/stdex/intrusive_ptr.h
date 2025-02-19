@@ -2,7 +2,7 @@
 
 #include "stdex/intrusive_ptr_config.h"
 
-#include <stdexcept>
+#include <utility>
 
 namespace stdex
 {
@@ -22,83 +22,83 @@ namespace stdex
         typedef intrusive_ptr<derived_type, void> derived_type_ptr;
 
     public:
-        static const intrusive_ptr & none()
+        static inline const intrusive_ptr & none()
         {
-            static intrusive_ptr ptr_none;
+            static const intrusive_ptr ptr_none;
 
             return ptr_none;
         }
 
     public:
-        intrusive_ptr()
+        constexpr intrusive_ptr() noexcept
             : intrusive_ptr<derived_type>( nullptr )
         {
         }
 
-        intrusive_ptr( const intrusive_ptr & _rhs )
+        constexpr intrusive_ptr( std::nullptr_t ) noexcept
+            : intrusive_ptr<derived_type>( nullptr )
+        {
+        }
+
+        constexpr intrusive_ptr( const intrusive_ptr & _rhs ) noexcept
             : intrusive_ptr<derived_type>( _rhs.m_ptr )
         {
         }
 
-        intrusive_ptr( intrusive_ptr && _rhs ) noexcept
+        constexpr intrusive_ptr( intrusive_ptr && _rhs ) noexcept
             : intrusive_ptr<derived_type>( std::forward<intrusive_ptr>( _rhs ) )
         {
         }
 
-        intrusive_ptr( std::nullptr_t _ptr )
-            : intrusive_ptr<derived_type>( _ptr )
-        {
-        }
-
-        intrusive_ptr( const derived_type_ptr & _rhs )
+        constexpr intrusive_ptr( const derived_type_ptr & _rhs ) noexcept
             : intrusive_ptr<derived_type>( _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
         }
 
-        intrusive_ptr( derived_type_ptr && _rhs )
+        constexpr intrusive_ptr( derived_type_ptr && _rhs ) noexcept
             : derived_type_ptr( std::forward<derived_type_ptr>( _rhs ) )
         {
         }
 
-        explicit intrusive_ptr( const value_type * _ptr )
+        constexpr explicit intrusive_ptr( const value_type * _ptr ) noexcept
             : derived_type_ptr( _ptr )
         {
         }
 
-        explicit intrusive_ptr( const value_type * _ptr, intrusive_borrow_t )
+        constexpr explicit intrusive_ptr( const value_type * _ptr, intrusive_borrow_t ) noexcept
             : derived_type_ptr( _ptr, intrusive_borrow_t() )
         {
         }
 
         template<class U>
-        intrusive_ptr( const intrusive_ptr<U> & _rhs )
+        constexpr intrusive_ptr( const intrusive_ptr<U> & _rhs ) noexcept
             : intrusive_ptr<derived_type>( _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
         }
 
         template<class U>
-        intrusive_ptr( intrusive_ptr<U> && _rhs )
+        constexpr intrusive_ptr( intrusive_ptr<U> && _rhs ) noexcept
             : intrusive_ptr<derived_type>( std::forward<intrusive_ptr<U>>( _rhs ) )
         {
         }
 
         template<class U, class UD>
-        intrusive_ptr( const intrusive_ptr<U, UD> & _rhs )
+        constexpr intrusive_ptr( const intrusive_ptr<U, UD> & _rhs ) noexcept
             : intrusive_ptr<derived_type>( _rhs )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
         }
 
         template<class U, class UD>
-        intrusive_ptr( intrusive_ptr<U, UD> && _rhs )
+        constexpr intrusive_ptr( intrusive_ptr<U, UD> && _rhs ) noexcept
             : intrusive_ptr<derived_type>( std::forward<intrusive_ptr<U, UD>>( _rhs ) )
         {
         }
 
         template<class U>
-        explicit intrusive_ptr( const U * _ptr )
+        constexpr explicit intrusive_ptr( const U * _ptr ) noexcept
             : intrusive_ptr<derived_type>( _ptr )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, pointer_type );
@@ -155,7 +155,7 @@ namespace stdex
         }
 
     public:
-        intrusive_ptr & operator = ( const intrusive_ptr & _rhs ) noexcept
+        constexpr intrusive_ptr & operator = ( const intrusive_ptr & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -165,7 +165,7 @@ namespace stdex
             return *this;
         }
 
-        intrusive_ptr & operator = ( intrusive_ptr && _rhs ) noexcept
+        constexpr intrusive_ptr & operator = ( intrusive_ptr && _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -175,7 +175,7 @@ namespace stdex
             return *this;
         }
 
-        intrusive_ptr & operator = ( value_type * _rhs ) noexcept
+        constexpr intrusive_ptr & operator = ( value_type * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -186,7 +186,7 @@ namespace stdex
         }
 
         template<class U, class UD>
-        intrusive_ptr & operator = ( const intrusive_ptr<U, UD> & _rhs ) noexcept
+        constexpr intrusive_ptr & operator = ( const intrusive_ptr<U, UD> & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -197,7 +197,7 @@ namespace stdex
         }
 
         template<class U, class UD>
-        intrusive_ptr & operator = ( intrusive_ptr<U, UD> && _rhs ) noexcept
+        constexpr intrusive_ptr & operator = ( intrusive_ptr<U, UD> && _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -208,7 +208,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr & operator = ( U * _rhs ) noexcept
+        constexpr intrusive_ptr & operator = ( U * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -218,7 +218,7 @@ namespace stdex
             return *this;
         }
 
-        intrusive_ptr & operator = ( std::nullptr_t ) noexcept
+        constexpr intrusive_ptr & operator = ( std::nullptr_t ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -229,7 +229,7 @@ namespace stdex
         }
 
     public:
-        value_type * get() const
+        constexpr value_type * get() const noexcept
         {
             value_type * ptr = intrusive_ptr<derived_type>::template getT<value_type *>();
 
@@ -237,7 +237,7 @@ namespace stdex
         }
 
         template<class K>
-        K getT() const
+        constexpr K getT() const noexcept
         {
             value_type * ptr = this->get();
 
@@ -247,7 +247,7 @@ namespace stdex
         }
 
         template<class K>
-        K getDynamicT() const
+        constexpr K getDynamicT() const noexcept
         {
             value_type * ptr = this->get();
 
@@ -256,7 +256,7 @@ namespace stdex
             return ptr_t;
         }
 
-        value_type * move()
+        constexpr value_type * move() noexcept
         {
             derived_type * ptr = intrusive_ptr<derived_type>::move();
 
@@ -264,7 +264,7 @@ namespace stdex
         }
 
         template<class U, class UD>
-        intrusive_ptr<U, UD> && moveT()
+        constexpr intrusive_ptr<U, UD> && moveT() noexcept
         {
             value_type * ptr = this->move();
 
@@ -273,7 +273,7 @@ namespace stdex
             return intrusive_ptr<U, UD>( ptr_t, intrusive_borrow_t() );
         }
 
-        value_type * operator -> () const
+        constexpr value_type * operator -> () const noexcept
         {
             derived_type * ptr = intrusive_ptr<derived_type>::operator ->();
 
@@ -281,7 +281,7 @@ namespace stdex
         }
 
     public:
-        value_type * acquire() const
+        constexpr value_type * acquire() const noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -290,13 +290,13 @@ namespace stdex
             return intrusive_ptr<derived_type>::m_ptr;
         }
 
-        static void release( value_type * _ptr )
+        static void release( value_type * _ptr ) noexcept
         {
             T::intrusive_ptr_dec_ref( _ptr );
         }
 
     public:
-        void swap( intrusive_ptr & _rhs )
+        constexpr void swap( intrusive_ptr & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -513,27 +513,27 @@ namespace stdex
         typedef const T * const_pointer_type;
 
     public:
-        static const intrusive_ptr & none()
+        static inline const intrusive_ptr & none()
         {
-            static intrusive_ptr ptr_none;
+            static const intrusive_ptr ptr_none;
 
             return ptr_none;
         }
 
     public:
-        intrusive_ptr() noexcept
+        constexpr intrusive_ptr() noexcept
             : m_ptr( nullptr )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
         }
 
-        intrusive_ptr( std::nullptr_t _ptr )
-            : m_ptr( _ptr )
+        constexpr intrusive_ptr( std::nullptr_t ) noexcept
+            : m_ptr( nullptr )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
         }
 
-        intrusive_ptr( const intrusive_ptr & _rhs )
+        constexpr intrusive_ptr( const intrusive_ptr & _rhs ) noexcept
             : m_ptr( _rhs.get() )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -541,7 +541,7 @@ namespace stdex
             this->incref();
         }
 
-        intrusive_ptr( intrusive_ptr && _rhs ) noexcept
+        constexpr intrusive_ptr( intrusive_ptr && _rhs ) noexcept
             : m_ptr( _rhs.get() )
         {
             STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK();
@@ -549,7 +549,7 @@ namespace stdex
             _rhs.reset();
         }
 
-        explicit intrusive_ptr( const value_type * _ptr )
+        constexpr explicit intrusive_ptr( const value_type * _ptr ) noexcept
             : m_ptr( const_cast<pointer_type>(_ptr) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
@@ -558,7 +558,7 @@ namespace stdex
             this->incref();
         }
 
-        explicit intrusive_ptr( const value_type * _ptr, intrusive_borrow_t )
+        constexpr explicit intrusive_ptr( const value_type * _ptr, intrusive_borrow_t ) noexcept
             : m_ptr( const_cast<pointer_type>(_ptr) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
@@ -566,7 +566,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr( const intrusive_ptr<U, void> & _rhs )
+        constexpr intrusive_ptr( const intrusive_ptr<U, void> & _rhs ) noexcept
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
@@ -576,7 +576,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr( intrusive_ptr<U, void> && _rhs )
+        constexpr intrusive_ptr( intrusive_ptr<U, void> && _rhs ) noexcept
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
@@ -586,7 +586,7 @@ namespace stdex
         }
 
         template<class U, class Y>
-        intrusive_ptr( const intrusive_ptr<U, Y> & _rhs )
+        constexpr intrusive_ptr( const intrusive_ptr<U, Y> & _rhs ) noexcept
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
@@ -596,7 +596,7 @@ namespace stdex
         }
 
         template<class U, class Y>
-        intrusive_ptr( intrusive_ptr<U, Y> && _rhs )
+        constexpr intrusive_ptr( intrusive_ptr<U, Y> && _rhs ) noexcept
             : m_ptr( static_cast<T *>(_rhs.get()) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _rhs.get(), pointer_type );
@@ -606,7 +606,7 @@ namespace stdex
         }
 
         template<class U>
-        explicit intrusive_ptr( const U * _ptr )
+        constexpr explicit intrusive_ptr( const U * _ptr ) noexcept
             : m_ptr( static_cast<value_type *>(const_cast<U *>(_ptr)) )
         {
             STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR( _ptr, const_pointer_type );
@@ -626,50 +626,50 @@ namespace stdex
         intrusive_ptr( bool ) = delete;
 
     public:
-        static intrusive_ptr from( const_pointer_type _pointer )
+        static intrusive_ptr from( const_pointer_type _pointer ) noexcept
         {
             return intrusive_ptr( _pointer );
         }
 
         template<class U>
-        static intrusive_ptr from( U _pointer )
+        static intrusive_ptr from( U _pointer ) noexcept
         {
             return intrusive_ptr( static_cast<const value_type *>(_pointer) );
         }
 
         template<class U, class UD>
-        static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer )
+        static intrusive_ptr from( const intrusive_ptr<U, UD> & _pointer ) noexcept
         {
             return intrusive_ptr( _pointer.get() );
         }
 
     public:
-        static intrusive_ptr dynamic_from( const_pointer_type _pointer )
+        static intrusive_ptr dynamic_from( const_pointer_type _pointer ) noexcept
         {
             return intrusive_ptr( _pointer );
         }
 
         template<class U>
-        static intrusive_ptr dynamic_from( U _pointer )
+        static intrusive_ptr dynamic_from( U _pointer ) noexcept
         {
             return intrusive_ptr( dynamic_cast<const value_type *>(_pointer) );
         }
 
         template<class U, class UD>
-        static intrusive_ptr dynamic_from( const intrusive_ptr<U, UD> & _pointer )
+        static intrusive_ptr dynamic_from( const intrusive_ptr<U, UD> & _pointer ) noexcept
         {
             return intrusive_ptr( _pointer.template getDynamicT<pointer_type>() );
         }
 
     public:
         template<class U, class UD>
-        static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer )
+        static pointer_type ptr( const intrusive_ptr<U, UD> & _pointer ) noexcept
         {
             return _pointer.template getT<pointer_type>();
         }
 
     public:
-        intrusive_ptr & operator = ( const intrusive_ptr & _rhs )
+        constexpr intrusive_ptr & operator = ( const intrusive_ptr & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -689,7 +689,7 @@ namespace stdex
             return *this;
         }
 
-        intrusive_ptr & operator = ( value_type * _rhs )
+        constexpr intrusive_ptr & operator = ( value_type * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -700,7 +700,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr & operator = ( const intrusive_ptr<U, void> & _rhs )
+        constexpr intrusive_ptr & operator = ( const intrusive_ptr<U, void> & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -711,7 +711,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr & operator = ( intrusive_ptr<U, void> && _rhs )
+        constexpr intrusive_ptr & operator = ( intrusive_ptr<U, void> && _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -722,7 +722,7 @@ namespace stdex
         }
 
         template<class U>
-        intrusive_ptr & operator = ( U * _rhs )
+        constexpr intrusive_ptr & operator = ( U * _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -732,7 +732,7 @@ namespace stdex
             return *this;
         }
 
-        intrusive_ptr & operator = ( std::nullptr_t )
+        constexpr intrusive_ptr & operator = ( std::nullptr_t ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -743,21 +743,21 @@ namespace stdex
         }
 
     public:
-        void set( value_type * _ptr )
+        constexpr void set( value_type * _ptr ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
             m_ptr = _ptr;
         }
 
-        value_type * get_base() const
+        constexpr value_type * get_base() const noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
             return m_ptr;
         }
 
-        value_type * get() const
+        constexpr value_type * get() const noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -765,7 +765,7 @@ namespace stdex
         }
 
         template<class K>
-        K getT() const
+        constexpr K getT() const noexcept
         {
             value_type * ptr = this->get();
 
@@ -777,7 +777,7 @@ namespace stdex
         }
 
         template<class K>
-        K getDynamicT() const
+        constexpr K getDynamicT() const noexcept
         {
             value_type * ptr = this->get();
 
@@ -786,7 +786,7 @@ namespace stdex
             return ptr_t;
         }
 
-        value_type * move()
+        constexpr value_type * move() noexcept
         {
             value_type * ptr = m_ptr;
             m_ptr = nullptr;
@@ -795,7 +795,7 @@ namespace stdex
         }
 
         template<class U, class D>
-        intrusive_ptr<U, D> moveT()
+        constexpr intrusive_ptr<U, D> moveT() noexcept
         {
             value_type * ptr = this->move();
 
@@ -805,19 +805,17 @@ namespace stdex
         }
 
 
-        value_type * operator -> () const
+        constexpr value_type * operator -> () const noexcept
         {
 #   ifdef STDEX_INTRUSIVE_PTR_DEBUG
             if( m_ptr == nullptr )
             {
                 STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-                throw std::runtime_error( "m_ptr == nullptr" );
             }
 
             if( T::intrusive_ptr_check_ref( m_ptr ) == false )
             {
                 STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-                throw std::runtime_error( "ptr check == false" );
             }
 #   endif
 
@@ -825,7 +823,7 @@ namespace stdex
         }
 
     public:
-        value_type * acquire() const
+        constexpr value_type * acquire() const noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
             
@@ -834,20 +832,20 @@ namespace stdex
             return m_ptr;
         }
 
-        static void release( value_type * _ptr )
+        static void release( value_type * _ptr ) noexcept
         {
             T::intrusive_ptr_dec_ref( _ptr );
         }
 
     public:
-        void reset()
+        constexpr void reset() noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
             m_ptr = nullptr;
         }
 
-        void swap( intrusive_ptr & _rhs )
+        constexpr void swap( intrusive_ptr & _rhs ) noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -857,7 +855,7 @@ namespace stdex
         }
 
     protected:
-        void incref()
+        constexpr void incref() noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
@@ -867,7 +865,7 @@ namespace stdex
             }
         }
 
-        void decref()
+        constexpr void decref() noexcept
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 

@@ -1,10 +1,6 @@
 #pragma once
 
-#include <stdexcept>
-#include <cstddef>
-#include <cstdint>
-
-#ifndef STDEX_INTRUSIVE_PTR_DEBUG_ENABLE
+#if !defined(STDEX_INTRUSIVE_PTR_DEBUG_ENABLE)
 #   ifndef NDEBUG
 #       define STDEX_INTRUSIVE_PTR_DEBUG
 #   endif
@@ -12,49 +8,45 @@
 #   define STDEX_INTRUSIVE_PTR_DEBUG
 #endif
 
-#if defined(_WIN32) && !defined(NDEBUG)
+#if defined(STDEX_INTRUSIVE_PTR_DEBUG)
+#   define STDEX_INTRUSIVE_PTR_DEBUG_MASK (0x7BADF00D)
 
-#pragma warning(disable:6011)
-
-inline void stdex_intrusive_ptr_critical_crash_error()
+namespace stdex
 {
-    volatile unsigned int * p = nullptr;
-    *p = 0x7BADF00D;
-}
-
-#pragma warning(default:6011)
-
-#define STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR stdex_intrusive_ptr_critical_crash_error()
-#else
-#define STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR 
-#endif
-
-#ifdef STDEX_INTRUSIVE_PTR_DEBUG
-template<class V, class T>
-void stdex_intrusive_ptr_check_typecast_ptr( T _ptr )
-{
-    if( _ptr != nullptr && dynamic_cast<V>(_ptr) == nullptr )
+    inline void __intrusive_ptr_critical_crash_error()
     {
-        STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-        throw std::runtime_error( "ptr invalid cast" );
+#   pragma warning(disable:6011)
+        volatile unsigned int * p = nullptr;
+        *p = STDEX_INTRUSIVE_PTR_DEBUG_MASK;
+#   pragma warning(default:6011)
+    }
+
+    template<class V, class T>
+    void __intrusive_ptr_check_typecast_ptr( T _ptr )
+    {
+        if( _ptr != nullptr && dynamic_cast<V>(_ptr) == nullptr )
+        {
+            stdex::__intrusive_ptr_critical_crash_error();
+        }
+    }
+
+    template<class T>
+    void __intrusive_ptr_check_debug_mask( T _ptr )
+    {
+        if( _ptr->m_debug_ptr_mask__ != STDEX_INTRUSIVE_PTR_DEBUG_MASK )
+        {
+            stdex::__intrusive_ptr_critical_crash_error();
+        }
     }
 }
 
-template<class T>
-void stdex_intrusive_ptr_check_debug_mask( T _ptr )
-{
-    if( _ptr->m_debug_ptr_mask__ != 0xABCDEF01 )
-    {
-        STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR;
-        throw std::runtime_error( "mask != 0xABCDEF01" );
-    }
-}
-
-#   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE) stdex_intrusive_ptr_check_typecast_ptr<TYPE>( PTR )
-#   define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK() public: uint32_t m_debug_ptr_mask__; protected:
-#   define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() this->m_debug_ptr_mask__ = 0xABCDEF01
-#   define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() stdex_intrusive_ptr_check_debug_mask( this )
+#   define STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR stdex::__intrusive_ptr_critical_crash_error()
+#   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE) stdex::__intrusive_ptr_check_typecast_ptr<TYPE>( PTR )
+#   define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK() public: unsigned int m_debug_ptr_mask__; protected:
+#   define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK() this->m_debug_ptr_mask__ = STDEX_INTRUSIVE_PTR_DEBUG_MASK
+#   define STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK() stdex::__intrusive_ptr_check_debug_mask( this )
 #else
+#   define STDEX_INTRUSIVE_PTR_CRITICAL_CRASH_ERROR
 #   define STDEX_INTRUSIVE_PTR_CHECK_TYPECAST_PTR(PTR, TYPE)
 #   define STDEX_INTRUSIVE_PTR_DECLARE_DEBUG_MASK()
 #   define STDEX_INTRUSIVE_PTR_INIT_DEBUG_MASK()

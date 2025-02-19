@@ -7,14 +7,14 @@ namespace stdex
     class intrusive_ptr_base
     {
     public:
-        virtual uint32_t incref() = 0;
-        virtual void decref() = 0;
-        virtual uint32_t getrefcount() const = 0;
+        virtual unsigned int incref() noexcept = 0;
+        virtual void decref() noexcept = 0;
+        virtual unsigned int getrefcount() const noexcept = 0;
 
     public:
         inline static void intrusive_ptr_add_ref( intrusive_ptr_base * _ptr ) noexcept;
         inline static void intrusive_ptr_dec_ref( intrusive_ptr_base * _ptr ) noexcept;
-        inline static uint32_t intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept;
+        inline static unsigned int intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept;
 
         template<class T>
         static void intrusive_ptr_setup( T *& _ptr, T * _other );
@@ -69,9 +69,9 @@ namespace stdex
         _ptr->decref();
     }
     //////////////////////////////////////////////////////////////////////////
-    inline uint32_t intrusive_ptr_base::intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept
+    inline unsigned int intrusive_ptr_base::intrusive_ptr_get_ref( const intrusive_ptr_base * _ptr ) noexcept
     {
-        uint32_t refcount = _ptr->getrefcount();
+        unsigned int refcount = _ptr->getrefcount();
 
         return refcount;
     }
@@ -85,7 +85,7 @@ namespace stdex
             return false;
         }
 
-        uint32_t refcount = _ptr->getrefcount();
+        unsigned int refcount = _ptr->getrefcount();
 
         if( refcount == 0 )
         {
