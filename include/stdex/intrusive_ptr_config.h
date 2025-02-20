@@ -9,16 +9,15 @@
 #endif
 
 #if defined(STDEX_INTRUSIVE_PTR_DEBUG)
+#   include <cassert>
+
 #   define STDEX_INTRUSIVE_PTR_DEBUG_MASK (0x7BADF00D)
 
 namespace stdex
 {
     inline void __intrusive_ptr_critical_crash_error()
     {
-#   pragma warning(disable:6011)
-        volatile unsigned int * p = nullptr;
-        *p = STDEX_INTRUSIVE_PTR_DEBUG_MASK;
-#   pragma warning(default:6011)
+        assert("intrusive_ptr_critical_crash_error");
     }
 
     template<class V, class T>
