@@ -10,6 +10,7 @@ namespace stdex
     {
     public:
         typedef intrusive_ptr<T, D> base_type;
+
         using typename base_type::value_type;
         using typename base_type::derived_type;
         using typename base_type::pointer_type;
@@ -31,51 +32,51 @@ namespace stdex
         }
 
     public:
-        intrusive_ptr_view()
+        constexpr intrusive_ptr_view() noexcept
             : base_type()
         {
         }
 
-        intrusive_ptr_view( const value_ptr_type & _rhs )
-            : base_type( _rhs.get(), intrusive_borrow_t() )
+        constexpr intrusive_ptr_view( std::nullptr_t ) noexcept
+            : base_type()
         {
         }
 
-        intrusive_ptr_view( const intrusive_ptr_view & _rhs )
+        constexpr intrusive_ptr_view( const intrusive_ptr_view & _rhs ) noexcept
             : base_type( _rhs.m_ptr, intrusive_borrow_t() )
         {
         }
 
-        intrusive_ptr_view( std::nullptr_t )
-            : base_type()
+        constexpr intrusive_ptr_view( const value_ptr_type & _rhs ) noexcept
+            : base_type( _rhs.get(), intrusive_borrow_t() )
         {
         }
 
-        intrusive_ptr_view( const value_type * _ptr )
+        constexpr intrusive_ptr_view( const value_type * _ptr ) noexcept
             : base_type( _ptr, intrusive_borrow_t() )
         {
         }
 
-        ~intrusive_ptr_view()
+        ~intrusive_ptr_view() noexcept
         {
             base_type::m_ptr = nullptr;
         }
 
-        intrusive_ptr_view & operator = ( const intrusive_ptr_view & _rhs ) noexcept
+        constexpr intrusive_ptr_view & operator = ( const intrusive_ptr_view & _rhs ) noexcept
         {
             base_type::m_ptr = _rhs.get();
 
             return *this;
         }
 
-        intrusive_ptr_view & operator = ( const value_type * _rhs ) noexcept
+        constexpr intrusive_ptr_view & operator = ( const value_type * _rhs ) noexcept
         {
             base_type::m_ptr = const_cast<value_type *>(_rhs);
 
             return *this;
         }
 
-        intrusive_ptr_view & operator = ( std::nullptr_t ) noexcept
+        constexpr intrusive_ptr_view & operator = ( std::nullptr_t ) noexcept
         {
             base_type::m_ptr = nullptr;
 
@@ -83,28 +84,28 @@ namespace stdex
         }
 
     public:
-        value_type * get() const
+        constexpr value_type * get() const noexcept
         {
-            return base_type::m_ptr;
+            return static_cast<value_type *>(base_type::m_ptr);
         }
 
         template<class U>
-        U getT() const
+        constexpr U getT() const noexcept
         {
             return static_cast<U>(base_type::m_ptr);
         }
 
-        value_type * operator -> () const
+        constexpr value_type * operator -> () const noexcept
         {
-            return base_type::m_ptr;
+            return static_cast<value_type *>(base_type::m_ptr);
         }
 
-        void reset()
+        constexpr void reset() noexcept
         {
             base_type::m_ptr = nullptr;
         }
 
-        void swap( intrusive_ptr_view & _rhs )
+        constexpr void swap( intrusive_ptr_view & _rhs ) noexcept
         {
             value_type * tmp = base_type::m_ptr;
             base_type::m_ptr = _rhs.m_ptr;
