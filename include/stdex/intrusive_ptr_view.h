@@ -32,51 +32,51 @@ namespace stdex
         }
 
     public:
-        constexpr intrusive_ptr_view() noexcept
+        constexpr intrusive_ptr_view()
             : base_type()
         {
         }
 
-        constexpr intrusive_ptr_view( std::nullptr_t ) noexcept
+        constexpr intrusive_ptr_view( std::nullptr_t )
             : base_type()
         {
         }
 
-        constexpr intrusive_ptr_view( const intrusive_ptr_view & _rhs ) noexcept
+        constexpr intrusive_ptr_view( const intrusive_ptr_view & _rhs )
             : base_type( _rhs.m_ptr, intrusive_borrow_t() )
         {
         }
 
-        constexpr intrusive_ptr_view( const value_ptr_type & _rhs ) noexcept
+        constexpr intrusive_ptr_view( const value_ptr_type & _rhs )
             : base_type( _rhs.get(), intrusive_borrow_t() )
         {
         }
 
-        constexpr intrusive_ptr_view( const value_type * _ptr ) noexcept
+        constexpr intrusive_ptr_view( const value_type * _ptr )
             : base_type( _ptr, intrusive_borrow_t() )
         {
         }
 
-        ~intrusive_ptr_view() noexcept
+        ~intrusive_ptr_view()
         {
             base_type::m_ptr = nullptr;
         }
 
-        constexpr intrusive_ptr_view & operator = ( const intrusive_ptr_view & _rhs ) noexcept
+        constexpr intrusive_ptr_view & operator = ( const intrusive_ptr_view & _rhs )
         {
             base_type::m_ptr = _rhs.get();
 
             return *this;
         }
 
-        constexpr intrusive_ptr_view & operator = ( const value_type * _rhs ) noexcept
+        constexpr intrusive_ptr_view & operator = ( const value_type * _rhs )
         {
             base_type::m_ptr = const_cast<value_type *>(_rhs);
 
             return *this;
         }
 
-        constexpr intrusive_ptr_view & operator = ( std::nullptr_t ) noexcept
+        constexpr intrusive_ptr_view & operator = ( std::nullptr_t )
         {
             base_type::m_ptr = nullptr;
 
@@ -84,28 +84,28 @@ namespace stdex
         }
 
     public:
-        constexpr value_type * get() const noexcept
+        constexpr value_type * get() const
         {
             return static_cast<value_type *>(base_type::m_ptr);
         }
 
         template<class U>
-        constexpr U getT() const noexcept
+        constexpr U getT() const
         {
             return static_cast<U>(base_type::m_ptr);
         }
 
-        constexpr value_type * operator -> () const noexcept
+        constexpr value_type * operator -> () const
         {
             return static_cast<value_type *>(base_type::m_ptr);
         }
 
-        constexpr void reset() noexcept
+        constexpr void reset()
         {
             base_type::m_ptr = nullptr;
         }
 
-        constexpr void swap( intrusive_ptr_view & _rhs ) noexcept
+        constexpr void swap( intrusive_ptr_view & _rhs )
         {
             value_type * tmp = base_type::m_ptr;
             base_type::m_ptr = _rhs.m_ptr;
