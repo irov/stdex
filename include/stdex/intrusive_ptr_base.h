@@ -7,6 +7,10 @@ namespace stdex
     class intrusive_ptr_base
     {
     public:
+        intrusive_ptr_base() = default;
+        virtual ~intrusive_ptr_base() = default;
+
+    public:
         virtual unsigned int incref() = 0;
         virtual void decref() = 0;
         virtual unsigned int getrefcount() const = 0;
