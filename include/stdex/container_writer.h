@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstddef>
+#include <type_traits>
+
 namespace stdex
 {
     template<class C>
@@ -47,6 +50,8 @@ namespace stdex
 
         inline void writeBuffer( const void * _begin, size_t _size )
         {
+            static_assert( sizeof( value_type ) == 1, "container_writer requires byte-sized value_type" );
+
             m_container.insert( m_container.end(), reinterpret_cast<const value_type *>(_begin), reinterpret_cast<const value_type *>(_begin) + _size );
         }
 

@@ -158,7 +158,7 @@ namespace stdex
                     if( _predicate( prev_element_ptr, element_ptr ) == false && _predicate( element_ptr, prev_element_ptr ) == true )
                     {
                         linked_type_ptr element_linked = element_ptr;
-                        linked_type_ptr prev_element_linked = element_ptr;
+                        linked_type_ptr prev_element_linked = prev_element_ptr;
 
                         element_linked->unlink();
                         prev_element_linked->link_before( element_linked );

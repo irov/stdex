@@ -1,7 +1,9 @@
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <cstdint>
+#include <functional>
+#include <vector>
 
 namespace stdex
 {
@@ -188,9 +190,14 @@ namespace stdex
             return ret;
         }
 
-        void erase( iterator _erase )
+        iterator erase( iterator _erase )
         {
-            m_buffer.erase( _erase );
+            size_type index = *_erase;
+            m_free.push_back( index );
+
+            iterator new_it = m_buffer.erase( _erase );
+
+            return new_it;
         }
 
         bool erase( const K & _key )
@@ -262,6 +269,44 @@ namespace stdex
             }
 
             return true;
+        }
+
+        iterator find( const K & _key )
+        {
+            iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), _key, binary_set_less_key( m_store ) );
+
+            if( it_lower_bound == this->end() )
+            {
+                return this->end();
+            }
+
+            T & lower_value = this->get_value( it_lower_bound );
+
+            if( L()(_key, LK()(lower_value)) == true )
+            {
+                return this->end();
+            }
+
+            return it_lower_bound;
+        }
+
+        const_iterator find( const K & _key ) const
+        {
+            const_iterator it_lower_bound = std::lower_bound( m_buffer.begin(), m_buffer.end(), _key, binary_set_less_key( m_store ) );
+
+            if( it_lower_bound == this->end() )
+            {
+                return this->end();
+            }
+
+            const T & lower_value = this->get_value( it_lower_bound );
+
+            if( L()(_key, LK()(lower_value)) == true )
+            {
+                return this->end();
+            }
+
+            return it_lower_bound;
         }
 
     protected:

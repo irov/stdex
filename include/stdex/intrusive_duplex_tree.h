@@ -2,6 +2,8 @@
 
 #include "stdex/intrusive_tree_base.h"
 
+#include <cstdint>
+
 namespace stdex
 {
     template<class T>

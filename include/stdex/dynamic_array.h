@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstddef>
+#include <cstdint>
+
 namespace stdex
 {
     template<class T, class A>
@@ -21,7 +24,10 @@ namespace stdex
 
         ~dynamic_array()
         {
-            allocator_type().deallocate( m_buff, static_cast<std::size_t>(m_last - m_buff) * sizeof( T ) );
+            if( m_buff != nullptr )
+            {
+                allocator_type().deallocate( m_buff, static_cast<std::size_t>(m_last - m_buff) * sizeof( T ) );
+            }
         }
 
     public:

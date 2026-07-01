@@ -168,14 +168,14 @@ namespace stdex
         template<class F>
         void foreach_other( F _pred ) const
         {
-            linked_type * it_right = m_right;
+            value_type_ptr it_right = m_right;
             while( it_right != nullptr )
             {
                 _pred( it_right );
                 it_right = it_right->m_right;
             }
 
-            linked_type * it_left = m_left;
+            value_type_ptr it_left = m_left;
             while( it_left != nullptr )
             {
                 _pred( (it_left) );
@@ -218,7 +218,7 @@ namespace stdex
             {
                 if( _pred( it_right ) == true )
                 {
-                    return static_cast<value_type *>(this);
+                    return it_right;
                 }
 
                 it_right = it_right->m_right;
@@ -230,7 +230,7 @@ namespace stdex
             {
                 if( _pred( it_left ) == true )
                 {
-                    return static_cast<value_type *>(this);
+                    return it_left;
                 }
 
                 it_left = it_left->m_left;

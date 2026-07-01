@@ -2,6 +2,7 @@
 
 #include "stdex/typename.h"
 
+#include <cstddef>
 #include <cstdint>
 
 namespace stdex

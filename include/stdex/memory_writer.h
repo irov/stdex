@@ -1,8 +1,9 @@
 #pragma once
 
-#include "stdex/memorycopy.h"
-
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 namespace stdex
 {
@@ -49,13 +50,13 @@ namespace stdex
     public:
         inline void writeBuffer( const void * _begin, size_t _size )
         {
-            if( m_write + _size > m_capacity )
+            if( m_write > m_capacity || _size > m_capacity - m_write )
             {
                 throw_memory_writer_exception();
             }
 
             unsigned char * write_buff = m_buff + m_write;
-            memorycopy( write_buff, 0, _begin, _size );
+            std::memcpy( write_buff, _begin, _size );
 
             m_write += _size;
         }
@@ -88,6 +89,8 @@ namespace stdex
 
         inline void skip( size_t _size )
         {
+            assert( m_write <= m_capacity && _size <= m_capacity - m_write );
+
             m_write += _size;
         }
 

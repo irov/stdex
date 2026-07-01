@@ -192,7 +192,7 @@ namespace stdex
         template<class F>
         const linked_type * find( F _pred ) const
         {
-            linked_type * node_found = this->find_self( _pred );
+            const linked_type * node_found = this->find_self( _pred );
 
             if( node_found != nullptr )
             {
@@ -224,7 +224,7 @@ namespace stdex
             {
                 if( _pred( it_right ) == true )
                 {
-                    return this;
+                    return it_right;
                 }
 
                 it_right = it_right->m_right;
@@ -236,7 +236,7 @@ namespace stdex
             {
                 if( _pred( it_left ) == true )
                 {
-                    return this;
+                    return it_left;
                 }
 
                 it_left = it_left->m_left;

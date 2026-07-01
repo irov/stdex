@@ -35,8 +35,8 @@ namespace stdex
                     size_type replace_n = m_size - m_begin;
                     for( size_type i = 0; i != replace_n; i++ )
                     {
-                        size_t l = m_size - i - 1;
-                        size_t k = new_s - i - 1;
+                        size_type l = m_size - i - 1;
+                        size_type k = new_s - i - 1;
 
                         std::swap( m_container[l], m_container[k] );
                     }

@@ -1,6 +1,8 @@
 #pragma once
 
-#include <memory.h>
+#include <cstddef>
+#include <cstring>
+#include <type_traits>
 
 namespace stdex
 {
@@ -50,9 +52,11 @@ namespace stdex
 
         inline void readBuffer( void * _begin, size_t _size )
         {
+            static_assert( sizeof( value_type ) == 1, "container_reader requires byte-sized value_type" );
+
             const value_type * data = m_container.data();
 
-            ::memcpy( _begin, data + m_carriage, _size );
+            std::memcpy( _begin, data + m_carriage, _size );
 
             m_carriage += _size;
         }

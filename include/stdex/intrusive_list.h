@@ -244,22 +244,22 @@ namespace stdex
             inline reverse_iterator operator ++ ( int )
             {
                 reverse_iterator tmp = *this;
-                -- * this;
+                ++ * this;
 
                 return tmp;
             }
 
-            inline reverse_iterator & operator -- () const
+            inline reverse_iterator & operator -- ()
             {
                 this->shuffle_next();
 
                 return *this;
             }
 
-            inline reverse_iterator operator -- ( int ) const
+            inline reverse_iterator operator -- ( int )
             {
                 reverse_iterator tmp = *this;
-                ++ * this;
+                -- * this;
 
                 return tmp;
             }
@@ -409,7 +409,7 @@ namespace stdex
         template<class F>
         inline iterator erase_if( F _pred )
         {
-            iterator it_found = find_if( _pred );
+            iterator it_found = stdex::helper::intrusive_find_if( this->begin(), this->end(), _pred );
 
             if( it_found == this->end() )
             {

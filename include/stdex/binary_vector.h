@@ -4,6 +4,7 @@
 #include "stdex/stl_allocator.h"
 
 #include <functional>
+#include <iterator>
 
 namespace stdex
 {

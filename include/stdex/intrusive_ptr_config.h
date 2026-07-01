@@ -17,7 +17,7 @@ namespace stdex
 {
     inline void __intrusive_ptr_critical_crash_error()
     {
-        assert("intrusive_ptr_critical_crash_error");
+        assert(false && "intrusive_ptr_critical_crash_error");
     }
 
     template<class V, class T>

@@ -1,5 +1,7 @@
 #	pragma once
 
+#	include <cstdint>
+
 namespace stdex
 {
     const uint32_t hash_base = 0xABCDEF01;

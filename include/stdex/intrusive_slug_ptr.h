@@ -2,20 +2,22 @@
 
 #include "stdex/intrusive_slug_linked_ptr.h"
 #include "stdex/intrusive_slug_list_size_ptr.h"
-#include "stdex/intrusive_slug_linked_ptr.h"
+
+#include <cstdint>
 
 namespace stdex
 {
-    template<class T, template <class> class IntrusivePtr, class IntrusivePtrBase>
+    template<class T, template <class, class> class IntrusivePtr, class IntrusivePtrBase>
     class intrusive_slug_ptr
-        : public intrusive_slug_linked_ptr<typename T::value_type, IntrusivePtr, IntrusivePtrBase>
+        : public intrusive_slug_linked_ptr<typename T::value_type, typename T::derived_type, IntrusivePtr, IntrusivePtrBase>
     {
     public:
         typedef T list_type;
         typedef typename list_type::value_type value_type;
-        typedef IntrusivePtr<value_type> value_type_ptr;
-        typedef intrusive_slug_linked_ptr<value_type, IntrusivePtr, IntrusivePtrBase> linked_type;
-        typedef IntrusivePtr<linked_type> linked_type_ptr;
+        typedef typename list_type::derived_type derived_type;
+        typedef IntrusivePtr<value_type, derived_type> value_type_ptr;
+        typedef intrusive_slug_linked_ptr<value_type, derived_type, IntrusivePtr, IntrusivePtrBase> linked_type;
+        typedef IntrusivePtr<linked_type, void> linked_type_ptr;
 
     public:
         explicit intrusive_slug_ptr( const list_type & _list )

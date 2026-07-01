@@ -1,5 +1,9 @@
 #pragma once
 
+#include "stdex/allocator.h"
+
+#include <cstdint>
+
 namespace stdex
 {
     template<class T>
@@ -72,6 +76,7 @@ namespace stdex
     public:
         void resize( size_t _count )
         {
+            Allocator::free( m_ptr );
             m_ptr = Allocator::malloc( _count );
         }
 

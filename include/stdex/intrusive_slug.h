@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdex/intrusive_slug_linked_tag.h"
+
 namespace stdex
 {
     template<class T>
@@ -12,7 +14,7 @@ namespace stdex
 
     public:
         intrusive_slug( T & _list )
-            : T::linked_type( EILT_SLUG )
+            : linked_type( EILT_SLUG )
             , m_list( _list )
         {
             m_list.increfSlug( this );
@@ -32,7 +34,7 @@ namespace stdex
 
             linked_type * pos_right_adapt_right_adapt = nullptr;
 
-            T::size_type countSlugs = m_list.countSlugs();
+            typename T::size_type countSlugs = m_list.countSlugs();
 
             if( countSlugs == 1 )
             {

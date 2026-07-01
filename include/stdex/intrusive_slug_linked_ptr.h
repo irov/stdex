@@ -231,7 +231,7 @@ namespace stdex
         {
             if( _pred( this ) == true )
             {
-                return this;
+                return linked_type_ptr( this );
             }
 
             return nullptr;
@@ -246,7 +246,7 @@ namespace stdex
             {
                 if( _pred( it_right ) == true )
                 {
-                    return this;
+                    return it_right;
                 }
 
                 it_right = it_right->m_right;
@@ -258,7 +258,7 @@ namespace stdex
             {
                 if( _pred( it_left ) == true )
                 {
-                    return this;
+                    return it_left;
                 }
 
                 it_left = it_left->m_left;

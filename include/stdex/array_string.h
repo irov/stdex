@@ -1,7 +1,7 @@
 #pragma once
 
-#include "stdex/memorycopy.h"
-
+#include <cstddef>
+#include <cstdint>
 #include <cstring>
 
 namespace stdex
@@ -14,7 +14,8 @@ namespace stdex
 
     public:
         array_string()
-            : m_pos( 0 )
+            : m_buffer()
+            , m_pos( 0 )
         {
         }
 
@@ -42,17 +43,18 @@ namespace stdex
         void clear()
         {
             m_pos = 0;
+            m_buffer[0] = '\0';
         }
 
     public:
         void append( const char * _value, size_type _size )
         {
-            if( m_pos + _size >= Size )
+            if( _size >= Size - m_pos )
             {
                 return;
             }
 
-            memorycopy( m_buffer, (size_t)m_pos, _value, (size_t)_size );
+            std::memcpy( m_buffer + m_pos, _value, (size_t)_size );
 
             m_pos += _size;
             m_buffer[m_pos] = '\0';
@@ -60,21 +62,21 @@ namespace stdex
 
         void append( char * _value )
         {
-            size_type size = (size_type)strlen( _value );
+            size_type size = (size_type)std::strlen( _value );
 
             this->append( _value, size );
         }
 
         void append( const char * _value )
         {
-            size_type size = (size_type)strlen( _value );
+            size_type size = (size_type)std::strlen( _value );
 
             this->append( _value, size );
         }
 
         void append( char _ch )
         {
-            if( m_pos + 1 >= Size )
+            if( 1 >= Size - m_pos )
             {
                 return;
             }
@@ -101,7 +103,7 @@ namespace stdex
                 return;
             }
 
-            memorycopy( m_buffer, (size_t)0, _value, (size_t)_size );
+            std::memcpy( m_buffer, _value, (size_t)_size );
 
             m_pos = _size;
             m_buffer[m_pos] = 0;
@@ -109,14 +111,14 @@ namespace stdex
 
         void assign( char * _value )
         {
-            size_type size = (size_type)strlen( _value );
+            size_type size = (size_type)std::strlen( _value );
 
             this->assign( _value, size );
         }
 
         void assign( const char * _value )
         {
-            size_type size = (size_type)strlen( _value );
+            size_type size = (size_type)std::strlen( _value );
 
             this->assign( _value, size );
         }
@@ -145,19 +147,19 @@ namespace stdex
     public:
         void replace_last( const char * _value )
         {
-            size_t size = strlen( _value );
+            size_t size = std::strlen( _value );
 
             if( size > (size_t)m_pos )
             {
                 return;
             }
 
-            memorycopy( m_buffer, (size_t)m_pos - size, _value, size );
+            std::memcpy( m_buffer + (size_t)m_pos - size, _value, size );
         }
 
         void cut_before_last_of( char _ch )
         {
-            char * ch_pos = strrchr( m_buffer, _ch );
+            char * ch_pos = std::strrchr( m_buffer, _ch );
 
             if( ch_pos == nullptr )
             {
@@ -167,6 +169,7 @@ namespace stdex
             ptrdiff_t d = ch_pos - m_buffer;
 
             m_pos = (size_type)d;
+            m_buffer[m_pos] = '\0';
         }
 
     public:
