@@ -13,7 +13,7 @@ namespace stdex
         typedef typename T::linked_type linked_type;
 
     public:
-        intrusive_slug( T & _list )
+        explicit intrusive_slug( T & _list )
             : linked_type( EILT_SLUG )
             , m_list( _list )
         {
@@ -22,8 +22,13 @@ namespace stdex
 
         ~intrusive_slug()
         {
+            this->unlink();
             m_list.decrefSlug();
         }
+
+    private:
+        intrusive_slug( const intrusive_slug & ) = delete;
+        intrusive_slug & operator = ( const intrusive_slug & ) = delete;
 
     public:
         void next_shuffle()

@@ -15,9 +15,9 @@ namespace stdex
         {
         }
 
-        inline intrusive_linked( const intrusive_linked & _linked )
-            : m_right( _linked.m_right )
-            , m_left( _linked.m_left )
+        inline intrusive_linked( const intrusive_linked & )
+            : m_right( nullptr )
+            , m_left( nullptr )
         {
         }
 
@@ -27,11 +27,8 @@ namespace stdex
         }
 
     public:
-        intrusive_linked & operator = ( const intrusive_linked & _linked )
+        intrusive_linked & operator = ( const intrusive_linked & )
         {
-            m_right = _linked.m_right;
-            m_left = _linked.m_left;
-
             return *this;
         }
 

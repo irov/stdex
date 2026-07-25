@@ -29,8 +29,13 @@ namespace stdex
 
         ~intrusive_slug_ptr()
         {
+            this->unlink();
             m_list.decrefSlug();
         }
+
+    private:
+        intrusive_slug_ptr( const intrusive_slug_ptr & ) = delete;
+        intrusive_slug_ptr & operator = ( const intrusive_slug_ptr & ) = delete;
 
     public:
         void next_shuffle()
@@ -157,6 +162,21 @@ namespace stdex
             }
 
             return pos;
+        }
+
+    protected:
+        unsigned int incref() override
+        {
+            return 1;
+        }
+
+        void decref() override
+        {
+        }
+
+        unsigned int getrefcount() const override
+        {
+            return 1;
         }
 
     protected:

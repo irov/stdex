@@ -28,6 +28,10 @@ namespace stdex
             m_head.m_left = nullptr;
         }
 
+    private:
+        intrusive_list( const intrusive_list & ) = delete;
+        intrusive_list & operator = ( const intrusive_list & ) = delete;
+
     protected:
         template<class It>
         class base_iterator
@@ -337,8 +341,24 @@ namespace stdex
 
         inline void splice( iterator _from, iterator _where )
         {
-            this->erase( _from );
-            this->insert( --_where, *_from );
+            if( _from == this->end() || _from == _where )
+            {
+                return;
+            }
+
+            iterator it_next = _from;
+            ++it_next;
+
+            if( it_next == _where )
+            {
+                return;
+            }
+
+            linked_type * node = _from.get();
+            linked_type * where = _where.get();
+
+            node->unlink();
+            where->link_before( node );
         }
 
         inline void clear()
@@ -374,18 +394,27 @@ namespace stdex
 
         inline void insert( iterator _where, iterator _begin, iterator _end )
         {
-            if( _begin == _end )
+            if( _begin == _end || _where == _begin || _where == _end )
             {
                 return;
             }
 
-            _end->m_left->m_right = nullptr;
-            _end->m_left = _begin->m_left;
+            linked_type * first = _begin.get();
+            linked_type * after = _end.get();
+            linked_type * last = after->m_left;
+            linked_type * before = first->m_left;
 
-            _begin->m_left->m_right = *_end;
-            _begin->m_left = nullptr;
+            linked_type * where = _where.get();
+            linked_type * where_before = where->m_left;
 
-            _begin->linkall( *_where );
+            before->m_right = after;
+            after->m_left = before;
+
+            where_before->m_right = first;
+            first->m_left = where_before;
+
+            last->m_right = where;
+            where->m_left = last;
         }
 
         inline iterator erase( iterator _where )

@@ -25,6 +25,13 @@ namespace stdex
         {
         }
 
+        inline intrusive_slug_linked( const intrusive_slug_linked & _linked )
+            : m_right( nullptr )
+            , m_left( nullptr )
+            , m_tag( _linked.m_tag )
+        {
+        }
+
         inline ~intrusive_slug_linked()
         {
             this->unlink();

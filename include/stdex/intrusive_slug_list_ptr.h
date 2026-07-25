@@ -33,6 +33,10 @@ namespace stdex
             m_head.m_left = nullptr;
         }
 
+    private:
+        intrusive_slug_list_ptr( const intrusive_slug_list_ptr & ) = delete;
+        intrusive_slug_list_ptr & operator = ( const intrusive_slug_list_ptr & ) = delete;
+
     protected:
         class base_slug_iterator
         {
@@ -118,6 +122,7 @@ namespace stdex
             inline explicit base_unslug_iterator( const linked_type_ptr & _node )
                 : m_node( _node )
             {
+                this->adapt_node();
             }
 
             inline explicit base_unslug_iterator( const linked_type_ptr & _node, bool _stable )
@@ -164,16 +169,26 @@ namespace stdex
         protected:
             inline void shuffle_next()
             {
-                m_node = m_node->right();
+                do
+                {
+                    m_node = m_node->right();
+                } while( m_node->getIntrusiveTag() == EILT_SLUG );
             }
 
             inline void shuffle_prev()
             {
-                m_node = m_node->left();
+                do
+                {
+                    m_node = m_node->left();
+                } while( m_node->getIntrusiveTag() == EILT_SLUG );
             }
 
-            inline void adapt_node() const
+            inline void adapt_node()
             {
+                while( m_node->getIntrusiveTag() == EILT_SLUG )
+                {
+                    m_node = m_node->right();
+                }
             }
 
         protected:
@@ -202,12 +217,12 @@ namespace stdex
             }
 
         public:
-            inline bool operator == ( base_iterator _it ) const
+            inline bool operator == ( const base_iterator & _it ) const
             {
                 return this->equal_iterator( _it );
             }
 
-            inline bool operator != ( base_iterator _it ) const
+            inline bool operator != ( const base_iterator & _it ) const
             {
                 return !this->operator == ( _it );
             }
@@ -282,12 +297,12 @@ namespace stdex
             }
 
         public:
-            inline bool operator == ( base_const_iterator _it ) const
+            inline bool operator == ( const base_const_iterator & _it ) const
             {
                 return this->equal_iterator( _it );
             }
 
-            inline bool operator != ( base_const_iterator _it ) const
+            inline bool operator != ( const base_const_iterator & _it ) const
             {
                 return !this->operator == ( _it );
             }
@@ -343,12 +358,12 @@ namespace stdex
             }
 
         public:
-            inline bool operator == ( base_reverse_iterator _it ) const
+            inline bool operator == ( const base_reverse_iterator & _it ) const
             {
                 return this->equal_iterator( _it );
             }
 
-            inline bool operator != ( base_reverse_iterator _it ) const
+            inline bool operator != ( const base_reverse_iterator & _it ) const
             {
                 return !this->operator == ( _it );
             }
@@ -469,7 +484,7 @@ namespace stdex
     public:
         inline void push_front( const linked_type_ptr & _node )
         {
-            iterator it = this->begin();
+            iterator it = this->pure_begin_();
             this->insert_( it, _node );
         }
 
@@ -509,6 +524,16 @@ namespace stdex
             }
 
             const linked_type_ptr & first = m_head.right();
+
+            if( first.get() == &m_head )
+            {
+                return nullptr;
+            }
+
+            if( first->right_get() != &m_head )
+            {
+                return nullptr;
+            }
 
             value_type_ptr value = stdex::intrusive_reinterpret_cast<value_type_ptr>(first);
 
@@ -599,6 +624,11 @@ namespace stdex
         {
             const linked_type_ptr & linked = _where.get();
             linked->link_before( _node );
+        }
+
+        inline iterator pure_begin_()
+        {
+            return iterator( m_head.m_right, true );
         }
 
     protected:

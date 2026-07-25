@@ -18,8 +18,6 @@ namespace stdex
     public:
         intrusive_list_ptr()
         {
-            stdex::intrusive_this_acquire( this );
-
             this->m_head = this;
             this->m_right = this->m_head;
             this->m_left = this->m_head;
@@ -34,33 +32,37 @@ namespace stdex
             this->m_left = nullptr;
         }
 
+    private:
+        intrusive_list_ptr( const intrusive_list_ptr & ) = delete;
+        intrusive_list_ptr & operator = ( const intrusive_list_ptr & ) = delete;
+
     protected:
         template<class It>
         class base_iterator
         {
         public:
             inline explicit base_iterator( const value_type_ptr & _value )
-                : m_value( &_value )
+                : m_value( _value )
             {
             }
 
             inline base_iterator( const base_iterator & _it )
-                : m_value( _it.get() )
+                : m_value( _it.m_value )
             {
             }
 
         public:
             inline const value_type_ptr & operator -> () const
             {
-                return *m_value;
+                return m_value;
             }
 
             inline const value_type_ptr & operator * () const
             {
-                return *m_value;
+                return m_value;
             }
 
-            inline const value_type_ptr * get() const
+            inline const value_type_ptr & get() const
             {
                 return m_value;
             }
@@ -68,8 +70,8 @@ namespace stdex
         public:
             inline bool operator == ( const It & _it ) const
             {
-                const value_type * lptr = m_value->get();
-                const value_type * rptr = _it.get()->get();
+                const value_type * lptr = m_value.get();
+                const value_type * rptr = _it.get().get();
 
                 return lptr == rptr;
             }
@@ -82,16 +84,16 @@ namespace stdex
         protected:
             inline void shuffle_next()
             {
-                m_value = &(*m_value)->right();
+                m_value = m_value->right();
             }
 
             inline void shuffle_prev()
             {
-                m_value = &(*m_value)->left();
+                m_value = m_value->left();
             }
 
         protected:
-            const value_type_ptr * m_value;
+            value_type_ptr m_value;
         };
 
     public:
@@ -328,8 +330,24 @@ namespace stdex
 
         inline void splice( iterator _from, iterator _where )
         {
-            this->erase( _from );
-            this->insert( --_where, *_from );
+            if( _from == this->end() || _from == _where )
+            {
+                return;
+            }
+
+            iterator it_next = _from;
+            ++it_next;
+
+            if( it_next == _where )
+            {
+                return;
+            }
+
+            value_type_ptr node = *_from;
+            value_type_ptr where = *_where;
+
+            node->unlink();
+            where->link_before( node );
         }
 
         inline void clear()
@@ -365,18 +383,27 @@ namespace stdex
 
         inline void insert( iterator _where, iterator _begin, iterator _end )
         {
-            if( _begin == _end )
+            if( _begin == _end || _where == _begin || _where == _end )
             {
                 return;
             }
 
-            _end->m_left->m_right = nullptr;
-            _end->m_left = _begin->m_left;
+            value_type_ptr first = *_begin;
+            value_type_ptr after = *_end;
+            value_type_ptr last = after->m_left;
+            value_type_ptr before = first->m_left;
 
-            _begin->m_left->m_right = *_end;
-            _begin->m_left = nullptr;
+            value_type_ptr where = *_where;
+            value_type_ptr where_before = where->m_left;
 
-            _begin->linkall( *_where );
+            before->m_right = after;
+            after->m_left = before;
+
+            where_before->m_right = first;
+            first->m_left = where_before;
+
+            last->m_right = where;
+            where->m_left = last;
         }
 
         inline iterator erase( iterator _where )
@@ -419,9 +446,18 @@ namespace stdex
         }
 
     protected:
-        void destroy() override
+        unsigned int incref() override
         {
-            //Empty
+            return 1;
+        }
+
+        void decref() override
+        {
+        }
+
+        unsigned int getrefcount() const override
+        {
+            return 1;
         }
 
     protected:

@@ -108,12 +108,17 @@ namespace stdex
                 typename T::iterator it_next = it;
                 ++it_next;
 
-                while( it != _container.begin() )
+                for( ;; )
                 {
                     typename T::iterator it_prev = it;
                     --it_prev;
 
-                    if( _predicate( *it_prev, *it ) == false )
+                    if( it_prev == it_end )
+                    {
+                        break;
+                    }
+
+                    if( _predicate( *it, *it_prev ) == true )
                     {
                         linked_type * it_linked = *it;
                         linked_type * it_prev_linked = *it_prev;
@@ -147,15 +152,21 @@ namespace stdex
                 container_iterator_type it_next = it;
                 ++it_next;
 
-                while( it != _container.begin() )
+                container_value_type_ptr element_ptr = *it;
+
+                for( ;; )
                 {
                     container_iterator_type it_prev = it;
                     --it_prev;
 
-                    container_value_type_ptr element_ptr = *it;
+                    if( it_prev == it_end )
+                    {
+                        break;
+                    }
+
                     container_value_type_ptr prev_element_ptr = *it_prev;
 
-                    if( _predicate( prev_element_ptr, element_ptr ) == false && _predicate( element_ptr, prev_element_ptr ) == true )
+                    if( _predicate( element_ptr, prev_element_ptr ) == true )
                     {
                         linked_type_ptr element_linked = element_ptr;
                         linked_type_ptr prev_element_linked = prev_element_ptr;
