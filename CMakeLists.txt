@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 option(STDEX_INSTALL "STDEX_INSTALL" ON)
 
-project(stdex)
+project(stdex LANGUAGES CXX)
 
 add_library(${PROJECT_NAME} INTERFACE)
 

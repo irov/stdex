@@ -18,6 +18,12 @@ namespace stdex
             intrusive_ptr_base::intrusive_ptr_dec_ref( m_ptr );
         }
 
+    private:
+        intrusive_ptr_scope( const intrusive_ptr_scope & ) = delete;
+        intrusive_ptr_scope( intrusive_ptr_scope && ) = delete;
+        intrusive_ptr_scope & operator = ( const intrusive_ptr_scope & ) = delete;
+        intrusive_ptr_scope & operator = ( intrusive_ptr_scope && ) = delete;
+
     protected:
         intrusive_ptr_base * m_ptr;
     };

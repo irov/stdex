@@ -32,51 +32,75 @@ namespace stdex
         }
 
     public:
-        constexpr intrusive_ptr_view()
+        constexpr intrusive_ptr_view() noexcept
             : base_type()
         {
         }
 
-        constexpr intrusive_ptr_view( std::nullptr_t )
+        constexpr intrusive_ptr_view( std::nullptr_t ) noexcept
             : base_type()
         {
         }
 
-        constexpr intrusive_ptr_view( const intrusive_ptr_view & _rhs )
-            : base_type( _rhs.m_ptr, intrusive_borrow_t() )
+        constexpr intrusive_ptr_view( const intrusive_ptr_view & _rhs ) noexcept
+            : base_type( _rhs.get(), detail::intrusive_adopt_t() )
         {
         }
 
-        constexpr intrusive_ptr_view( const value_ptr_type & _rhs )
-            : base_type( _rhs.get(), intrusive_borrow_t() )
+        constexpr intrusive_ptr_view( intrusive_ptr_view && _rhs ) noexcept
+            : base_type( _rhs.get(), detail::intrusive_adopt_t() )
+        {
+            _rhs.m_ptr = nullptr;
+        }
+
+        constexpr intrusive_ptr_view( const value_ptr_type & _rhs ) noexcept
+            : base_type( _rhs.get(), detail::intrusive_adopt_t() )
         {
         }
 
-        constexpr intrusive_ptr_view( const value_type * _ptr )
-            : base_type( _ptr, intrusive_borrow_t() )
+        constexpr intrusive_ptr_view( const value_type * _ptr ) noexcept
+            : base_type( _ptr, detail::intrusive_adopt_t() )
         {
         }
 
-        ~intrusive_ptr_view()
+        ~intrusive_ptr_view() noexcept
         {
             base_type::m_ptr = nullptr;
         }
 
-        constexpr intrusive_ptr_view & operator = ( const intrusive_ptr_view & _rhs )
+        constexpr intrusive_ptr_view & operator = ( const intrusive_ptr_view & _rhs ) noexcept
         {
+            if( this == &_rhs )
+            {
+                return *this;
+            }
+
             base_type::m_ptr = _rhs.get();
 
             return *this;
         }
 
-        constexpr intrusive_ptr_view & operator = ( const value_type * _rhs )
+        constexpr intrusive_ptr_view & operator = ( intrusive_ptr_view && _rhs ) noexcept
+        {
+            if( this == &_rhs )
+            {
+                return *this;
+            }
+
+            base_type::m_ptr = _rhs.m_ptr;
+            _rhs.m_ptr = nullptr;
+
+            return *this;
+        }
+
+        constexpr intrusive_ptr_view & operator = ( const value_type * _rhs ) noexcept
         {
             base_type::m_ptr = const_cast<value_type *>(_rhs);
 
             return *this;
         }
 
-        constexpr intrusive_ptr_view & operator = ( std::nullptr_t )
+        constexpr intrusive_ptr_view & operator = ( std::nullptr_t ) noexcept
         {
             base_type::m_ptr = nullptr;
 
@@ -84,37 +108,37 @@ namespace stdex
         }
 
     public:
-        constexpr value_type * get() const
+        constexpr value_type * get() const noexcept
         {
             return static_cast<value_type *>(base_type::m_ptr);
         }
 
         template<class U>
-        constexpr U getT() const
+        constexpr U getT() const noexcept
         {
             return static_cast<U>(base_type::m_ptr);
         }
 
-        constexpr value_type * operator -> () const
+        constexpr value_type * operator -> () const noexcept
         {
             return static_cast<value_type *>(base_type::m_ptr);
         }
 
-        constexpr void reset()
+        constexpr void reset() noexcept
         {
             base_type::m_ptr = nullptr;
         }
 
-        constexpr void swap( intrusive_ptr_view & _rhs )
+        constexpr void swap( intrusive_ptr_view & _rhs ) noexcept
         {
-            value_type * tmp = base_type::m_ptr;
+            auto tmp = base_type::m_ptr;
             base_type::m_ptr = _rhs.m_ptr;
             _rhs.m_ptr = tmp;
         }
     };
     //////////////////////////////////////////////////////////////////////////
     template<class T, class D>
-    void swap( const intrusive_ptr_view<T, D> & _left, const intrusive_ptr_view<T, D> & _right )
+    void swap( intrusive_ptr_view<T, D> & _left, intrusive_ptr_view<T, D> & _right ) noexcept
     {
         _left.swap( _right );
     }
@@ -128,7 +152,7 @@ namespace stdex
     template<class U, class T, class D>
     U intrusive_ptr_view_get( const intrusive_ptr_view<T, D> & _iptr )
     {
-        U * u_ptr = _iptr.template getT<U *>();
+        U u_ptr = _iptr.template getT<U>();
 
         return u_ptr;
     }

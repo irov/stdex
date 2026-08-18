@@ -10,14 +10,16 @@
 
 #if defined(STDEX_INTRUSIVE_PTR_DEBUG)
 #   include <cassert>
+#   include <cstdlib>
 
 #   define STDEX_INTRUSIVE_PTR_DEBUG_MASK (0x7BADF00D)
 
 namespace stdex
 {
-    inline void __intrusive_ptr_critical_crash_error()
+    [[noreturn]] inline void __intrusive_ptr_critical_crash_error()
     {
         assert(false && "intrusive_ptr_critical_crash_error");
+        std::abort();
     }
 
     template<class V, class T>
