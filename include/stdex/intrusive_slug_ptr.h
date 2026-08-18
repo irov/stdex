@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stdex/intrusive_slug_linked_ptr.h"
-#include "stdex/intrusive_slug_list_size_ptr.h"
 
 #include <cstdint>
 

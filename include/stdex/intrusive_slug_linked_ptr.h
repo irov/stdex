@@ -147,7 +147,7 @@ namespace stdex
 
         void linkall( const linked_type_ptr & _other )
         {
-            const linked_type_ptr & other_right = _other->m_right;
+            linked_type_ptr other_right = _other->m_right;
 
             if( m_left != nullptr )
             {

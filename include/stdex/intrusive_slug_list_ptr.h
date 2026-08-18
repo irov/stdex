@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdex/intrusive_slug_linked_ptr.h"
+#include "stdex/intrusive_slug_algorithm.h"
 #include "stdex/intrusive_algorithm.h"
 #include "stdex/intrusive_ptr.h"
 
@@ -47,10 +48,9 @@ namespace stdex
                 this->adapt_node();
             }
 
-            inline explicit base_slug_iterator( const linked_type_ptr & _node, bool _stable )
+            inline explicit base_slug_iterator( const linked_type_ptr & _node, detail::intrusive_slug_no_adapt_t )
                 : m_node( _node )
             {
-                (void)_stable;
             }
 
             inline base_slug_iterator( const base_slug_iterator & _it )
@@ -112,6 +112,14 @@ namespace stdex
                 }
             }
 
+            inline void adapt_node_reverse()
+            {
+                while( m_node->getIntrusiveTag() == EILT_SLUG )
+                {
+                    m_node = m_node->left();
+                }
+            }
+
         protected:
             linked_type_ptr m_node;
         };
@@ -125,10 +133,9 @@ namespace stdex
                 this->adapt_node();
             }
 
-            inline explicit base_unslug_iterator( const linked_type_ptr & _node, bool _stable )
+            inline explicit base_unslug_iterator( const linked_type_ptr & _node, detail::intrusive_slug_no_adapt_t )
                 : m_node( _node )
             {
-                (void)_stable;
             }
 
             inline base_unslug_iterator( const base_unslug_iterator & _it )
@@ -191,6 +198,14 @@ namespace stdex
                 }
             }
 
+            inline void adapt_node_reverse()
+            {
+                while( m_node->getIntrusiveTag() == EILT_SLUG )
+                {
+                    m_node = m_node->left();
+                }
+            }
+
         protected:
             linked_type_ptr m_node;
         };
@@ -206,8 +221,8 @@ namespace stdex
             {
             }
 
-            inline base_iterator( const linked_type_ptr & _node, bool _stable )
-                : It( _node, _stable )
+            inline base_iterator( const linked_type_ptr & _node, detail::intrusive_slug_no_adapt_t )
+                : It( _node, detail::intrusive_slug_no_adapt_t() )
             {
             }
 
@@ -276,8 +291,8 @@ namespace stdex
             {
             }
 
-            inline base_const_iterator( const linked_type_ptr & _node, bool _stable )
-                : It( _node, _stable )
+            inline base_const_iterator( const linked_type_ptr & _node, detail::intrusive_slug_no_adapt_t )
+                : It( _node, detail::intrusive_slug_no_adapt_t() )
             {
             }
 
@@ -343,12 +358,13 @@ namespace stdex
         {
         public:
             inline explicit base_reverse_iterator( const linked_type_ptr & _node )
-                : It( _node )
+                : It( _node, detail::intrusive_slug_no_adapt_t() )
             {
+                this->adapt_node_reverse();
             }
 
-            inline base_reverse_iterator( const linked_type_ptr & _node, bool _stable )
-                : It( _node, _stable )
+            inline base_reverse_iterator( const linked_type_ptr & _node, detail::intrusive_slug_no_adapt_t )
+                : It( _node, detail::intrusive_slug_no_adapt_t() )
             {
             }
 
@@ -415,7 +431,7 @@ namespace stdex
 
         inline iterator end()
         {
-            return iterator( linked_type_ptr( &m_head ), true );
+            return iterator( linked_type_ptr( &m_head ), detail::intrusive_slug_no_adapt_t() );
         }
 
         inline const_iterator begin() const
@@ -425,7 +441,7 @@ namespace stdex
 
         inline const_iterator end() const
         {
-            return const_iterator( linked_type_ptr( &m_head ), true );
+            return const_iterator( linked_type_ptr( &m_head ), detail::intrusive_slug_no_adapt_t() );
         }
 
         inline reverse_iterator rbegin()
@@ -435,7 +451,7 @@ namespace stdex
 
         inline reverse_iterator rend()
         {
-            return reverse_iterator( linked_type_ptr( &m_head ), true );
+            return reverse_iterator( linked_type_ptr( &m_head ), detail::intrusive_slug_no_adapt_t() );
         }
 
     public:
@@ -542,16 +558,20 @@ namespace stdex
 
         inline size_type size() const
         {
-            const_iterator it = this->begin();
-            const_iterator it_end = this->end();
-            size_type count = stdex::helper::intrusive_distance( it, it_end );
+            const linked_type * head = &m_head;
+            const linked_type * node = m_head.right_get();
+            size_type count = stdex::helper::intrusive_slug_distance( node, head );
 
             return count;
         }
 
         inline bool empty() const
         {
-            return this->begin() == this->end();
+            const linked_type * head = &m_head;
+            const linked_type * node = m_head.right_get();
+            bool empty = stdex::helper::intrusive_slug_empty( node, head );
+
+            return empty;
         }
 
         inline iterator insert( iterator _where, const linked_type_ptr & _node )
@@ -628,7 +648,7 @@ namespace stdex
 
         inline iterator pure_begin_()
         {
-            return iterator( m_head.m_right, true );
+            return iterator( m_head.m_right, detail::intrusive_slug_no_adapt_t() );
         }
 
     protected:
