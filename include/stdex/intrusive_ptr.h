@@ -231,7 +231,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            derived_type * rhs_ptr = static_cast<derived_type *>(_rhs.get());
+            const derived_type * rhs_ptr = static_cast<const derived_type *>(_rhs.get());
 
             if( intrusive_ptr<derived_type>::m_ptr == rhs_ptr )
             {
@@ -260,7 +260,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            derived_type * rhs_ptr = static_cast<derived_type *>(_rhs);
+            const derived_type * rhs_ptr = static_cast<const derived_type *>(_rhs);
 
             if( intrusive_ptr<derived_type>::m_ptr == rhs_ptr )
             {
@@ -798,7 +798,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            pointer_type rhs_ptr = static_cast<pointer_type>(_rhs.get());
+            const_pointer_type rhs_ptr = static_cast<const_pointer_type>(_rhs.get());
 
             if( m_ptr == rhs_ptr )
             {
@@ -827,7 +827,7 @@ namespace stdex
         {
             STDEX_INTRUSIVE_PTR_CHECK_DEBUG_MASK();
 
-            pointer_type rhs_ptr = static_cast<pointer_type>(_rhs);
+            const_pointer_type rhs_ptr = static_cast<const_pointer_type>(_rhs);
 
             if( m_ptr == rhs_ptr )
             {
